@@ -23,7 +23,9 @@ package com.kauri.scout;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Eric Fritz
@@ -34,6 +36,8 @@ public class RTree
 	private final int MAX_OBJECTS_PER_NODE = 3;
 
 	private Node root;
+
+	private Map<Object, Node> leafMap = new HashMap<Object, Node>();
 
 	public RTree()
 	{
@@ -87,7 +91,7 @@ public class RTree
 
 	public void remove(AABB aabb, Object object)
 	{
-		Node node = findLeaf(aabb, object);
+		Node node = leafMap.get(object);
 
 		if (node == null) {
 			return;
@@ -180,39 +184,6 @@ public class RTree
 		return node;
 	}
 
-	private Node findLeaf(AABB aabb, Object object)
-	{
-		return findLeaf(root, aabb, object);
-	}
-
-	//
-	// RECURSIVE
-
-	private Node findLeaf(Node node, AABB aabb, Object object)
-	{
-		if (node.isLeaf) {
-			for (int i = 0; i < node.numEntries; i++) {
-				if (node.entries[i] == object) {
-					return node;
-				}
-			}
-
-			return null;
-		} else {
-			for (int i = 0; i < node.numEntries; i++) {
-				if (aabb.intersects(node.bounds[i])) {
-					Node leaf = findLeaf((Node) node.entries[i], aabb, object);
-
-					if (leaf != null) {
-						return leaf;
-					}
-				}
-			}
-
-			return null;
-		}
-	}
-
 	private Node splitNode(Node node, AABB aabb, Object object, boolean createLeaves)
 	{
 		Node node1 = node;
@@ -280,12 +251,20 @@ public class RTree
 		node.bounds[node.numEntries] = aabb;
 		node.entries[node.numEntries] = object;
 		node.numEntries++;
+
+		if (node.isLeaf) {
+			leafMap.put(object, node);
+		}
 	}
 
 	public boolean removeEntry(Node node, Object object)
 	{
 		for (int i = 0; i < node.numEntries; i++) {
 			if (node.entries[i] == object) {
+				if (node.isLeaf) {
+					leafMap.remove(object);
+				}
+
 				node.bounds[i] = node.bounds[node.numEntries - 1];
 				node.entries[i] = node.entries[node.numEntries - 1];
 
@@ -303,6 +282,10 @@ public class RTree
 	public void clearEntries(Node node)
 	{
 		for (int i = 0; i < node.numEntries; i++) {
+			if (node.isLeaf) {
+				leafMap.remove(node.entries[i]);
+			}
+
 			node.bounds[i] = null;
 			node.entries[i] = null;
 		}
