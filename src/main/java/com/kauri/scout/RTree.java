@@ -30,8 +30,8 @@ import java.util.List;
  */
 public class RTree
 {
-	private final int M = 3;
-	private final int m = 2;
+	private final int MIN_OBJECTS_PER_NODE = 2;
+	private final int MAX_OBJECTS_PER_NODE = 3;
 
 	private Node root;
 
@@ -50,7 +50,7 @@ public class RTree
 		Node node1 = chooseLeaf(aabb);
 		Node node2 = null;
 
-		if (node1.numEntries + 1 <= M) {
+		if (node1.numEntries + 1 <= MAX_OBJECTS_PER_NODE) {
 			addEntry(node1, aabb, object);
 		} else {
 			node2 = splitNode(node1, aabb, object, true);
@@ -63,7 +63,7 @@ public class RTree
 			updateBounds(parent, node1);
 
 			if (node2 != null) {
-				if (parent.numEntries + 1 <= M) {
+				if (parent.numEntries + 1 <= MAX_OBJECTS_PER_NODE) {
 					addEntry(parent, getBoundsForNode(node2), node2);
 					node2.parent = parent;
 				} else {
@@ -100,7 +100,7 @@ public class RTree
 		while (node != root) {
 			Node parent = node.parent;
 
-			if (node.numEntries < m) {
+			if (node.numEntries < MIN_OBJECTS_PER_NODE) {
 				removeEntry(parent, node);
 				queue.add(node);
 			} else {
@@ -315,8 +315,8 @@ public class RTree
 		private Node parent;
 		private boolean isLeaf;
 		private int numEntries;
-		private AABB[] bounds = new AABB[M];
-		private Object[] entries = new Object[M];
+		private AABB[] bounds = new AABB[MAX_OBJECTS_PER_NODE];
+		private Object[] entries = new Object[MAX_OBJECTS_PER_NODE];
 
 		public Node(boolean isLeaf)
 		{
