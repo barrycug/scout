@@ -49,7 +49,7 @@ public class RTree
 		return searchRange(new ArrayList<Object>(), aabb, root);
 	}
 
-	public void insert(AABB aabb, Object object)
+	public void insert(Object object, AABB aabb)
 	{
 		Node node1 = chooseLeaf(aabb);
 		Node node2 = null;
@@ -89,7 +89,7 @@ public class RTree
 		}
 	}
 
-	public void remove(AABB aabb, Object object)
+	public void remove(Object object)
 	{
 		Node node = leafMap.get(object);
 
@@ -122,6 +122,12 @@ public class RTree
 			root = (Node) root.entries[0];
 			root.parent = null;
 		}
+	}
+
+	public void update(Object object, AABB aabb)
+	{
+		remove(object);
+		insert(object, aabb);
 	}
 
 	//
@@ -222,7 +228,7 @@ public class RTree
 	{
 		for (int i = 0; i < node.numEntries; i++) {
 			if (node.isLeaf) {
-				insert(node.bounds[i], node.entries[i]);
+				insert(node.entries[i], node.bounds[i]);
 			} else {
 				reinsert((Node) node.entries[i]);
 			}
