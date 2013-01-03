@@ -44,9 +44,37 @@ public class RTree
 		root = new Node(true);
 	}
 
-	public List<Object> search(AABB aabb)
+	public void query(Query query, QueryResultVisitor visitor)
 	{
-		return searchRange(new ArrayList<Object>(), aabb, root);
+		query(query, visitor, root);
+	}
+	private void query(Query query, QueryResultVisitor visitor, Node node)
+	{
+		for (int i = 0; i < node.numEntries; i++) {
+			if (node.isLeaf) {
+				if (query.queryElement(node.bounds[i], node.entries[i])) {
+					visitor.visit(node.entries[i]);
+				}
+			} else {
+				QueryResult result = query.queryInternalNode(node.bounds[i], (Node) node.entries[i]);
+
+				if (result == QueryResult.ALL) {
+					visitAllObjects(visitor, (Node) node.entries[i]);
+				} else if (result == QueryResult.SOME) {
+					query(query, visitor, (Node) node.entries[i]);
+				}
+			}
+		}
+	}
+	private void visitAllObjects(QueryResultVisitor visitor, Node node)
+	{
+		for (int i = 0; i < node.numEntries; i++) {
+			if (node.isLeaf) {
+				visitor.visit(node.entries[i]);
+			} else {
+				visitAllObjects(visitor, (Node) node.entries[i]);
+			}
+		}
 	}
 
 	public void insert(Object object, AABB aabb)
@@ -128,44 +156,6 @@ public class RTree
 	{
 		remove(object);
 		insert(object, aabb);
-	}
-
-	//
-	// RECURSIVE
-
-	private List<Object> searchRange(List<Object> objects, AABB aabb, Node node)
-	{
-		for (int i = 0; i < node.numEntries; i++) {
-			if (node.bounds[i].intersects(aabb)) {
-				if (node.isLeaf) {
-					objects.add(node.entries[i]);
-				} else {
-					if (aabb.contains(node.bounds[i])) {
-						getAllObjects(objects, (Node) node.entries[i]);
-					} else {
-						searchRange(objects, aabb, (Node) node.entries[i]);
-					}
-				}
-			}
-		}
-
-		return objects;
-	}
-
-	//
-	// RECURSIVE
-
-	private List<Object> getAllObjects(List<Object> objects, Node node)
-	{
-		for (int i = 0; i < node.numEntries; i++) {
-			if (node.isLeaf) {
-				objects.add(node.entries[i]);
-			} else {
-				getAllObjects(objects, (Node) node.entries[i]);
-			}
-		}
-
-		return objects;
 	}
 
 	private Node chooseLeaf(AABB aabb)
