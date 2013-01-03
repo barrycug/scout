@@ -21,8 +21,6 @@
 
 package com.kauri.scout;
 
-import java.util.Arrays;
-
 /**
  * An axis-aligned bounding box.
  * 
@@ -173,68 +171,5 @@ public class AABB
 		}
 
 		return true;
-	}
-
-	/**
-	 * Computes the bounding box of the smallest volume such that all of the specified boxes are
-	 * contained within it. The minimum bounding box of a single element is itself.
-	 * 
-	 * @param aabbs
-	 *            A list of boxes.
-	 * @return The minimum bounding box.
-	 */
-	public static AABB getUnion(AABB... aabbs)
-	{
-		for (int i = 1; i < aabbs.length; i++) {
-			if (aabbs[i - 1].dimensions != aabbs[i].dimensions) {
-				throw new IllegalArgumentException();
-			}
-		}
-
-		float[] min = new float[aabbs[0].dimensions];
-		float[] max = new float[aabbs[0].dimensions];
-
-		Arrays.fill(min, Float.POSITIVE_INFINITY);
-		Arrays.fill(max, Float.NEGATIVE_INFINITY);
-
-		for (int i = 0; i < aabbs[0].dimensions; i++) {
-			for (AABB aabb : aabbs) {
-				min[i] = Math.min(min[i], aabb.min[i]);
-				max[i] = Math.max(max[i], aabb.max[i]);
-			}
-		}
-
-		return new AABB(min, max);
-	}
-
-	/**
-	 * Computes the volume of the minimum bounding box of the specified boxes.
-	 * 
-	 * @param aabbs
-	 *            A list of boxes.
-	 * @return The volume of the minimum bounding box.
-	 */
-	public static float getUnionVolume(AABB... aabbs)
-	{
-		for (int i = 1; i < aabbs.length; i++) {
-			if (aabbs[i - 1].dimensions != aabbs[i].dimensions) {
-				throw new IllegalArgumentException();
-			}
-		}
-
-		float volume = 1;
-		for (int i = 0; i < aabbs[0].dimensions; i++) {
-			float min = Float.POSITIVE_INFINITY;
-			float max = Float.NEGATIVE_INFINITY;
-
-			for (AABB aabb : aabbs) {
-				min = Math.min(min, aabb.min[i]);
-				max = Math.max(max, aabb.max[i]);
-			}
-
-			volume *= max - min;
-		}
-
-		return volume;
 	}
 }

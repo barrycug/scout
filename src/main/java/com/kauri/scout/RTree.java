@@ -207,7 +207,14 @@ public class RTree
 			float best = Float.POSITIVE_INFINITY;
 
 			for (int i = 0; i < node.numEntries; i++) {
-				float increase = AABB.getUnionVolume(node.bounds[i], aabb);
+				float increase = 1;
+
+				for (int j = 0; i < aabb.getDimensions(); j++) {
+					float min = Math.min(node.bounds[i].getMinimum(j), aabb.getMinimum(j));
+					float max = Math.max(node.bounds[i].getMaximum(j), aabb.getMaximum(j));
+
+					increase *= max - min;
+				}
 
 				if (increase < best || (increase == best && node.bounds[i].getVolume() < node.bounds[index].getVolume())) {
 					index = i;
@@ -280,7 +287,24 @@ public class RTree
 
 	private AABB getBoundsForNode(Node node)
 	{
-		return AABB.getUnion(Arrays.copyOf(node.bounds, node.numEntries));
+		int dimensions = node.bounds[0].getDimensions();
+
+		float[] min = new float[dimensions];
+		float[] max = new float[dimensions];
+
+		Arrays.fill(min, Float.POSITIVE_INFINITY);
+		Arrays.fill(max, Float.NEGATIVE_INFINITY);
+
+		for (int j = 0; j < node.numEntries; j++) {
+			AABB aabb = node.bounds[j];
+
+			for (int i = 0; i < dimensions; i++) {
+				min[i] = Math.min(min[i], aabb.getMinimum(i));
+				max[i] = Math.max(max[i], aabb.getMaximum(i));
+			}
+		}
+
+		return new AABB(min, max);
 	}
 
 	public void addEntry(Node node, AABB aabb, Object object)
