@@ -51,12 +51,12 @@ public class RTree
 
 	public void queryJoin(JoinQuery query, QueryJoinResultVisitor visitor)
 	{
-		query(query, visitor, root, root, true);
+		query(query, visitor, root, root);
 	}
 
 	public void queryJoin(RTree tree, JoinQuery query, QueryJoinResultVisitor visitor)
 	{
-		query(query, visitor, root, tree.root, tree == this);
+		query(query, visitor, root, tree.root);
 	}
 
 	private void query(Query query, QueryResultVisitor visitor, Node node)
@@ -78,11 +78,11 @@ public class RTree
 		}
 	}
 
-	private void query(JoinQuery query, QueryJoinResultVisitor visitor, Node node1, Node node2, boolean sameTree)
+	private void query(JoinQuery query, QueryJoinResultVisitor visitor, Node node1, Node node2)
 	{
 		if (node1.isLeaf && node2.isLeaf) {
 			for (int i = 0; i < node1.numEntries; i++) {
-				for (int j = sameTree && node1 == node2 ? i + 1 : 0; j < node2.numEntries; j++) {
+				for (int j = node1 == node2 ? i + 1 : 0; j < node2.numEntries; j++) {
 					if (query.queryJoin(node1.bounds[i], node2.bounds[j])) {
 						visitor.visit(node1.entries[i], node2.entries[j]);
 					}
@@ -90,17 +90,17 @@ public class RTree
 			}
 		} else if (node1.isLeaf) {
 			for (int i = 0; i < node2.numEntries; i++) {
-				query(query, visitor, node1, (Node) node2.entries[i], sameTree);
+				query(query, visitor, node1, (Node) node2.entries[i]);
 			}
 		} else if (node2.isLeaf) {
 			for (int i = 0; i < node1.numEntries; i++) {
-				query(query, visitor, (Node) node1.entries[i], node2, sameTree);
+				query(query, visitor, (Node) node1.entries[i], node2);
 			}
 		} else {
 			for (int i = 0; i < node1.numEntries; i++) {
-				for (int j = sameTree && node1 == node2 ? i : 0; j < node2.numEntries; j++) {
+				for (int j = node1 == node2 ? i : 0; j < node2.numEntries; j++) {
 					if (query.queryJoin(node1.bounds[i], node2.bounds[j])) {
-						query(query, visitor, (Node) node1.entries[i], (Node) node2.entries[j], sameTree);
+						query(query, visitor, (Node) node1.entries[i], (Node) node2.entries[j]);
 					}
 				}
 			}
