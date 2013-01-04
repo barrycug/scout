@@ -209,7 +209,7 @@ public class RTree
 			for (int i = 0; i < node.numEntries; i++) {
 				float increase = 1;
 
-				for (int j = 0; i < aabb.getDimensions(); j++) {
+				for (int j = 0; j < aabb.getDimensions(); j++) {
 					float min = Math.min(node.bounds[i].getMinimum(j), aabb.getMinimum(j));
 					float max = Math.max(node.bounds[i].getMaximum(j), aabb.getMaximum(j));
 
