@@ -98,7 +98,7 @@ public class RTree
 			}
 		} else {
 			for (int i = 0; i < node1.numEntries; i++) {
-				for (int j = sameTree ? i : 0; j < node2.numEntries; j++) {
+				for (int j = sameTree && node1 == node2 ? i : 0; j < node2.numEntries; j++) {
 					if (query.queryJoin(node1.bounds[i], node2.bounds[j])) {
 						query(query, visitor, (Node) node1.entries[i], (Node) node2.entries[j], sameTree);
 					}
