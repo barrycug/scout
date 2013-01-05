@@ -30,98 +30,100 @@ import java.util.Map;
 /**
  * @author Eric Fritz
  */
-public class RTree
+public class RTree<E>
 {
-	private final int MIN_OBJECTS_PER_NODE = 2;
-	private final int MAX_OBJECTS_PER_NODE = 3;
+	private final static int MIN_OBJECTS_PER_NODE = 2;
+	private final static int MAX_OBJECTS_PER_NODE = 3;
 
-	private Node root;
-
-	private Map<Object, Node> leafMap = new HashMap<Object, Node>();
+	private Node<E> root;
+	private Map<E, Node<E>> leafMap = new HashMap<E, Node<E>>();
 
 	public RTree()
 	{
-		root = new Node(true);
+		root = new Node<E>(true);
 	}
 
-	public void query(Query query, QueryResultVisitor visitor)
+	public void query(Query query, QueryResultVisitor<E> visitor)
 	{
 		query(query, visitor, root);
 	}
 
-	public void queryJoin(JoinQuery query, QueryJoinResultVisitor visitor)
+	public void queryJoin(JoinQuery query, QueryJoinResultVisitor<E, E> visitor)
 	{
 		query(query, visitor, root, root);
 	}
 
-	public void queryJoin(RTree tree, JoinQuery query, QueryJoinResultVisitor visitor)
+	public <E2> void queryJoin(RTree<E2> tree, JoinQuery query, QueryJoinResultVisitor<E, E2> visitor)
 	{
 		query(query, visitor, root, tree.root);
 	}
 
-	private void query(Query query, QueryResultVisitor visitor, Node node)
+	@SuppressWarnings("unchecked")
+	private void query(Query query, QueryResultVisitor<E> visitor, Node<E> node)
 	{
 		for (int i = 0; i < node.numEntries; i++) {
 			if (node.isLeaf) {
-				if (query.queryElement(node.bounds[i], node.entries[i])) {
-					visitor.visit(node.entries[i]);
+				if (query.queryElement(node.bounds[i])) {
+					visitor.visit((E) node.entries[i]);
 				}
 			} else {
-				QueryResult result = query.queryInternalNode(node.bounds[i], (Node) node.entries[i]);
+				QueryResult result = query.queryInternalNode(node.bounds[i]);
 
 				if (result == QueryResult.ALL) {
-					visitAllObjects(visitor, (Node) node.entries[i]);
+					visitAllObjects(visitor, (Node<E>) node.entries[i]);
 				} else if (result == QueryResult.SOME) {
-					query(query, visitor, (Node) node.entries[i]);
+					query(query, visitor, (Node<E>) node.entries[i]);
 				}
 			}
 		}
 	}
 
-	private void query(JoinQuery query, QueryJoinResultVisitor visitor, Node node1, Node node2)
+	@SuppressWarnings("unchecked")
+	private <E2> void query(JoinQuery query, QueryJoinResultVisitor<E, E2> visitor, Node<E> node1, Node<E2> node2)
 	{
 		if (node1.isLeaf && node2.isLeaf) {
 			for (int i = 0; i < node1.numEntries; i++) {
 				for (int j = node1 == node2 ? i + 1 : 0; j < node2.numEntries; j++) {
 					if (query.queryJoin(node1.bounds[i], node2.bounds[j])) {
-						visitor.visit(node1.entries[i], node2.entries[j]);
+						visitor.visit((E) node1.entries[i], (E2) node2.entries[j]);
 					}
 				}
 			}
 		} else if (node1.isLeaf) {
 			for (int i = 0; i < node2.numEntries; i++) {
-				query(query, visitor, node1, (Node) node2.entries[i]);
+				query(query, visitor, node1, (Node<E2>) node2.entries[i]);
 			}
 		} else if (node2.isLeaf) {
 			for (int i = 0; i < node1.numEntries; i++) {
-				query(query, visitor, (Node) node1.entries[i], node2);
+				query(query, visitor, (Node<E>) node1.entries[i], node2);
 			}
 		} else {
 			for (int i = 0; i < node1.numEntries; i++) {
 				for (int j = node1 == node2 ? i : 0; j < node2.numEntries; j++) {
 					if (query.queryJoin(node1.bounds[i], node2.bounds[j])) {
-						query(query, visitor, (Node) node1.entries[i], (Node) node2.entries[j]);
+						query(query, visitor, (Node<E>) node1.entries[i], (Node<E2>) node2.entries[j]);
 					}
 				}
 			}
 		}
 	}
 
-	private void visitAllObjects(QueryResultVisitor visitor, Node node)
+	@SuppressWarnings("unchecked")
+	private void visitAllObjects(QueryResultVisitor<E> visitor, Node<E> node)
 	{
 		for (int i = 0; i < node.numEntries; i++) {
 			if (node.isLeaf) {
-				visitor.visit(node.entries[i]);
+				visitor.visit((E) node.entries[i]);
 			} else {
-				visitAllObjects(visitor, (Node) node.entries[i]);
+				visitAllObjects(visitor, (Node<E>) node.entries[i]);
 			}
 		}
 	}
 
-	public void insert(Object object, AABB aabb)
+	public void insert(E object, AABB aabb)
 	{
-		Node node1 = chooseLeaf(aabb);
-		Node node2 = null;
+		Node<E> node1 = chooseLeaf(aabb);
+		Node<E> node2 = null;
 
 		if (node1.numEntries + 1 <= MAX_OBJECTS_PER_NODE) {
 			addEntry(node1, aabb, object);
@@ -130,8 +132,8 @@ public class RTree
 		}
 
 		while (node1 != root) {
-			Node parent = node1.parent;
-			Node psplit = null;
+			Node<E> parent = node1.parent;
+			Node<E> psplit = null;
 
 			updateBounds(parent, node1);
 
@@ -149,7 +151,7 @@ public class RTree
 		}
 
 		if (node2 != null) {
-			root = new Node(false);
+			root = new Node<E>(false);
 			addEntry(root, getBoundsForNode(node1), node1);
 			addEntry(root, getBoundsForNode(node2), node2);
 
@@ -158,9 +160,10 @@ public class RTree
 		}
 	}
 
-	public void remove(Object object)
+	@SuppressWarnings("unchecked")
+	public void remove(E object)
 	{
-		Node node = leafMap.get(object);
+		Node<E> node = leafMap.get(object);
 
 		if (node == null) {
 			return;
@@ -168,10 +171,10 @@ public class RTree
 
 		removeEntry(node, object);
 
-		List<Node> queue = new ArrayList<Node>();
+		List<Node<E>> queue = new ArrayList<Node<E>>();
 
 		while (node != root) {
-			Node parent = node.parent;
+			Node<E> parent = node.parent;
 
 			if (node.numEntries < MIN_OBJECTS_PER_NODE) {
 				removeEntry(parent, node);
@@ -183,25 +186,26 @@ public class RTree
 			node = parent;
 		}
 
-		for (Node n : queue) {
+		for (Node<E> n : queue) {
 			reinsert(n);
 		}
 
 		if (!root.isLeaf && root.numEntries == 1) {
-			root = (Node) root.entries[0];
+			root = (Node<E>) root.entries[0];
 			root.parent = null;
 		}
 	}
 
-	public void update(Object object, AABB aabb)
+	public void update(E object, AABB aabb)
 	{
 		remove(object);
 		insert(object, aabb);
 	}
 
-	private Node chooseLeaf(AABB aabb)
+	@SuppressWarnings("unchecked")
+	private Node<E> chooseLeaf(AABB aabb)
 	{
-		Node node = root;
+		Node<E> node = root;
 		while (!node.isLeaf) {
 			int index = 0;
 			float best = Float.POSITIVE_INFINITY;
@@ -222,16 +226,17 @@ public class RTree
 				}
 			}
 
-			node = (Node) node.entries[index];
+			node = (Node<E>) node.entries[index];
 		}
 
 		return node;
 	}
 
-	private Node splitNode(Node node, AABB aabb, Object object, boolean createLeaves)
+	@SuppressWarnings("unchecked")
+	private Node<E> splitNode(Node<E> node, AABB aabb, Object object, boolean createLeaves)
 	{
-		Node node1 = node;
-		Node node2 = new Node(createLeaves);
+		Node<E> node1 = node;
+		Node<E> node2 = new Node<E>(createLeaves);
 
 		List<AABB> aabbs = new ArrayList<AABB>();
 		List<Object> objects = new ArrayList<Object>();
@@ -247,12 +252,12 @@ public class RTree
 		objects.add(object);
 
 		for (int i = 0; i < aabbs.size(); i++) {
-			Node target = i % 2 == 0 ? node1 : node2;
+			Node<E> target = i % 2 == 0 ? node1 : node2;
 
 			addEntry(target, aabbs.get(i), objects.get(i));
 
 			if (!createLeaves) {
-				((Node) objects.get(i)).parent = target;
+				((Node<E>) objects.get(i)).parent = target;
 			}
 		}
 
@@ -262,18 +267,19 @@ public class RTree
 	//
 	// RECURSIVE
 
-	private void reinsert(Node node)
+	@SuppressWarnings("unchecked")
+	private void reinsert(Node<E> node)
 	{
 		for (int i = 0; i < node.numEntries; i++) {
 			if (node.isLeaf) {
-				insert(node.entries[i], node.bounds[i]);
+				insert((E) node.entries[i], node.bounds[i]);
 			} else {
-				reinsert((Node) node.entries[i]);
+				reinsert((Node<E>) node.entries[i]);
 			}
 		}
 	}
 
-	private boolean updateBounds(Node parent, Node node)
+	private boolean updateBounds(Node<E> parent, Node<E> node)
 	{
 		for (int i = 0; i < parent.numEntries; i++) {
 			if (parent.entries[i] == node) {
@@ -285,7 +291,7 @@ public class RTree
 		return false;
 	}
 
-	private AABB getBoundsForNode(Node node)
+	private AABB getBoundsForNode(Node<E> node)
 	{
 		int dimensions = node.bounds[0].getDimensions();
 
@@ -307,18 +313,19 @@ public class RTree
 		return new AABB(min, max);
 	}
 
-	public void addEntry(Node node, AABB aabb, Object object)
+	@SuppressWarnings("unchecked")
+	public void addEntry(Node<E> node, AABB aabb, Object object)
 	{
 		node.bounds[node.numEntries] = aabb;
 		node.entries[node.numEntries] = object;
 		node.numEntries++;
 
 		if (node.isLeaf) {
-			leafMap.put(object, node);
+			leafMap.put((E) object, node);
 		}
 	}
 
-	public boolean removeEntry(Node node, Object object)
+	public boolean removeEntry(Node<E> node, Object object)
 	{
 		for (int i = 0; i < node.numEntries; i++) {
 			if (node.entries[i] == object) {
@@ -340,7 +347,7 @@ public class RTree
 		return false;
 	}
 
-	public void clearEntries(Node node)
+	public void clearEntries(Node<E> node)
 	{
 		for (int i = 0; i < node.numEntries; i++) {
 			if (node.isLeaf) {
@@ -354,9 +361,9 @@ public class RTree
 		node.numEntries = 0;
 	}
 
-	class Node
+	static class Node<E>
 	{
-		private Node parent;
+		private Node<E> parent;
 		private boolean isLeaf;
 		private int numEntries;
 		private AABB[] bounds = new AABB[MAX_OBJECTS_PER_NODE];

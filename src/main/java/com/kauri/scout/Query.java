@@ -21,14 +21,13 @@
 
 package com.kauri.scout;
 
-import com.kauri.scout.RTree.Node;
 
 /**
  * @author Eric Fritz
  */
 interface Query
 {
-	public QueryResult queryInternalNode(AABB aabb, Node node);
+	public QueryResult queryInternalNode(AABB aabb);
 
-	public boolean queryElement(AABB aabb, Object object);
+	public boolean queryElement(AABB aabb);
 }

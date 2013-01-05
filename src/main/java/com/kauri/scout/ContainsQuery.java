@@ -21,7 +21,6 @@
 
 package com.kauri.scout;
 
-import com.kauri.scout.RTree.Node;
 
 /**
  * @author Eric Fritz
@@ -36,7 +35,7 @@ class ContainsQuery implements Query
 	}
 
 	@Override
-	public QueryResult queryInternalNode(AABB aabb, Node node)
+	public QueryResult queryInternalNode(AABB aabb)
 	{
 		if (this.aabb.contains(aabb)) {
 			return QueryResult.ALL;
@@ -46,7 +45,7 @@ class ContainsQuery implements Query
 	}
 
 	@Override
-	public boolean queryElement(AABB aabb, Object object)
+	public boolean queryElement(AABB aabb)
 	{
 		return this.aabb.contains(aabb);
 	}

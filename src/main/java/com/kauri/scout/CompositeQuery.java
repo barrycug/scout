@@ -21,8 +21,6 @@
 
 package com.kauri.scout;
 
-import com.kauri.scout.RTree.Node;
-
 /**
  * @author Eric Fritz
  */
@@ -38,10 +36,10 @@ public class CompositeQuery implements Query
 	}
 
 	@Override
-	public QueryResult queryInternalNode(AABB aabb, Node node)
+	public QueryResult queryInternalNode(AABB aabb)
 	{
-		QueryResult result1 = query1.queryInternalNode(aabb, node);
-		QueryResult result2 = query1.queryInternalNode(aabb, node);
+		QueryResult result1 = query1.queryInternalNode(aabb);
+		QueryResult result2 = query1.queryInternalNode(aabb);
 
 		if (result1 == QueryResult.ALL && result2 == QueryResult.ALL) {
 			return QueryResult.ALL;
@@ -55,8 +53,8 @@ public class CompositeQuery implements Query
 	}
 
 	@Override
-	public boolean queryElement(AABB aabb, Object object)
+	public boolean queryElement(AABB aabb)
 	{
-		return query1.queryElement(aabb, object) && query2.queryElement(aabb, object);
+		return query1.queryElement(aabb) && query2.queryElement(aabb);
 	}
 }

@@ -21,7 +21,6 @@
 
 package com.kauri.scout;
 
-import com.kauri.scout.RTree.Node;
 
 /**
  * @author Eric Fritz
@@ -38,13 +37,13 @@ class DistanceQuery implements Query
 	}
 
 	@Override
-	public QueryResult queryInternalNode(AABB aabb, Node node)
+	public QueryResult queryInternalNode(AABB aabb)
 	{
 		return QueryResult.SOME;
 	}
 
 	@Override
-	public boolean queryElement(AABB aabb, Object object)
+	public boolean queryElement(AABB aabb)
 	{
 		return getDistanceSquared(aabb, this.aabb) <= distance * distance;
 	}
