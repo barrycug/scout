@@ -21,7 +21,6 @@
 
 package com.kauri.scout;
 
-
 /**
  * @author Eric Fritz
  */
