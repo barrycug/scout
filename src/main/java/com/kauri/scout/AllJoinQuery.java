@@ -23,12 +23,23 @@ package com.kauri.scout;
 
 /**
  * @author Eric Fritz
- * 
  */
 public class AllJoinQuery implements JoinQuery
 {
 	@Override
-	public boolean queryJoin(AABB aabb1, AABB aabb2)
+	public QueryResult queryInternalNode(AABB aabb1, AABB aabb2)
+	{
+		return QueryResult.ALL;
+	}
+
+	@Override
+	public boolean queryLeafNode(AABB aabb1, AABB aabb2)
+	{
+		return true;
+	}
+
+	@Override
+	public boolean isSymmetricRelation()
 	{
 		return true;
 	}

@@ -34,9 +34,23 @@ public class DistanceJoinQuery implements JoinQuery
 	}
 
 	@Override
-	public boolean queryJoin(AABB aabb1, AABB aabb2)
+	public QueryResult queryInternalNode(AABB aabb1, AABB aabb2)
+	{
+		// TODO - prune internal nodes
+
+		return QueryResult.SOME;
+	}
+
+	@Override
+	public boolean queryLeafNode(AABB aabb1, AABB aabb2)
 	{
 		return getDistanceSquared(aabb1, aabb2) <= distance * distance;
+	}
+
+	@Override
+	public boolean isSymmetricRelation()
+	{
+		return true;
 	}
 
 	private float getDistanceSquared(AABB aabb1, AABB aabb2)

@@ -36,8 +36,31 @@ public class CompositeJoinQuery implements JoinQuery
 	}
 
 	@Override
-	public boolean queryJoin(AABB aabb1, AABB aabb2)
+	public QueryResult queryInternalNode(AABB aabb1, AABB aabb2)
 	{
-		return query1.queryJoin(aabb1, aabb2) && query2.queryJoin(aabb1, aabb2);
+		QueryResult result1 = query1.queryInternalNode(aabb1, aabb2);
+		QueryResult result2 = query1.queryInternalNode(aabb1, aabb2);
+
+		if (result1 == QueryResult.ALL && result2 == QueryResult.ALL) {
+			return QueryResult.ALL;
+		}
+
+		if (result1 == QueryResult.NONE || result2 == QueryResult.NONE) {
+			return QueryResult.NONE;
+		}
+
+		return QueryResult.SOME;
+	}
+
+	@Override
+	public boolean queryLeafNode(AABB aabb1, AABB aabb2)
+	{
+		return query1.queryLeafNode(aabb1, aabb2) && query2.queryLeafNode(aabb1, aabb2);
+	}
+
+	@Override
+	public boolean isSymmetricRelation()
+	{
+		return query1.isSymmetricRelation() && query2.isSymmetricRelation();
 	}
 }

@@ -50,12 +50,12 @@ public class RTree<E>
 
 	public void queryJoin(JoinQuery query, QueryJoinResultVisitor<E, E> visitor)
 	{
-		query(query, visitor, root, root);
+		query(query, visitor, root, root, true);
 	}
 
 	public <E2> void queryJoin(RTree<E2> tree, JoinQuery query, QueryJoinResultVisitor<E, E2> visitor)
 	{
-		query(query, visitor, root, tree.root);
+		query(query, visitor, root, tree.root, tree == this);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -79,29 +79,31 @@ public class RTree<E>
 	}
 
 	@SuppressWarnings("unchecked")
-	private <E2> void query(JoinQuery query, QueryJoinResultVisitor<E, E2> visitor, Node<E> node1, Node<E2> node2)
+	private <E2> void query(JoinQuery query, QueryJoinResultVisitor<E, E2> visitor, Node<E> node1, Node<E2> node2, boolean sameTree)
 	{
+		boolean queryBoth = sameTree && !query.isSymmetricRelation();
+
 		if (node1.isLeaf && node2.isLeaf) {
 			for (int i = 0; i < node1.numEntries; i++) {
 				for (int j = node1 == node2 ? i + 1 : 0; j < node2.numEntries; j++) {
-					if (query.queryJoin(node1.bounds[i], node2.bounds[j])) {
+					if (query.queryLeafNode(node1.bounds[i], node2.bounds[j]) || (queryBoth && query.queryLeafNode(node2.bounds[j], node1.bounds[i]))) {
 						visitor.visit((E) node1.entries[i], (E2) node2.entries[j]);
 					}
 				}
 			}
 		} else if (node1.isLeaf) {
 			for (int i = 0; i < node2.numEntries; i++) {
-				query(query, visitor, node1, (Node<E2>) node2.entries[i]);
+				query(query, visitor, node1, (Node<E2>) node2.entries[i], sameTree);
 			}
 		} else if (node2.isLeaf) {
 			for (int i = 0; i < node1.numEntries; i++) {
-				query(query, visitor, (Node<E>) node1.entries[i], node2);
+				query(query, visitor, (Node<E>) node1.entries[i], node2, sameTree);
 			}
 		} else {
 			for (int i = 0; i < node1.numEntries; i++) {
 				for (int j = node1 == node2 ? i : 0; j < node2.numEntries; j++) {
-					if (query.queryJoin(node1.bounds[i], node2.bounds[j])) {
-						query(query, visitor, (Node<E>) node1.entries[i], (Node<E2>) node2.entries[j]);
+					if (query.queryInternalNode(node1.bounds[i], node2.bounds[j]) != QueryResult.NONE || (queryBoth && query.queryInternalNode(node2.bounds[j], node1.bounds[i]) != QueryResult.NONE)) {
+						query(query, visitor, (Node<E>) node1.entries[i], (Node<E2>) node2.entries[j], sameTree);
 					}
 				}
 			}
