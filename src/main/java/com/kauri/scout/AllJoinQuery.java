@@ -27,15 +27,9 @@ package com.kauri.scout;
 public class AllJoinQuery implements JoinQuery
 {
 	@Override
-	public QueryResult queryInternalNode(AABB aabb1, AABB aabb2)
+	public QueryResult query(AABB aabb1, AABB aabb2, boolean queryPartial)
 	{
 		return QueryResult.ALL;
-	}
-
-	@Override
-	public boolean queryLeafNode(AABB aabb1, AABB aabb2)
-	{
-		return true;
 	}
 
 	@Override

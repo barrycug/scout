@@ -34,18 +34,12 @@ class IntersectionQuery implements Query
 	}
 
 	@Override
-	public QueryResult queryInternalNode(AABB aabb)
+	public QueryResult query(AABB aabb, boolean queryPartial)
 	{
 		if (this.aabb.contains(aabb)) {
 			return QueryResult.ALL;
 		}
 
-		return this.aabb.intersects(aabb) ? QueryResult.SOME : QueryResult.NONE;
-	}
-
-	@Override
-	public boolean queryElement(AABB aabb)
-	{
-		return this.aabb.intersects(aabb);
+		return queryPartial && this.aabb.intersects(aabb) ? QueryResult.SOME : QueryResult.NONE;
 	}
 }

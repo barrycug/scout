@@ -27,14 +27,8 @@ package com.kauri.scout;
 class AllQuery implements Query
 {
 	@Override
-	public QueryResult queryInternalNode(AABB aabb)
+	public QueryResult query(AABB aabb, boolean queryPartial)
 	{
 		return QueryResult.ALL;
-	}
-
-	@Override
-	public boolean queryElement(AABB aabb)
-	{
-		return true;
 	}
 }

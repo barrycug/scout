@@ -26,7 +26,5 @@ package com.kauri.scout;
  */
 interface Query
 {
-	public QueryResult queryInternalNode(AABB aabb);
-
-	public boolean queryElement(AABB aabb);
+	public QueryResult query(AABB aabb, boolean queryPartial);
 }

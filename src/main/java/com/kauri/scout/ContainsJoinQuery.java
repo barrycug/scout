@@ -27,21 +27,16 @@ package com.kauri.scout;
 public class ContainsJoinQuery implements JoinQuery
 {
 	@Override
-	public QueryResult queryInternalNode(AABB aabb1, AABB aabb2)
+	public QueryResult query(AABB aabb1, AABB aabb2, boolean queryPartial)
 	{
 		if (aabb1.contains(aabb2)) {
 			return QueryResult.ALL;
 		}
 
-		return aabb1.intersects(aabb2) ? QueryResult.SOME : QueryResult.NONE;
+		return queryPartial && aabb1.intersects(aabb2) ? QueryResult.SOME : QueryResult.NONE;
 	}
 
 	@Override
-	public boolean queryLeafNode(AABB aabb1, AABB aabb2)
-	{
-		return aabb1.contains(aabb2);
-	}
-
 	public boolean isSymmetricRelation()
 	{
 		return false;

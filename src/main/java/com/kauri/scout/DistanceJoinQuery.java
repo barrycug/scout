@@ -34,17 +34,13 @@ public class DistanceJoinQuery implements JoinQuery
 	}
 
 	@Override
-	public QueryResult queryInternalNode(AABB aabb1, AABB aabb2)
+	public QueryResult query(AABB aabb1, AABB aabb2, boolean queryPartial)
 	{
-		// TODO - prune internal nodes
+		if (getDistanceSquared(aabb1, aabb2) <= distance * distance) {
+			//
+		}
 
 		return QueryResult.SOME;
-	}
-
-	@Override
-	public boolean queryLeafNode(AABB aabb1, AABB aabb2)
-	{
-		return getDistanceSquared(aabb1, aabb2) <= distance * distance;
 	}
 
 	@Override

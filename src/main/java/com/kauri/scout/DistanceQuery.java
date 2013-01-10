@@ -36,15 +36,13 @@ class DistanceQuery implements Query
 	}
 
 	@Override
-	public QueryResult queryInternalNode(AABB aabb)
+	public QueryResult query(AABB aabb, boolean queryPartial)
 	{
-		return QueryResult.SOME;
-	}
+		if (getDistanceSquared(aabb, this.aabb) <= distance * distance) {
+			//
+		}
 
-	@Override
-	public boolean queryElement(AABB aabb)
-	{
-		return getDistanceSquared(aabb, this.aabb) <= distance * distance;
+		return QueryResult.SOME;
 	}
 
 	private float getDistanceSquared(AABB aabb1, AABB aabb2)

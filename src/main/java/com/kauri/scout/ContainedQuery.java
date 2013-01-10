@@ -34,18 +34,12 @@ public class ContainedQuery implements Query
 	}
 
 	@Override
-	public QueryResult queryInternalNode(AABB aabb)
+	public QueryResult query(AABB aabb, boolean queryPartial)
 	{
 		if (aabb.contains(this.aabb)) {
 			return QueryResult.ALL;
 		}
 
-		return aabb.intersects(this.aabb) ? QueryResult.SOME : QueryResult.NONE;
-	}
-
-	@Override
-	public boolean queryElement(AABB aabb)
-	{
-		return aabb.contains(this.aabb);
+		return queryPartial && aabb.intersects(this.aabb) ? QueryResult.SOME : QueryResult.NONE;
 	}
 }

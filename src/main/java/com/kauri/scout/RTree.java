@@ -63,11 +63,11 @@ public class RTree<E>
 	{
 		for (int i = 0; i < node.numEntries; i++) {
 			if (node.isLeaf) {
-				if (query.queryElement(node.bounds[i])) {
+				if (query.query(node.bounds[i], false) == QueryResult.ALL) {
 					visitor.visit((E) node.entries[i]);
 				}
 			} else {
-				QueryResult result = query.queryInternalNode(node.bounds[i]);
+				QueryResult result = query.query(node.bounds[i], true);
 
 				if (result == QueryResult.ALL) {
 					visitAllObjects(visitor, (Node<E>) node.entries[i]);
@@ -86,7 +86,7 @@ public class RTree<E>
 		if (node1.isLeaf && node2.isLeaf) {
 			for (int i = 0; i < node1.numEntries; i++) {
 				for (int j = node1 == node2 ? i + 1 : 0; j < node2.numEntries; j++) {
-					if (query.queryLeafNode(node1.bounds[i], node2.bounds[j]) || (queryBoth && query.queryLeafNode(node2.bounds[j], node1.bounds[i]))) {
+					if (query.query(node1.bounds[i], node2.bounds[j], false) == QueryResult.ALL || (queryBoth && query.query(node2.bounds[j], node1.bounds[i], true) == QueryResult.ALL)) {
 						visitor.visit((E) node1.entries[i], (E2) node2.entries[j]);
 					}
 				}
@@ -102,7 +102,7 @@ public class RTree<E>
 		} else {
 			for (int i = 0; i < node1.numEntries; i++) {
 				for (int j = node1 == node2 ? i : 0; j < node2.numEntries; j++) {
-					if (query.queryInternalNode(node1.bounds[i], node2.bounds[j]) != QueryResult.NONE || (queryBoth && query.queryInternalNode(node2.bounds[j], node1.bounds[i]) != QueryResult.NONE)) {
+					if (query.query(node1.bounds[i], node2.bounds[j], true) != QueryResult.NONE || (queryBoth && query.query(node2.bounds[j], node1.bounds[i], true) != QueryResult.NONE)) {
 						query(query, visitor, (Node<E>) node1.entries[i], (Node<E2>) node2.entries[j], sameTree);
 					}
 				}

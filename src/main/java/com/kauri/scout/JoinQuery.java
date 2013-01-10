@@ -26,9 +26,7 @@ package com.kauri.scout;
  */
 public interface JoinQuery
 {
-	public QueryResult queryInternalNode(AABB aabb1, AABB aabb2);
-
-	public boolean queryLeafNode(AABB aabb1, AABB aabb2);
+	public QueryResult query(AABB aabb1, AABB aabb2, boolean queryPartial);
 
 	public boolean isSymmetricRelation();
 }

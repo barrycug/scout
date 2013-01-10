@@ -36,7 +36,7 @@ public class CompositeJoinQuery implements JoinQuery
 	}
 
 	@Override
-	public QueryResult queryInternalNode(AABB aabb1, AABB aabb2)
+	public QueryResult query(AABB aabb1, AABB aabb2, boolean queryPartial)
 	{
 		QueryResult result1 = query1.query(aabb1, aabb2, queryPartial);
 		QueryResult result2 = query2.query(aabb1, aabb2, queryPartial);
@@ -45,17 +45,11 @@ public class CompositeJoinQuery implements JoinQuery
 			return QueryResult.ALL;
 		}
 
-		if (result1 == QueryResult.NONE || result2 == QueryResult.NONE) {
-			return QueryResult.NONE;
+		if (queryPartial && result1 != QueryResult.NONE && result2 != QueryResult.NONE) {
+			return QueryResult.SOME;
 		}
 
-		return QueryResult.SOME;
-	}
-
-	@Override
-	public boolean queryLeafNode(AABB aabb1, AABB aabb2)
-	{
-		return query1.queryLeafNode(aabb1, aabb2) && query2.queryLeafNode(aabb1, aabb2);
+		return QueryResult.NONE;
 	}
 
 	@Override

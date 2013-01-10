@@ -36,25 +36,19 @@ public class CompositeQuery implements Query
 	}
 
 	@Override
-	public QueryResult queryInternalNode(AABB aabb)
+	public QueryResult query(AABB aabb, boolean queryPartial)
 	{
-		QueryResult result1 = query1.queryInternalNode(aabb);
-		QueryResult result2 = query1.queryInternalNode(aabb);
+		QueryResult result1 = query1.query(aabb, queryPartial);
+		QueryResult result2 = query2.query(aabb, queryPartial);
 
 		if (result1 == QueryResult.ALL && result2 == QueryResult.ALL) {
 			return QueryResult.ALL;
 		}
 
-		if (result1 == QueryResult.NONE || result2 == QueryResult.NONE) {
-			return QueryResult.NONE;
+		if (queryPartial && result1 != QueryResult.NONE && result2 != QueryResult.NONE) {
+			return QueryResult.SOME;
 		}
 
-		return QueryResult.SOME;
-	}
-
-	@Override
-	public boolean queryElement(AABB aabb)
-	{
-		return query1.queryElement(aabb) && query2.queryElement(aabb);
+		return QueryResult.NONE;
 	}
 }
