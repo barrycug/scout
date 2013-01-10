@@ -38,8 +38,8 @@ public class CompositeJoinQuery implements JoinQuery
 	@Override
 	public QueryResult queryInternalNode(AABB aabb1, AABB aabb2)
 	{
-		QueryResult result1 = query1.queryInternalNode(aabb1, aabb2);
-		QueryResult result2 = query1.queryInternalNode(aabb1, aabb2);
+		QueryResult result1 = query1.query(aabb1, aabb2, queryPartial);
+		QueryResult result2 = query2.query(aabb1, aabb2, queryPartial);
 
 		if (result1 == QueryResult.ALL && result2 == QueryResult.ALL) {
 			return QueryResult.ALL;
