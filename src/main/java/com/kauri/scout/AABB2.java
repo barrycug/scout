@@ -60,6 +60,34 @@ public class AABB2 implements AABB
 	}
 
 	@Override
+	public boolean equals(Object object)
+	{
+		if (object == this) {
+			return true;
+		}
+
+		if (object == null || !(object instanceof AABB2)) {
+			return false;
+		}
+
+		AABB2 aabb = (AABB2) object;
+
+		return aabb.x1 == x1 && aabb.y1 == y1 && aabb.x2 == x2 && aabb.y2 == y2;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		int hash = 1;
+		hash = 31 * hash + Float.floatToIntBits(x1);
+		hash = 31 * hash + Float.floatToIntBits(y1);
+		hash = 31 * hash + Float.floatToIntBits(x2);
+		hash = 31 * hash + Float.floatToIntBits(y2);
+
+		return hash;
+	}
+
+	@Override
 	public AABB2 copy()
 	{
 		return new AABB2(x1, y1, x2 - x1, y2 - y1);

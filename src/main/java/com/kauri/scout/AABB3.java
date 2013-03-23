@@ -72,6 +72,36 @@ public class AABB3 implements AABB
 	}
 
 	@Override
+	public boolean equals(Object object)
+	{
+		if (object == this) {
+			return true;
+		}
+
+		if (object == null || !(object instanceof AABB3)) {
+			return false;
+		}
+
+		AABB3 aabb = (AABB3) object;
+
+		return aabb.x1 == x1 && aabb.y1 == y1 && aabb.z1 == z1 && aabb.x2 == x2 && aabb.y2 == y2 && aabb.z2 == z2;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		int hash = 1;
+		hash = 31 * hash + Float.floatToIntBits(x1);
+		hash = 31 * hash + Float.floatToIntBits(y1);
+		hash = 31 * hash + Float.floatToIntBits(z1);
+		hash = 31 * hash + Float.floatToIntBits(x2);
+		hash = 31 * hash + Float.floatToIntBits(y2);
+		hash = 31 * hash + Float.floatToIntBits(z2);
+
+		return hash;
+	}
+
+	@Override
 	public AABB3 copy()
 	{
 		return new AABB3(x1, y1, z1, x2 - x1, y2 - y1, z2 - z1);
