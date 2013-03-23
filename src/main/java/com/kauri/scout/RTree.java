@@ -57,6 +57,9 @@ public class RTree<E>
 		query(query, visitor, root, tree.root, tree == this);
 	}
 
+	//
+	// RECURSIVE
+
 	@SuppressWarnings("unchecked")
 	private void query(Query query, QueryResultVisitor<E> visitor, Node<E> node)
 	{
@@ -76,6 +79,9 @@ public class RTree<E>
 			}
 		}
 	}
+
+	//
+	// RECURSIVE
 
 	@SuppressWarnings("unchecked")
 	private <E2> void query(JoinQuery query, QueryJoinResultVisitor<E, E2> visitor, Node<E> node1, Node<E2> node2, boolean sameTree)
@@ -108,6 +114,9 @@ public class RTree<E>
 			}
 		}
 	}
+
+	//
+	// RECURSIVE
 
 	@SuppressWarnings("unchecked")
 	private void visitAllObjects(QueryResultVisitor<E> visitor, Node<E> node)
@@ -207,6 +216,7 @@ public class RTree<E>
 	private Node<E> chooseLeaf(AABB aabb)
 	{
 		Node<E> node = root;
+
 		while (!node.isLeaf) {
 			int index = 0;
 			float best = Float.POSITIVE_INFINITY;
