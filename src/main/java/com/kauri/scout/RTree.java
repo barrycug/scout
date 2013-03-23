@@ -312,7 +312,10 @@ public class RTree<E>
 			}
 		}
 
-		return new AABB(min, max);
+		//
+		// FIXME - this is a temporary solution.
+
+		return new AABB2(min, max);
 	}
 
 	@SuppressWarnings("unchecked")
