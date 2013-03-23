@@ -72,7 +72,7 @@ public class AABB3 implements AABB
 	}
 
 	@Override
-	public AABB copy()
+	public AABB3 copy()
 	{
 		return new AABB3(x1, y1, z1, x2 - x1, y2 - y1, z2 - z1);
 	}

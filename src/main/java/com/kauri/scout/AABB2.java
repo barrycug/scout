@@ -60,7 +60,7 @@ public class AABB2 implements AABB
 	}
 
 	@Override
-	public AABB copy()
+	public AABB2 copy()
 	{
 		return new AABB2(x1, y1, x2 - x1, y2 - y1);
 	}
