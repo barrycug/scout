@@ -60,6 +60,12 @@ public class AABB2 implements AABB
 	}
 
 	@Override
+	public AABB copy()
+	{
+		return new AABB2(x1, y1, x2 - x1, y2 - y1);
+	}
+
+	@Override
 	public int getDimensions()
 	{
 		return 2;
@@ -139,5 +145,18 @@ public class AABB2 implements AABB
 		}
 
 		return true;
+	}
+
+	@Override
+	public void expand(AABB aabb)
+	{
+		if (aabb.getDimensions() != 2) {
+			throw new IllegalArgumentException();
+		}
+
+		x1 = Math.min(x1, aabb.getMinimum(0));
+		y1 = Math.min(y1, aabb.getMinimum(1));
+		x2 = Math.max(x2, aabb.getMaximum(0));
+		y2 = Math.max(y2, aabb.getMaximum(1));
 	}
 }

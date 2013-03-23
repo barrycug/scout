@@ -22,7 +22,6 @@
 package com.kauri.scout;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -295,27 +294,13 @@ public class RTree<E>
 
 	private AABB getBoundsForNode(Node<E> node)
 	{
-		int dimensions = node.bounds[0].getDimensions();
+		AABB aabb = node.bounds[0].copy();
 
-		float[] min = new float[dimensions];
-		float[] max = new float[dimensions];
-
-		Arrays.fill(min, Float.POSITIVE_INFINITY);
-		Arrays.fill(max, Float.NEGATIVE_INFINITY);
-
-		for (int j = 0; j < node.numEntries; j++) {
-			AABB aabb = node.bounds[j];
-
-			for (int i = 0; i < dimensions; i++) {
-				min[i] = Math.min(min[i], aabb.getMinimum(i));
-				max[i] = Math.max(max[i], aabb.getMaximum(i));
-			}
+		for (int i = 1; i < node.numEntries; i++) {
+			aabb.expand(node.bounds[i]);
 		}
 
-		//
-		// FIXME - this is a temporary solution.
-
-		return new AABB2(min, max);
+		return aabb;
 	}
 
 	@SuppressWarnings("unchecked")

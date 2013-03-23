@@ -29,6 +29,13 @@ package com.kauri.scout;
 public interface AABB
 {
 	/**
+	 * Creates and returns a copy of this object.
+	 * 
+	 * @return A copy of this instance.
+	 */
+	public AABB copy();
+
+	/**
 	 * Returns the number of edges composing this box.
 	 * 
 	 * @return The number of edges composing this box.
@@ -84,4 +91,12 @@ public interface AABB
 	 * @return <tt>true</tt> if this box intersects with the specified box.
 	 */
 	public boolean intersects(AABB aabb);
+
+	/**
+	 * Expands the bounds of this box so that it contains the specified box.
+	 * 
+	 * @param aabb
+	 *            The other box.
+	 */
+	public void expand(AABB aabb);
 }
