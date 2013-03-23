@@ -118,11 +118,11 @@ public class AABB2 implements AABB
 			throw new IllegalArgumentException();
 		}
 
-		if (x1 > aabb.getMinimum(1) || x2 < aabb.getMaximum(0)) {
+		if (x1 > aabb.getMinimum(0) || x2 < aabb.getMaximum(0)) {
 			return false;
 		}
 
-		if (y1 > aabb.getMinimum(0) || y2 < aabb.getMaximum(1)) {
+		if (y1 > aabb.getMinimum(1) || y2 < aabb.getMaximum(1)) {
 			return false;
 		}
 
