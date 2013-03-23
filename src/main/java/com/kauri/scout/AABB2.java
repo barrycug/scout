@@ -26,153 +26,116 @@ package com.kauri.scout;
  */
 public class AABB2 implements AABB
 {
-	private float[] min;
-	private float[] max;
-	private int dimensions;
+	private float x1;
+	private float y1;
+	private float x2;
+	private float y2;
 
 	/**
-	 * Creates a new AABB.
+	 * Creates a new AABB2.
 	 * 
-	 * @param min
-	 *            The minimum points in each dimension.
-	 * @param max
-	 *            The maximum points in each dimension.
+	 * @param x
+	 *            The x-coordinate of the upper left corner.
+	 * @param y
+	 *            The y-coordinate of the upper left corner.
+	 * @param w
+	 *            The box's width.
+	 * @param h
+	 *            The box's height.
 	 */
-	public AABB2(float[] min, float[] max)
+	public AABB2(float x, float y, float w, float h)
 	{
-		if (min.length != max.length) {
+		if (w < 0) {
 			throw new IllegalArgumentException();
 		}
 
-		for (int i = 0; i < min.length; i++) {
-			if (min[i] > max[i]) {
-				throw new IllegalArgumentException();
-			}
+		if (h < 0) {
+			throw new IllegalArgumentException();
 		}
 
-		this.min = min;
-		this.max = max;
-		this.dimensions = min.length;
+		this.x1 = x;
+		this.y1 = y;
+		this.x2 = x + w;
+		this.y2 = y + h;
 	}
 
-	/**
-	 * Returns the number of edges composing this box.
-	 * 
-	 * @return The number of edges composing this box.
-	 */
 	@Override
 	public int getDimensions()
 	{
-		return dimensions;
+		return 2;
 	}
 
-	/**
-	 * Returns the minimum value in the given dimension.
-	 * 
-	 * @param dimension
-	 *            The dimension.
-	 * @return The maximum value in the given dimension.
-	 */
 	@Override
 	public float getMinimum(int dimension)
 	{
-		if (dimension < 0 || dimension >= min.length) {
-			throw new IllegalArgumentException();
+		if (dimension == 0) {
+			return x1;
 		}
 
-		return min[dimension];
+		if (dimension == 1) {
+			return y1;
+		}
+
+		throw new IllegalArgumentException();
 	}
 
-	/**
-	 * Returns the maximum value in the given dimension.
-	 * 
-	 * @param dimension
-	 *            The dimension.
-	 * @return The maximum value in the given dimension.
-	 */
 	@Override
 	public float getMaximum(int dimension)
 	{
-		if (dimension < 0 || dimension >= min.length) {
-			throw new IllegalArgumentException();
+		if (dimension == 0) {
+			return x2;
 		}
 
-		return max[dimension];
+		if (dimension == 1) {
+			return y2;
+		}
+
+		throw new IllegalArgumentException();
 	}
 
-	/**
-	 * Returns the sum of the edges composing the box.
-	 * 
-	 * @return The sum of the edges composing the box.
-	 */
 	@Override
 	public float getMargin()
 	{
-		float margin = 0;
-		for (int i = 0; i < dimensions; i++) {
-			margin += max[i] - min[i];
-		}
-
-		return margin;
+		return (x2 - x1) + (y2 - y1);
 	}
 
-	/**
-	 * Returns the product of the edges composing the box.
-	 * 
-	 * @return The product of the edges composing the box.
-	 */
 	@Override
 	public float getVolume()
 	{
-		float volume = 1;
-		for (int i = 0; i < dimensions; i++) {
-			volume *= max[i] - min[i];
-		}
-
-		return volume;
+		return (x2 - x1) * (y2 - y1);
 	}
 
-	/**
-	 * Determines whether this box contains the specified box.
-	 * 
-	 * @param aabb
-	 *            The other box.
-	 * @return <tt>true</tt> if this box contains the specified box.
-	 */
 	@Override
 	public boolean contains(AABB aabb)
 	{
-		if (aabb.getDimensions() != dimensions) {
+		if (aabb.getDimensions() != 2) {
 			throw new IllegalArgumentException();
 		}
 
-		for (int i = 0; i < dimensions; i++) {
-			if (min[i] > aabb.getMinimum(i) || max[i] < aabb.getMaximum(i)) {
-				return false;
-			}
+		if (x1 > aabb.getMinimum(1) || x2 < aabb.getMaximum(0)) {
+			return false;
+		}
+
+		if (y1 > aabb.getMinimum(0) || y2 < aabb.getMaximum(1)) {
+			return false;
 		}
 
 		return true;
 	}
 
-	/**
-	 * Determines whether this box intersects with the specified box.
-	 * 
-	 * @param aabb
-	 *            The other box.
-	 * @return <tt>true</tt> if this box intersects with the specified box.
-	 */
 	@Override
 	public boolean intersects(AABB aabb)
 	{
-		if (aabb.getDimensions() != dimensions) {
+		if (aabb.getDimensions() != 2) {
 			throw new IllegalArgumentException();
 		}
 
-		for (int i = 0; i < dimensions; i++) {
-			if (min[i] > aabb.getMaximum(i) || max[i] < aabb.getMinimum(i)) {
-				return false;
-			}
+		if (x1 > aabb.getMaximum(0) || x2 < aabb.getMinimum(0)) {
+			return false;
+		}
+
+		if (y1 > aabb.getMaximum(1) || y2 < aabb.getMinimum(1)) {
+			return false;
 		}
 
 		return true;
