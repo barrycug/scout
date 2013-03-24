@@ -91,8 +91,10 @@ public class RTree<E>
 		if (node1.isLeaf && node2.isLeaf) {
 			for (int i = 0; i < node1.numEntries; i++) {
 				for (int j = node1 == node2 ? i + 1 : 0; j < node2.numEntries; j++) {
-					if (query.query(node1.bounds[i], node2.bounds[j], false) == QueryResult.ALL || (queryBoth && query.query(node2.bounds[j], node1.bounds[i], true) == QueryResult.ALL)) {
+					if (query.query(node1.bounds[i], node2.bounds[j], false) == QueryResult.ALL) {
 						visitor.visit((E) node1.entries[i], (E2) node2.entries[j]);
+					} else if (queryBoth && query.query(node2.bounds[j], node1.bounds[i], false) == QueryResult.ALL) {
+						visitor.visit((E) node2.entries[j], (E2) node1.entries[i]);
 					}
 				}
 			}
