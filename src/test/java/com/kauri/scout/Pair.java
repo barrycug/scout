@@ -21,45 +21,33 @@
 
 package com.kauri.scout;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.Test;
-
 /**
  * @author Eric Fritz
  */
-public class ContainsQueryTest
+class Pair
 {
-	@Test
-	public void test()
+	Object o1;
+	Object o2;
+
+	public Pair(Object o1, Object o2)
 	{
-		RTree<Object> tree = new RTree<Object>();
+		this.o1 = o1;
+		this.o2 = o2;
+	}
 
-		Object o1, o2, o3;
-		tree.insert(o1 = new Object(), new AABB2(1, 1, 3, 3)); // Within bounds
-		tree.insert(o2 = new Object(), new AABB2(2, 2, 3, 3)); // Within bounds
-		tree.insert(o3 = new Object(), new AABB2(0, 0, 5, 5)); // Copies bounds
+	@Override
+	public boolean equals(Object o)
+	{
+		if (this == o) {
+			return true;
+		}
 
-		tree.insert(new Object(), new AABB2(4, 0, 2, 2)); // Intersects bounds
-		tree.insert(new Object(), new AABB2(6, 0, 1, 1)); // Outside of bounds
+		if (o == null || !(o instanceof Pair)) {
+			return false;
+		}
 
-		final List<Object> visited = new ArrayList<Object>();
+		Pair pair = (Pair) o;
 
-		tree.query(new ContainsQuery(new AABB2(0, 0, 5, 5)), new QueryResultVisitor<Object>() {
-			@Override
-			public void visit(Object o)
-			{
-				visited.add(o);
-			}
-		});
-
-		assertEquals(3, visited.size());
-		assertTrue(visited.contains(o1));
-		assertTrue(visited.contains(o2));
-		assertTrue(visited.contains(o3));
+		return pair.o1 == o1 && pair.o2 == o2;
 	}
 }

@@ -32,24 +32,23 @@ import org.junit.Test;
 /**
  * @author Eric Fritz
  */
-public class ContainsQueryTest
+public class ContainedQueryTest
 {
 	@Test
 	public void test()
 	{
 		RTree<Object> tree = new RTree<Object>();
 
-		Object o1, o2, o3;
-		tree.insert(o1 = new Object(), new AABB2(1, 1, 3, 3)); // Within bounds
-		tree.insert(o2 = new Object(), new AABB2(2, 2, 3, 3)); // Within bounds
-		tree.insert(o3 = new Object(), new AABB2(0, 0, 5, 5)); // Copies bounds
+		Object o1, o2;
+		tree.insert(o1 = new Object(), new AABB2(1, 1, 3, 3)); // Copies bounds
+		tree.insert(o2 = new Object(), new AABB2(0, 0, 5, 5)); // Covers bounds
 
-		tree.insert(new Object(), new AABB2(4, 0, 2, 2)); // Intersects bounds
-		tree.insert(new Object(), new AABB2(6, 0, 1, 1)); // Outside of bounds
+		tree.insert(new Object(), new AABB2(2, 2, 3, 3)); // Intersects bounds
+		tree.insert(new Object(), new AABB2(5, 5, 3, 3)); // Outside of bounds
 
 		final List<Object> visited = new ArrayList<Object>();
 
-		tree.query(new ContainsQuery(new AABB2(0, 0, 5, 5)), new QueryResultVisitor<Object>() {
+		tree.query(new ContainedQuery(new AABB2(1, 1, 3, 3)), new QueryResultVisitor<Object>() {
 			@Override
 			public void visit(Object o)
 			{
@@ -57,9 +56,8 @@ public class ContainsQueryTest
 			}
 		});
 
-		assertEquals(3, visited.size());
+		assertEquals(2, visited.size());
 		assertTrue(visited.contains(o1));
 		assertTrue(visited.contains(o2));
-		assertTrue(visited.contains(o3));
 	}
 }

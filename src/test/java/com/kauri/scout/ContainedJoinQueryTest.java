@@ -32,7 +32,7 @@ import org.junit.Test;
 /**
  * @author Eric Fritz
  */
-public class ContainsJoinQueryTest
+public class ContainedJoinQueryTest
 {
 	@Test
 	public void testOneTree()
@@ -40,14 +40,14 @@ public class ContainsJoinQueryTest
 		RTree<Object> tree = new RTree<Object>();
 
 		Object o1, o2, o3, o4;
-		tree.insert(o1 = new Object(), new AABB2(0, 0, 7, 7)); // Contains o2, o3, o4
-		tree.insert(o2 = new Object(), new AABB2(1, 1, 5, 5)); // Contains o3, o4
-		tree.insert(o3 = new Object(), new AABB2(2, 2, 3, 3)); // Contains o4
-		tree.insert(o4 = new Object(), new AABB2(3, 3, 1, 1)); // Contains nothing
+		tree.insert(o1 = new Object(), new AABB2(0, 0, 7, 7)); // Contained by nothing
+		tree.insert(o2 = new Object(), new AABB2(1, 1, 5, 5)); // Contained by o1
+		tree.insert(o3 = new Object(), new AABB2(2, 2, 3, 3)); // Contained by o1, o2
+		tree.insert(o4 = new Object(), new AABB2(3, 3, 1, 1)); // Contained by o1, o2, o3
 
 		final List<Pair> visited = new ArrayList<Pair>();
 
-		tree.queryJoin(new ContainsJoinQuery(), new QueryJoinResultVisitor<Object, Object>() {
+		tree.queryJoin(new ContainedJoinQuery(), new QueryJoinResultVisitor<Object, Object>() {
 			@Override
 			public void visit(Object o1, Object o2)
 			{
@@ -56,12 +56,13 @@ public class ContainsJoinQueryTest
 		});
 
 		assertEquals(6, visited.size());
-		assertTrue(visited.contains(new Pair(o1, o2)));
-		assertTrue(visited.contains(new Pair(o1, o3)));
-		assertTrue(visited.contains(new Pair(o1, o4)));
-		assertTrue(visited.contains(new Pair(o2, o3)));
-		assertTrue(visited.contains(new Pair(o2, o4)));
-		assertTrue(visited.contains(new Pair(o3, o4)));
+		assertTrue(visited.contains(new Pair(o2, o1)));
+		assertTrue(visited.contains(new Pair(o3, o1)));
+		assertTrue(visited.contains(new Pair(o3, o2)));
+		assertTrue(visited.contains(new Pair(o4, o1)));
+		assertTrue(visited.contains(new Pair(o4, o2)));
+		assertTrue(visited.contains(new Pair(o4, o3)));
+
 	}
 
 	@Test
@@ -71,19 +72,19 @@ public class ContainsJoinQueryTest
 		RTree<Object> tree2 = new RTree<Object>();
 
 		Object o1, o2, o3;
-		tree1.insert(o1 = new Object(), new AABB2(0, 0, 8, 8)); // Contains o4, o5, o6
-		tree1.insert(o2 = new Object(), new AABB2(3, 3, 2, 2)); // Contains o6
-		tree1.insert(o3 = new Object(), new AABB2(4, 4, 1, 1)); // Contains nothing
+		tree1.insert(o1 = new Object(), new AABB2(0, 0, 8, 8)); // Contained by nothing
+		tree1.insert(o2 = new Object(), new AABB2(3, 3, 2, 2)); // Contained by o4, o5
+		tree1.insert(o3 = new Object(), new AABB2(4, 4, 1, 1)); // Contained by o4, o5
 
 		Object o4, o5, o6;
-		tree2.insert(o4 = new Object(), new AABB2(1, 1, 6, 6)); // Contains o2, o3
-		tree2.insert(o5 = new Object(), new AABB2(2, 2, 4, 4)); // Contains o2, o3
-		tree2.insert(o6 = new Object(), new AABB2(3, 3, 1, 1)); // Contains nothing
+		tree2.insert(o4 = new Object(), new AABB2(1, 1, 6, 6)); // Contained by o1
+		tree2.insert(o5 = new Object(), new AABB2(2, 2, 4, 4)); // Contained by o1
+		tree2.insert(o6 = new Object(), new AABB2(3, 3, 1, 1)); // Contained by o1, o2
 
 		final List<Pair> visited1 = new ArrayList<Pair>();
 		final List<Pair> visited2 = new ArrayList<Pair>();
 
-		tree1.queryJoin(tree2, new ContainsJoinQuery(), new QueryJoinResultVisitor<Object, Object>() {
+		tree1.queryJoin(tree2, new ContainedJoinQuery(), new QueryJoinResultVisitor<Object, Object>() {
 			@Override
 			public void visit(Object o1, Object o2)
 			{
@@ -91,7 +92,7 @@ public class ContainsJoinQueryTest
 			}
 		});
 
-		tree2.queryJoin(tree1, new ContainsJoinQuery(), new QueryJoinResultVisitor<Object, Object>() {
+		tree2.queryJoin(tree1, new ContainedJoinQuery(), new QueryJoinResultVisitor<Object, Object>() {
 			@Override
 			public void visit(Object o1, Object o2)
 			{
@@ -100,15 +101,15 @@ public class ContainsJoinQueryTest
 		});
 
 		assertEquals(4, visited1.size());
-		assertTrue(visited1.contains(new Pair(o1, o4)));
-		assertTrue(visited1.contains(new Pair(o1, o5)));
-		assertTrue(visited1.contains(new Pair(o1, o6)));
-		assertTrue(visited1.contains(new Pair(o2, o6)));
+		assertTrue(visited1.contains(new Pair(o2, o4)));
+		assertTrue(visited1.contains(new Pair(o2, o5)));
+		assertTrue(visited1.contains(new Pair(o3, o4)));
+		assertTrue(visited1.contains(new Pair(o3, o5)));
 
 		assertEquals(4, visited2.size());
-		assertTrue(visited2.contains(new Pair(o4, o2)));
-		assertTrue(visited2.contains(new Pair(o4, o3)));
-		assertTrue(visited2.contains(new Pair(o5, o2)));
-		assertTrue(visited2.contains(new Pair(o5, o3)));
+		assertTrue(visited2.contains(new Pair(o4, o1)));
+		assertTrue(visited2.contains(new Pair(o5, o1)));
+		assertTrue(visited2.contains(new Pair(o6, o1)));
+		assertTrue(visited2.contains(new Pair(o6, o2)));
 	}
 }
