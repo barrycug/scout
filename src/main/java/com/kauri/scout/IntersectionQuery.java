@@ -40,6 +40,10 @@ class IntersectionQuery implements Query
 			return QueryResult.ALL;
 		}
 
-		return queryPartial && this.aabb.intersects(aabb) ? QueryResult.SOME : QueryResult.NONE;
+		if (this.aabb.intersects(aabb)) {
+			return queryPartial ? QueryResult.SOME : QueryResult.ALL;
+		}
+
+		return QueryResult.NONE;
 	}
 }

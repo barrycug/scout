@@ -33,7 +33,11 @@ public class IntersectionJoinQuery implements JoinQuery
 			return QueryResult.ALL;
 		}
 
-		return queryPartial && aabb1.intersects(aabb2) ? QueryResult.SOME : QueryResult.NONE;
+		if (aabb1.intersects(aabb2)) {
+			return queryPartial ? QueryResult.SOME : QueryResult.ALL;
+		}
+
+		return QueryResult.NONE;
 	}
 
 	@Override
