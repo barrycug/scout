@@ -42,8 +42,8 @@ public class IntersectionJoinQueryTest
 		Object o1, o2, o3, o4;
 		tree.insert(o1 = new Object(), new AABB2(0, 1, 2, 2)); // Intersects o2
 		tree.insert(o2 = new Object(), new AABB2(1, 1, 2, 3)); // Intersects o1, o3
-		tree.insert(o3 = new Object(), new AABB2(3, 1, 2, 2)); // Intersects o2
-		tree.insert(o4 = new Object(), new AABB2(4, 4, 1, 1)); // Intersects nothing
+		tree.insert(o3 = new Object(), new AABB2(3, 1, 2, 2)); // Intersects o2, o4
+		tree.insert(o4 = new Object(), new AABB2(5, 3, 1, 1)); // Intersects o3
 
 		final List<Pair> visited = new ArrayList<Pair>();
 
@@ -55,9 +55,10 @@ public class IntersectionJoinQueryTest
 			}
 		});
 
-		assertEquals(2, visited.size());
+		assertEquals(3, visited.size());
 		assertTrue(visited.contains(new Pair(o1, o2)) || visited.contains(new Pair(o2, o1)));
 		assertTrue(visited.contains(new Pair(o2, o3)) || visited.contains(new Pair(o3, o2)));
+		assertTrue(visited.contains(new Pair(o3, o4)) || visited.contains(new Pair(o4, o3)));
 	}
 
 	@Test
