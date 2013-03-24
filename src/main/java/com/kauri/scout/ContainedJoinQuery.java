@@ -30,7 +30,7 @@ public class ContainedJoinQuery implements JoinQuery
 	public QueryResult query(AABB aabb1, AABB aabb2, boolean queryPartial)
 	{
 		if (aabb2.contains(aabb1)) {
-			return QueryResult.ALL;
+			return queryPartial ? QueryResult.SOME : QueryResult.ALL;
 		}
 
 		return queryPartial && aabb2.intersects(aabb1) ? QueryResult.SOME : QueryResult.NONE;

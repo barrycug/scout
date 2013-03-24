@@ -37,7 +37,7 @@ public class ContainedQuery implements Query
 	public QueryResult query(AABB aabb, boolean queryPartial)
 	{
 		if (aabb.contains(this.aabb)) {
-			return QueryResult.ALL;
+			return queryPartial ? QueryResult.SOME : QueryResult.ALL;
 		}
 
 		return queryPartial && aabb.intersects(this.aabb) ? QueryResult.SOME : QueryResult.NONE;
