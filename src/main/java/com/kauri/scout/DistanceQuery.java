@@ -27,37 +27,45 @@ package com.kauri.scout;
 class DistanceQuery implements Query
 {
 	private AABB aabb;
-	private float distance;
+	private float distanceSquared;
 
 	public DistanceQuery(AABB aabb, float distance)
 	{
 		this.aabb = aabb;
-		this.distance = distance;
+		this.distanceSquared = distance * distance;
 	}
 
 	@Override
 	public QueryResult query(AABB aabb, boolean queryPartial)
 	{
-		if (getDistanceSquared(aabb, this.aabb) <= distance * distance) {
-			//
+		if (getDistanceSquared(aabb, this.aabb) <= distanceSquared) {
+			return queryPartial ? QueryResult.SOME : QueryResult.ALL;
 		}
 
-		return QueryResult.SOME;
+		return QueryResult.NONE;
 	}
+
+	//
+	// TODO - document and abstract for reuse
 
 	private float getDistanceSquared(AABB aabb1, AABB aabb2)
 	{
-		float distance = 0;
+		float dist = 0;
+
 		for (int i = 0; i < aabb1.getDimensions(); i++) {
-			float axisDistance = distance(aabb1.getMinimum(i), aabb1.getMaximum(i), aabb2.getMinimum(i), aabb2.getMaximum(i));
-			distance += axisDistance * axisDistance;
+			float ext = aabb2.getMaximum(i) - aabb2.getMinimum(i);
+			float pnt = aabb2.getMinimum(i);
+
+			float min = aabb1.getMinimum(i) - ext;
+			float max = aabb1.getMaximum(i);
+
+			if (pnt < min) {
+				dist += (min - pnt) * (min - pnt);
+			} else if (pnt > max) {
+				dist += (pnt - max) * (pnt - max);
+			}
 		}
 
-		return distance;
-	}
-
-	private float distance(float a, float b, float c, float d)
-	{
-		return Math.max(0, Math.max(a - d, c - b));
+		return dist;
 	}
 }

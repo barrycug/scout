@@ -26,21 +26,21 @@ package com.kauri.scout;
  */
 public class DistanceJoinQuery implements JoinQuery
 {
-	private float distance;
+	private float distanceSquared;
 
 	public DistanceJoinQuery(float distance)
 	{
-		this.distance = distance;
+		this.distanceSquared = distance * distance;
 	}
 
 	@Override
 	public QueryResult query(AABB aabb1, AABB aabb2, boolean queryPartial)
 	{
-		if (getDistanceSquared(aabb1, aabb2) <= distance * distance) {
-			//
+		if (getDistanceSquared(aabb1, aabb2) <= distanceSquared) {
+			return queryPartial ? QueryResult.SOME : QueryResult.ALL;
 		}
 
-		return QueryResult.SOME;
+		return QueryResult.NONE;
 	}
 
 	@Override
@@ -49,19 +49,27 @@ public class DistanceJoinQuery implements JoinQuery
 		return true;
 	}
 
+	//
+	// TODO - document and abstract for reuse
+
 	private float getDistanceSquared(AABB aabb1, AABB aabb2)
 	{
-		float distance = 0;
+		float dist = 0;
+
 		for (int i = 0; i < aabb1.getDimensions(); i++) {
-			float axisDistance = distance(aabb1.getMinimum(i), aabb1.getMaximum(i), aabb2.getMinimum(i), aabb2.getMaximum(i));
-			distance += axisDistance * axisDistance;
+			float ext = aabb2.getMaximum(i) - aabb2.getMinimum(i);
+			float pnt = aabb2.getMinimum(i);
+
+			float min = aabb1.getMinimum(i) - ext;
+			float max = aabb1.getMaximum(i);
+
+			if (pnt < min) {
+				dist += (min - pnt) * (min - pnt);
+			} else if (pnt > max) {
+				dist += (pnt - max) * (pnt - max);
+			}
 		}
 
-		return distance;
-	}
-
-	private float distance(float a, float b, float c, float d)
-	{
-		return Math.max(0, Math.max(a - d, c - b));
+		return dist;
 	}
 }
