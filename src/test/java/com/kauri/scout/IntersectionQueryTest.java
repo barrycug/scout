@@ -41,7 +41,7 @@ public class IntersectionQueryTest
 
 		Object o1, o2, o3;
 		tree.insert(o1 = new Object(), new AABB2(0, 0, 1, 1)); // Within bounds
-		tree.insert(o2 = new Object(), new AABB2(2, 1, 2, 2)); // Isects bounds
+		tree.insert(o2 = new Object(), new AABB2(2, 1, 2, 2)); // Intersects bounds
 		tree.insert(o3 = new Object(), new AABB2(0, 0, 3, 3)); // Copies bounds
 
 		tree.insert(new Object(), new AABB2(5, 5, 1, 1)); // Outside of bounds
