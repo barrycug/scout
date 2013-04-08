@@ -97,17 +97,17 @@ public class IntersectionJoinQueryTest
 		});
 
 		assertEquals(5, visited1.size());
-		assertTrue(visited1.contains(new Pair(o1, o4)) || visited1.contains(new Pair(o4, o1)));
-		assertTrue(visited1.contains(new Pair(o2, o4)) || visited1.contains(new Pair(o4, o2)));
-		assertTrue(visited1.contains(new Pair(o2, o5)) || visited1.contains(new Pair(o5, o2)));
-		assertTrue(visited1.contains(new Pair(o2, o6)) || visited1.contains(new Pair(o6, o2)));
-		assertTrue(visited1.contains(new Pair(o3, o6)) || visited1.contains(new Pair(o6, o3)));
+		assertTrue(visited1.contains(new Pair(o1, o4)));
+		assertTrue(visited1.contains(new Pair(o2, o4)));
+		assertTrue(visited1.contains(new Pair(o2, o5)));
+		assertTrue(visited1.contains(new Pair(o2, o6)));
+		assertTrue(visited1.contains(new Pair(o3, o6)));
 
 		assertEquals(5, visited2.size());
-		assertTrue(visited2.contains(new Pair(o4, o1)) || visited2.contains(new Pair(o1, o4)));
-		assertTrue(visited2.contains(new Pair(o4, o2)) || visited2.contains(new Pair(o2, o4)));
-		assertTrue(visited2.contains(new Pair(o5, o2)) || visited2.contains(new Pair(o2, o5)));
-		assertTrue(visited2.contains(new Pair(o6, o2)) || visited2.contains(new Pair(o2, o6)));
-		assertTrue(visited2.contains(new Pair(o6, o3)) || visited2.contains(new Pair(o3, o6)));
+		assertTrue(visited2.contains(new Pair(o4, o1)));
+		assertTrue(visited2.contains(new Pair(o4, o2)));
+		assertTrue(visited2.contains(new Pair(o5, o2)));
+		assertTrue(visited2.contains(new Pair(o6, o2)));
+		assertTrue(visited2.contains(new Pair(o6, o3)));
 	}
 }
