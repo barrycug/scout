@@ -31,8 +31,8 @@ import java.util.Map;
  */
 public class RTree<E>
 {
-	private final static int MIN_OBJECTS_PER_NODE = 2;
-	private final static int MAX_OBJECTS_PER_NODE = 3;
+	private final static int MIN_OBJECTS_PER_NODE = 24;
+	private final static int MAX_OBJECTS_PER_NODE = 32;
 
 	private Node<E> root;
 	private Map<E, Node<E>> leafMap = new HashMap<E, Node<E>>();

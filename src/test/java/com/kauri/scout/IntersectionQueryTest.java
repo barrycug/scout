@@ -62,4 +62,39 @@ public class IntersectionQueryTest
 		assertTrue(visited.contains(o2));
 		assertTrue(visited.contains(o3));
 	}
+
+	@Test
+	public void testBulk()
+	{
+		RTree<Object> tree = new RTree<Object>();
+
+		final List<Object> expected = new ArrayList<Object>();
+
+		for (int i = 0; i < 200; i++) {
+			for (int j = 0; j < 2; j++) {
+				Object o;
+				tree.insert(o = new Object(), new AABB2(10 * j, 10 * i, 10, 10));
+
+				if (i < 50) {
+					expected.add(o);
+				}
+			}
+		}
+
+		final List<Object> visited = new ArrayList<Object>();
+
+		tree.query(new IntersectionQuery(new AABB2(2, 2, 18, 497)), new QueryResultVisitor<Object>() {
+			@Override
+			public void visit(Object o)
+			{
+				visited.add(o);
+			}
+		});
+
+		assertEquals(expected.size(), visited.size());
+
+		for (Object o : expected) {
+			assertTrue(visited.contains(o));
+		}
+	}
 }

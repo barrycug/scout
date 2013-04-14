@@ -62,4 +62,38 @@ public class ContainedQueryTest
 		assertTrue(visited.contains(o2));
 		assertTrue(visited.contains(o3));
 	}
+
+	@Test
+	public void testBulk()
+	{
+		RTree<Object> tree = new RTree<Object>();
+
+		final List<Object> expected = new ArrayList<Object>();
+
+		int n = 400;
+		for (int i = 0; i < n; i++) {
+			Object o;
+			tree.insert(o = new Object(), new AABB2(i, i, 2 * n - 2 * i - 1, 2 * n - 2 * i - 1));
+
+			if (i < 100) {
+				expected.add(o);
+			}
+		}
+
+		final List<Object> visited = new ArrayList<Object>();
+
+		tree.query(new ContainedQuery(new AABB2(300, 300, 400, 400)), new QueryResultVisitor<Object>() {
+			@Override
+			public void visit(Object o)
+			{
+				visited.add(o);
+			}
+		});
+
+		assertEquals(expected.size(), visited.size());
+
+		for (Object o : expected) {
+			assertTrue(visited.contains(o));
+		}
+	}
 }

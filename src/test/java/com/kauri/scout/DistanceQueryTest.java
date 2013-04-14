@@ -62,4 +62,45 @@ public class DistanceQueryTest
 		assertTrue(visited.contains(o2));
 		assertTrue(visited.contains(o3));
 	}
+
+	@Test
+	public void testBulk()
+	{
+		RTree<Object> tree = new RTree<Object>();
+
+		final List<Object> expected = new ArrayList<Object>();
+
+		int n = 400;
+		for (int i = 1; i <= n; i++) {
+			Object o1, o2, o3, o4;
+
+			tree.insert(o1 = new Object(), new AABB2(n - i, n - i, 1, 1));
+			tree.insert(o2 = new Object(), new AABB2(n + i, n - i, 1, 1));
+			tree.insert(o3 = new Object(), new AABB2(n - i, n + i, 1, 1));
+			tree.insert(o4 = new Object(), new AABB2(n + i, n + i, 1, 1));
+
+			if (i <= 25) {
+				expected.add(o1);
+				expected.add(o2);
+				expected.add(o3);
+				expected.add(o4);
+			}
+		}
+
+		final List<Object> visited = new ArrayList<Object>();
+
+		tree.query(new DistanceQuery(new AABB2(n, n, 1, 1), 35), new QueryResultVisitor<Object>() {
+			@Override
+			public void visit(Object o)
+			{
+				visited.add(o);
+			}
+		});
+
+		assertEquals(expected.size(), visited.size());
+
+		for (Object o : expected) {
+			assertTrue(visited.contains(o));
+		}
+	}
 }
