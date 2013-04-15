@@ -1,4 +1,4 @@
-/*
+/*0
  * This file is part of the scout package.
  *
  * Copyright (C) 2013, Eric Fritz
@@ -34,6 +34,8 @@ import org.junit.Test;
  */
 public class ContainsQueryTest extends QueryTest
 {
+	private static final int NUM_BOUNDS = 1000;
+
 	@Test
 	public void test()
 	{
@@ -62,18 +64,16 @@ public class ContainsQueryTest extends QueryTest
 
 		final List<Object> expected = new ArrayList<Object>();
 
-		for (int i = 0; i < 20; i++) {
-			for (int j = 0; j < 20; j++) {
-				Object o;
-				tree.insert(o = new Object(), new AABB2(5 * i, 5 * j, 5, 5));
+		for (int i = 0; i < NUM_BOUNDS; i++) {
+			Object o;
+			tree.insert(o = new Object(), new AABB2(5 * i, 0, 5, 5));
 
-				if (i + 1 <= 10 && j + 1 <= 10) {
-					expected.add(o);
-				}
+			if (i < NUM_BOUNDS / 4) {
+				expected.add(o);
 			}
 		}
 
-		List<Object> visited = this.getVisited(tree, new ContainsQuery(new AABB2(0, 0, 50, 50)));
+		List<Object> visited = this.getVisited(tree, new ContainsQuery(new AABB2(0, 0, NUM_BOUNDS / 4 * 5, 5)));
 
 		assertEquals(expected.size(), visited.size());
 

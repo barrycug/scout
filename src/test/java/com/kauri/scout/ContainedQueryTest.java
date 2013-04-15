@@ -34,6 +34,8 @@ import org.junit.Test;
  */
 public class ContainedQueryTest extends QueryTest
 {
+	private static final int NUM_BOUNDS = 1000;
+
 	@Test
 	public void test()
 	{
@@ -62,17 +64,16 @@ public class ContainedQueryTest extends QueryTest
 
 		final List<Object> expected = new ArrayList<Object>();
 
-		int n = 400;
-		for (int i = 0; i < n; i++) {
+		for (int i = 0; i < NUM_BOUNDS; i++) {
 			Object o;
-			tree.insert(o = new Object(), new AABB2(i, i, 2 * n - 2 * i - 1, 2 * n - 2 * i - 1));
+			tree.insert(o = new Object(), new AABB2(i, i, 2 * NUM_BOUNDS - 2 * i - 1, 2 * NUM_BOUNDS - 2 * i - 1));
 
-			if (i < 100) {
+			if (i < NUM_BOUNDS / 4) {
 				expected.add(o);
 			}
 		}
 
-		List<Object> visited = this.getVisited(tree, new ContainedQuery(new AABB2(300, 300, 400, 400)));
+		List<Object> visited = this.getVisited(tree, new ContainedQuery(new AABB2(NUM_BOUNDS * 3 / 4, NUM_BOUNDS * 3 / 4, NUM_BOUNDS, NUM_BOUNDS)));
 
 		assertEquals(expected.size(), visited.size());
 

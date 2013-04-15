@@ -34,6 +34,8 @@ import org.junit.Test;
  */
 public class IntersectionQueryTest extends QueryTest
 {
+	private static final int NUM_BOUNDS = 1000;
+
 	@Test
 	public void test()
 	{
@@ -62,18 +64,20 @@ public class IntersectionQueryTest extends QueryTest
 
 		final List<Object> expected = new ArrayList<Object>();
 
-		for (int i = 0; i < 200; i++) {
-			for (int j = 0; j < 2; j++) {
-				Object o;
-				tree.insert(o = new Object(), new AABB2(10 * j, 10 * i, 10, 10));
+		for (int i = 0; i < NUM_BOUNDS; i++) {
+			Object o1;
+			Object o2;
 
-				if (i < 50) {
-					expected.add(o);
-				}
+			tree.insert(o1 = new Object(), new AABB2(10 * i, 0, 10, 5));
+			tree.insert(o2 = new Object(), new AABB2(10 * i, 5, 10, 5));
+
+			if (i < NUM_BOUNDS / 4) {
+				expected.add(o1);
+				expected.add(o2);
 			}
 		}
 
-		List<Object> visited = this.getVisited(tree, new IntersectionQuery(new AABB2(2, 2, 18, 497)));
+		List<Object> visited = this.getVisited(tree, new IntersectionQuery(new AABB2(1, 1, NUM_BOUNDS / 4 * 10 - 2, 8)));
 
 		assertEquals(expected.size(), visited.size());
 

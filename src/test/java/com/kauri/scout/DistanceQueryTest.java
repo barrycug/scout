@@ -34,6 +34,8 @@ import org.junit.Test;
  */
 public class DistanceQueryTest extends QueryTest
 {
+	private static final int NUM_BOUNDS = 1000;
+
 	@Test
 	public void test()
 	{
@@ -62,14 +64,13 @@ public class DistanceQueryTest extends QueryTest
 
 		final List<Object> expected = new ArrayList<Object>();
 
-		int n = 400;
-		for (int i = 1; i <= n; i++) {
+		for (int i = 1; i <= NUM_BOUNDS; i++) {
 			Object o1, o2, o3, o4;
 
-			tree.insert(o1 = new Object(), new AABB2(n - i, n - i, 1, 1));
-			tree.insert(o2 = new Object(), new AABB2(n + i, n - i, 1, 1));
-			tree.insert(o3 = new Object(), new AABB2(n - i, n + i, 1, 1));
-			tree.insert(o4 = new Object(), new AABB2(n + i, n + i, 1, 1));
+			tree.insert(o1 = new Object(), new AABB2(NUM_BOUNDS - i, NUM_BOUNDS - i, 1, 1));
+			tree.insert(o2 = new Object(), new AABB2(NUM_BOUNDS + i, NUM_BOUNDS - i, 1, 1));
+			tree.insert(o3 = new Object(), new AABB2(NUM_BOUNDS - i, NUM_BOUNDS + i, 1, 1));
+			tree.insert(o4 = new Object(), new AABB2(NUM_BOUNDS + i, NUM_BOUNDS + i, 1, 1));
 
 			if (i <= 25) {
 				expected.add(o1);
@@ -79,7 +80,7 @@ public class DistanceQueryTest extends QueryTest
 			}
 		}
 
-		List<Object> visited = this.getVisited(tree, new DistanceQuery(new AABB2(n, n, 1, 1), 35));
+		List<Object> visited = this.getVisited(tree, new DistanceQuery(new AABB2(NUM_BOUNDS, NUM_BOUNDS, 1, 1), 35));
 
 		assertEquals(expected.size(), visited.size());
 

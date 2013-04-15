@@ -34,6 +34,8 @@ import org.junit.Test;
  */
 public class IntersectionJoinQueryTest extends QueryTest
 {
+	private static final int NUM_BOUNDS = 1000;
+
 	@Test
 	public void testOneTree()
 	{
@@ -61,7 +63,7 @@ public class IntersectionJoinQueryTest extends QueryTest
 		final List<Object> row1 = new ArrayList<Object>();
 		final List<Object> row2 = new ArrayList<Object>();
 
-		for (int i = 0; i < 200; i++) {
+		for (int i = 0; i < NUM_BOUNDS; i++) {
 			Object o1 = new Object();
 			Object o2 = new Object();
 
@@ -127,7 +129,7 @@ public class IntersectionJoinQueryTest extends QueryTest
 		final List<Object> row1 = new ArrayList<Object>();
 		final List<Object> row2 = new ArrayList<Object>();
 
-		for (int i = 0; i < 200; i++) {
+		for (int i = 0; i < NUM_BOUNDS; i++) {
 			Object o1 = new Object();
 			Object o2 = new Object();
 
@@ -144,7 +146,7 @@ public class IntersectionJoinQueryTest extends QueryTest
 		assertEquals(row1.size(), visited1.size());
 		assertEquals(row2.size(), visited2.size());
 
-		for (int i = 0; i < 200; i++) {
+		for (int i = 0; i < NUM_BOUNDS; i++) {
 			Object o1 = row1.get(i);
 			Object o2 = row2.get(i);
 
