@@ -21,10 +21,8 @@
 
 package com.kauri.scout;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
@@ -49,25 +47,17 @@ public class IntersectionQueryTest extends QueryTest
 		tree.insert(new Object(), new AABB2(5, 5, 1, 1)); // Outside of bounds
 		tree.insert(new Object(), new AABB2(6, 6, 1, 1)); // Outside of bounds
 
-		List<Object> visited = this.getVisited(tree, new IntersectionQuery(new AABB2(0, 0, 3, 3)));
-
-		assertEquals(3, visited.size());
-		assertTrue(visited.contains(o1));
-		assertTrue(visited.contains(o2));
-		assertTrue(visited.contains(o3));
+		ensureSame(getVisited(tree, new IntersectionQuery(new AABB2(0, 0, 3, 3))), Arrays.asList(o1, o2, o3));
 	}
 
 	@Test
 	public void testBulk()
 	{
 		RTree<Object> tree = new RTree<Object>();
+		List<Object> expected = new ArrayList<Object>();
 
-		final List<Object> expected = new ArrayList<Object>();
-
+		Object o1, o2;
 		for (int i = 0; i < NUM_BOUNDS; i++) {
-			Object o1;
-			Object o2;
-
 			tree.insert(o1 = new Object(), new AABB2(10 * i, 0, 10, 5));
 			tree.insert(o2 = new Object(), new AABB2(10 * i, 5, 10, 5));
 
@@ -77,12 +67,6 @@ public class IntersectionQueryTest extends QueryTest
 			}
 		}
 
-		List<Object> visited = this.getVisited(tree, new IntersectionQuery(new AABB2(1, 1, NUM_BOUNDS / 4 * 10 - 2, 8)));
-
-		assertEquals(expected.size(), visited.size());
-
-		for (Object o : expected) {
-			assertTrue(visited.contains(o));
-		}
+		ensureSame(getVisited(tree, new IntersectionQuery(new AABB2(1, 1, NUM_BOUNDS / 4 * 10 - 2, 8))), expected);
 	}
 }

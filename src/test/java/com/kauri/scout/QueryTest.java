@@ -21,6 +21,9 @@
 
 package com.kauri.scout;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,4 +61,49 @@ abstract public class QueryTest
 
 		return visited;
 	}
+
+	public <T> void ensureSame(List<T> actual, List<T> expected)
+	{
+		assertEquals(expected.size(), actual.size());
+
+		for (T item : expected) {
+			assertTrue(actual.contains(item));
+		}
+	}
+
+	public <T> void ensureSameSymmetric(List<Pair<T>> actual, List<Pair<T>> expected)
+	{
+		assertEquals(expected.size(), actual.size());
+
+		for (Pair<T> item : expected) {
+			assertTrue(actual.contains(item) || actual.contains(new Pair<T>(item.o2, item.o1)));
+		}
+	}
+
+	public class Pair<T>
+	{
+		T o1;
+		T o2;
+
+		public Pair(T o1, T o2)
+		{
+			this.o1 = o1;
+			this.o2 = o2;
+		}
+
+		@Override
+		public boolean equals(Object o)
+		{
+			if (this == o) {
+				return true;
+			}
+
+			if (o == null || !(o instanceof Pair<?>)) {
+				return false;
+			}
+
+			return ((Pair<?>) o).o1.equals(o1) && ((Pair<?>) o).o2.equals(o2);
+		}
+	}
+
 }

@@ -21,10 +21,8 @@
 
 package com.kauri.scout;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
@@ -49,23 +47,17 @@ public class ContainedQueryTest extends QueryTest
 		tree.insert(new Object(), new AABB2(3, 3, 1, 1)); // Intersects bounds
 		tree.insert(new Object(), new AABB2(4, 4, 1, 1)); // Outside of bounds
 
-		List<Object> visited = this.getVisited(tree, new ContainedQuery(new AABB2(2, 2, 1, 1)));
-
-		assertEquals(3, visited.size());
-		assertTrue(visited.contains(o1));
-		assertTrue(visited.contains(o2));
-		assertTrue(visited.contains(o3));
+		ensureSame(getVisited(tree, new ContainedQuery(new AABB2(2, 2, 1, 1))), Arrays.asList(o1, o2, o3));
 	}
 
 	@Test
 	public void testBulk()
 	{
 		RTree<Object> tree = new RTree<Object>();
+		List<Object> expected = new ArrayList<Object>();
 
-		final List<Object> expected = new ArrayList<Object>();
-
+		Object o;
 		for (int i = 0; i < NUM_BOUNDS; i++) {
-			Object o;
 			tree.insert(o = new Object(), new AABB2(i, i, 2 * NUM_BOUNDS - 2 * i - 1, 2 * NUM_BOUNDS - 2 * i - 1));
 
 			if (i < NUM_BOUNDS / 4) {
@@ -73,12 +65,6 @@ public class ContainedQueryTest extends QueryTest
 			}
 		}
 
-		List<Object> visited = this.getVisited(tree, new ContainedQuery(new AABB2(NUM_BOUNDS * 3 / 4, NUM_BOUNDS * 3 / 4, NUM_BOUNDS, NUM_BOUNDS)));
-
-		assertEquals(expected.size(), visited.size());
-
-		for (Object o : expected) {
-			assertTrue(visited.contains(o));
-		}
+		ensureSame(getVisited(tree, new ContainedQuery(new AABB2(NUM_BOUNDS * 3 / 4, NUM_BOUNDS * 3 / 4, NUM_BOUNDS, NUM_BOUNDS))), expected);
 	}
 }

@@ -21,9 +21,6 @@
 
 package com.kauri.scout;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,46 +44,32 @@ public class ContainsJoinQueryTest extends QueryTest
 		tree.insert(o3 = new Object(), new AABB2(2, 2, 3, 3)); // Contains o4
 		tree.insert(o4 = new Object(), new AABB2(3, 3, 1, 1)); // Contains nothing
 
-		List<Pair<Object>> visited = this.getVisited(tree, tree, new ContainsJoinQuery());
+		List<Pair<Object>> expected = new ArrayList<Pair<Object>>();
+		expected.add(new Pair<Object>(o1, o2));
+		expected.add(new Pair<Object>(o1, o3));
+		expected.add(new Pair<Object>(o1, o4));
+		expected.add(new Pair<Object>(o2, o3));
+		expected.add(new Pair<Object>(o2, o4));
+		expected.add(new Pair<Object>(o3, o4));
 
-		assertEquals(6, visited.size());
-		assertTrue(visited.contains(new Pair<Object>(o1, o2)));
-		assertTrue(visited.contains(new Pair<Object>(o1, o3)));
-		assertTrue(visited.contains(new Pair<Object>(o1, o4)));
-		assertTrue(visited.contains(new Pair<Object>(o2, o3)));
-		assertTrue(visited.contains(new Pair<Object>(o2, o4)));
-		assertTrue(visited.contains(new Pair<Object>(o3, o4)));
+		ensureSame(getVisited(tree, tree, new ContainsJoinQuery()), expected);
 	}
 
 	@Test
 	public void testOneTreeBulk()
 	{
 		RTree<Object> tree = new RTree<Object>();
+		List<Pair<Object>> expected = new ArrayList<Pair<Object>>();
 
-		final List<Object> row1 = new ArrayList<Object>();
-		final List<Object> row2 = new ArrayList<Object>();
-
+		Object o1, o2;
 		for (int i = 0; i < NUM_BOUNDS; i++) {
-			Object o1 = new Object();
-			Object o2 = new Object();
+			tree.insert(o1 = new Object(), new AABB2(5 * i + 0, 0, 5, 5));
+			tree.insert(o2 = new Object(), new AABB2(5 * i + 1, 1, 3, 3));
 
-			tree.insert(o1, new AABB2(5 * i + 0, 0, 5, 5));
-			tree.insert(o2, new AABB2(5 * i + 1, 1, 3, 3));
-
-			row1.add(o1);
-			row2.add(o2);
+			expected.add(new Pair<Object>(o1, o2));
 		}
 
-		List<Pair<Object>> visited = this.getVisited(tree, tree, new ContainsJoinQuery());
-
-		assertEquals(row1.size(), visited.size());
-
-		for (int i = 0; i < NUM_BOUNDS; i++) {
-			Object o1 = row1.get(i);
-			Object o2 = row2.get(i);
-
-			assertTrue(visited.contains(new Pair<Object>(o1, o2)));
-		}
+		ensureSame(getVisited(tree, tree, new ContainsJoinQuery()), expected);
 	}
 
 	@Test
@@ -105,20 +88,20 @@ public class ContainsJoinQueryTest extends QueryTest
 		tree2.insert(o5 = new Object(), new AABB2(2, 2, 4, 4)); // Contains o2, o3
 		tree2.insert(o6 = new Object(), new AABB2(3, 3, 1, 1)); // Contains nothing
 
-		List<Pair<Object>> visited1 = this.getVisited(tree1, tree2, new ContainsJoinQuery());
-		List<Pair<Object>> visited2 = this.getVisited(tree2, tree1, new ContainsJoinQuery());
+		List<Pair<Object>> expected1 = new ArrayList<Pair<Object>>();
+		expected1.add(new Pair<Object>(o1, o4));
+		expected1.add(new Pair<Object>(o1, o5));
+		expected1.add(new Pair<Object>(o1, o6));
+		expected1.add(new Pair<Object>(o2, o6));
 
-		assertEquals(4, visited1.size());
-		assertTrue(visited1.contains(new Pair<Object>(o1, o4)));
-		assertTrue(visited1.contains(new Pair<Object>(o1, o5)));
-		assertTrue(visited1.contains(new Pair<Object>(o1, o6)));
-		assertTrue(visited1.contains(new Pair<Object>(o2, o6)));
+		List<Pair<Object>> expected2 = new ArrayList<Pair<Object>>();
+		expected2.add(new Pair<Object>(o4, o2));
+		expected2.add(new Pair<Object>(o4, o3));
+		expected2.add(new Pair<Object>(o5, o2));
+		expected2.add(new Pair<Object>(o5, o3));
 
-		assertEquals(4, visited2.size());
-		assertTrue(visited2.contains(new Pair<Object>(o4, o2)));
-		assertTrue(visited2.contains(new Pair<Object>(o4, o3)));
-		assertTrue(visited2.contains(new Pair<Object>(o5, o2)));
-		assertTrue(visited2.contains(new Pair<Object>(o5, o3)));
+		ensureSame(getVisited(tree1, tree2, new ContainsJoinQuery()), expected1);
+		ensureSame(getVisited(tree2, tree1, new ContainsJoinQuery()), expected2);
 	}
 
 	@Test
@@ -127,37 +110,20 @@ public class ContainsJoinQueryTest extends QueryTest
 		RTree<Object> tree1 = new RTree<Object>();
 		RTree<Object> tree2 = new RTree<Object>();
 
-		final List<Object> row1 = new ArrayList<Object>();
-		final List<Object> row2 = new ArrayList<Object>();
-		final List<Object> row3 = new ArrayList<Object>();
+		List<Pair<Object>> expected1 = new ArrayList<Pair<Object>>();
+		List<Pair<Object>> expected2 = new ArrayList<Pair<Object>>();
 
+		Object o1, o2, o3;
 		for (int i = 0; i < NUM_BOUNDS; i++) {
-			Object o1 = new Object();
-			Object o2 = new Object();
-			Object o3 = new Object();
+			tree1.insert(o1 = new Object(), new AABB2(5 * i + 0, 0, 5, 5));
+			tree2.insert(o2 = new Object(), new AABB2(5 * i + 1, 1, 3, 3));
+			tree1.insert(o3 = new Object(), new AABB2(5 * i + 2, 2, 1, 1));
 
-			tree1.insert(o1, new AABB2(5 * i + 0, 0, 5, 5));
-			tree2.insert(o2, new AABB2(5 * i + 1, 1, 3, 3));
-			tree1.insert(o3, new AABB2(5 * i + 2, 2, 1, 1));
-
-			row1.add(o1);
-			row2.add(o2);
-			row3.add(o3);
+			expected1.add(new Pair<Object>(o1, o2));
+			expected2.add(new Pair<Object>(o2, o3));
 		}
 
-		List<Pair<Object>> visited1 = this.getVisited(tree1, tree2, new ContainsJoinQuery());
-		List<Pair<Object>> visited2 = this.getVisited(tree2, tree1, new ContainsJoinQuery());
-
-		assertEquals(row1.size(), visited1.size());
-		assertEquals(row2.size(), visited2.size());
-
-		for (int i = 0; i < NUM_BOUNDS; i++) {
-			Object o1 = row1.get(i);
-			Object o2 = row2.get(i);
-			Object o3 = row3.get(i);
-
-			assertTrue(visited1.contains(new Pair<Object>(o1, o2)));
-			assertTrue(visited2.contains(new Pair<Object>(o2, o3)));
-		}
+		ensureSame(getVisited(tree1, tree2, new ContainsJoinQuery()), expected1);
+		ensureSame(getVisited(tree2, tree1, new ContainsJoinQuery()), expected2);
 	}
 }

@@ -21,10 +21,8 @@
 
 package com.kauri.scout;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
@@ -49,24 +47,17 @@ public class DistanceQueryTest extends QueryTest
 		tree.insert(new Object(), new AABB2(7, 0, 1, 1)); // Beyond distance on one axis
 		tree.insert(new Object(), new AABB2(5, 5, 1, 1)); // Beyond distance on two axes
 
-		List<Object> visited = this.getVisited(tree, new DistanceQuery(new AABB2(0, 0, 1, 1), 5));
-
-		assertEquals(3, visited.size());
-		assertTrue(visited.contains(o1));
-		assertTrue(visited.contains(o2));
-		assertTrue(visited.contains(o3));
+		ensureSame(getVisited(tree, new DistanceQuery(new AABB2(0, 0, 1, 1), 5)), Arrays.asList(o1, o2, o3));
 	}
 
 	@Test
 	public void testBulk()
 	{
 		RTree<Object> tree = new RTree<Object>();
+		List<Object> expected = new ArrayList<Object>();
 
-		final List<Object> expected = new ArrayList<Object>();
-
+		Object o1, o2, o3, o4;
 		for (int i = 1; i <= NUM_BOUNDS; i++) {
-			Object o1, o2, o3, o4;
-
 			tree.insert(o1 = new Object(), new AABB2(NUM_BOUNDS - i, NUM_BOUNDS - i, 1, 1));
 			tree.insert(o2 = new Object(), new AABB2(NUM_BOUNDS + i, NUM_BOUNDS - i, 1, 1));
 			tree.insert(o3 = new Object(), new AABB2(NUM_BOUNDS - i, NUM_BOUNDS + i, 1, 1));
@@ -80,12 +71,6 @@ public class DistanceQueryTest extends QueryTest
 			}
 		}
 
-		List<Object> visited = this.getVisited(tree, new DistanceQuery(new AABB2(NUM_BOUNDS, NUM_BOUNDS, 1, 1), 35));
-
-		assertEquals(expected.size(), visited.size());
-
-		for (Object o : expected) {
-			assertTrue(visited.contains(o));
-		}
+		ensureSame(getVisited(tree, new DistanceQuery(new AABB2(NUM_BOUNDS, NUM_BOUNDS, 1, 1), 35)), expected);
 	}
 }
