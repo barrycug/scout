@@ -32,7 +32,7 @@ import org.junit.Test;
 /**
  * @author Eric Fritz
  */
-public class ContainsJoinQueryTest
+public class ContainsJoinQueryTest extends QueryTest
 {
 	@Test
 	public void testOneTree()
@@ -45,15 +45,7 @@ public class ContainsJoinQueryTest
 		tree.insert(o3 = new Object(), new AABB2(2, 2, 3, 3)); // Contains o4
 		tree.insert(o4 = new Object(), new AABB2(3, 3, 1, 1)); // Contains nothing
 
-		final List<Pair> visited = new ArrayList<Pair>();
-
-		tree.queryJoin(new ContainsJoinQuery(), new QueryJoinResultVisitor<Object, Object>() {
-			@Override
-			public void visit(Object o1, Object o2)
-			{
-				visited.add(new Pair(o1, o2));
-			}
-		});
+		List<Pair> visited = this.getVisited(tree, tree, new ContainsJoinQuery());
 
 		assertEquals(6, visited.size());
 		assertTrue(visited.contains(new Pair(o1, o2)));
@@ -83,15 +75,7 @@ public class ContainsJoinQueryTest
 			row2.add(o2);
 		}
 
-		final List<Pair> visited = new ArrayList<Pair>();
-
-		tree.queryJoin(new ContainsJoinQuery(), new QueryJoinResultVisitor<Object, Object>() {
-			@Override
-			public void visit(Object o1, Object o2)
-			{
-				visited.add(new Pair(o1, o2));
-			}
-		});
+		List<Pair> visited = this.getVisited(tree, tree, new ContainsJoinQuery());
 
 		assertEquals(row1.size(), visited.size());
 
@@ -119,24 +103,8 @@ public class ContainsJoinQueryTest
 		tree2.insert(o5 = new Object(), new AABB2(2, 2, 4, 4)); // Contains o2, o3
 		tree2.insert(o6 = new Object(), new AABB2(3, 3, 1, 1)); // Contains nothing
 
-		final List<Pair> visited1 = new ArrayList<Pair>();
-		final List<Pair> visited2 = new ArrayList<Pair>();
-
-		tree1.queryJoin(tree2, new ContainsJoinQuery(), new QueryJoinResultVisitor<Object, Object>() {
-			@Override
-			public void visit(Object o1, Object o2)
-			{
-				visited1.add(new Pair(o1, o2));
-			}
-		});
-
-		tree2.queryJoin(tree1, new ContainsJoinQuery(), new QueryJoinResultVisitor<Object, Object>() {
-			@Override
-			public void visit(Object o1, Object o2)
-			{
-				visited2.add(new Pair(o1, o2));
-			}
-		});
+		List<Pair> visited1 = this.getVisited(tree1, tree2, new ContainsJoinQuery());
+		List<Pair> visited2 = this.getVisited(tree2, tree1, new ContainsJoinQuery());
 
 		assertEquals(4, visited1.size());
 		assertTrue(visited1.contains(new Pair(o1, o4)));
@@ -175,24 +143,8 @@ public class ContainsJoinQueryTest
 			row3.add(o3);
 		}
 
-		final List<Pair> visited1 = new ArrayList<Pair>();
-		final List<Pair> visited2 = new ArrayList<Pair>();
-
-		tree1.queryJoin(tree2, new ContainsJoinQuery(), new QueryJoinResultVisitor<Object, Object>() {
-			@Override
-			public void visit(Object o1, Object o2)
-			{
-				visited1.add(new Pair(o1, o2));
-			}
-		});
-
-		tree2.queryJoin(tree1, new ContainsJoinQuery(), new QueryJoinResultVisitor<Object, Object>() {
-			@Override
-			public void visit(Object o1, Object o2)
-			{
-				visited2.add(new Pair(o1, o2));
-			}
-		});
+		List<Pair> visited1 = this.getVisited(tree1, tree2, new ContainsJoinQuery());
+		List<Pair> visited2 = this.getVisited(tree2, tree1, new ContainsJoinQuery());
 
 		assertEquals(row1.size(), visited1.size());
 		assertEquals(row2.size(), visited2.size());

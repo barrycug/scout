@@ -32,7 +32,7 @@ import org.junit.Test;
 /**
  * @author Eric Fritz
  */
-public class DistanceQueryTest
+public class DistanceQueryTest extends QueryTest
 {
 	@Test
 	public void test()
@@ -47,15 +47,7 @@ public class DistanceQueryTest
 		tree.insert(new Object(), new AABB2(7, 0, 1, 1)); // Beyond distance on one axis
 		tree.insert(new Object(), new AABB2(5, 5, 1, 1)); // Beyond distance on two axes
 
-		final List<Object> visited = new ArrayList<Object>();
-
-		tree.query(new DistanceQuery(new AABB2(0, 0, 1, 1), 5), new QueryResultVisitor<Object>() {
-			@Override
-			public void visit(Object o)
-			{
-				visited.add(o);
-			}
-		});
+		List<Object> visited = this.getVisited(tree, new DistanceQuery(new AABB2(0, 0, 1, 1), 5));
 
 		assertEquals(3, visited.size());
 		assertTrue(visited.contains(o1));
@@ -87,15 +79,7 @@ public class DistanceQueryTest
 			}
 		}
 
-		final List<Object> visited = new ArrayList<Object>();
-
-		tree.query(new DistanceQuery(new AABB2(n, n, 1, 1), 35), new QueryResultVisitor<Object>() {
-			@Override
-			public void visit(Object o)
-			{
-				visited.add(o);
-			}
-		});
+		List<Object> visited = this.getVisited(tree, new DistanceQuery(new AABB2(n, n, 1, 1), 35));
 
 		assertEquals(expected.size(), visited.size());
 

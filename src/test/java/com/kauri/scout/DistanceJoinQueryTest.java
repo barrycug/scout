@@ -32,7 +32,7 @@ import org.junit.Test;
 /**
  * @author Eric Fritz
  */
-public class DistanceJoinQueryTest
+public class DistanceJoinQueryTest extends QueryTest
 {
 	@Test
 	public void testOneTree()
@@ -45,15 +45,7 @@ public class DistanceJoinQueryTest
 		tree.insert(o3 = new Object(), new AABB2(8, 0, 9, 1)); // In range of o2, o4
 		tree.insert(o4 = new Object(), new AABB2(8, 4, 9, 5)); // In range of o2, o3
 
-		final List<Pair> visited = new ArrayList<Pair>();
-
-		tree.queryJoin(new DistanceJoinQuery(5), new QueryJoinResultVisitor<Object, Object>() {
-			@Override
-			public void visit(Object o1, Object o2)
-			{
-				visited.add(new Pair(o1, o2));
-			}
-		});
+		List<Pair> visited = this.getVisited(tree, tree, new DistanceJoinQuery(5));
 
 		assertEquals(4, visited.size());
 		assertTrue(visited.contains(new Pair(o1, o2)) || visited.contains(new Pair(o2, o1)));
@@ -77,15 +69,7 @@ public class DistanceJoinQueryTest
 			row1.add(o1);
 		}
 
-		final List<Pair> visited = new ArrayList<Pair>();
-
-		tree.queryJoin(new DistanceJoinQuery(1), new QueryJoinResultVisitor<Object, Object>() {
-			@Override
-			public void visit(Object o1, Object o2)
-			{
-				visited.add(new Pair(o1, o2));
-			}
-		});
+		List<Pair> visited = this.getVisited(tree, tree, new DistanceJoinQuery(1));
 
 		assertEquals(row1.size() - 1, visited.size());
 
@@ -113,24 +97,8 @@ public class DistanceJoinQueryTest
 		tree2.insert(o5 = new Integer(5), new AABB2(0, 2, 1, 1)); // In range of o1
 		tree2.insert(o6 = new Integer(6), new AABB2(2, 5, 1, 3)); // In range of o2, o3
 
-		final List<Pair> visited1 = new ArrayList<Pair>();
-		final List<Pair> visited2 = new ArrayList<Pair>();
-
-		tree1.queryJoin(tree2, new DistanceJoinQuery(1), new QueryJoinResultVisitor<Object, Object>() {
-			@Override
-			public void visit(Object o1, Object o2)
-			{
-				visited1.add(new Pair(o1, o2));
-			}
-		});
-
-		tree2.queryJoin(tree1, new DistanceJoinQuery(1), new QueryJoinResultVisitor<Object, Object>() {
-			@Override
-			public void visit(Object o1, Object o2)
-			{
-				visited2.add(new Pair(o1, o2));
-			}
-		});
+		List<Pair> visited1 = this.getVisited(tree1, tree2, new DistanceJoinQuery(1));
+		List<Pair> visited2 = this.getVisited(tree2, tree1, new DistanceJoinQuery(1));
 
 		assertEquals(4, visited1.size());
 		assertTrue(visited1.contains(new Pair(o1, o4)));
@@ -165,24 +133,8 @@ public class DistanceJoinQueryTest
 			row2.add(o2);
 		}
 
-		final List<Pair> visited1 = new ArrayList<Pair>();
-		final List<Pair> visited2 = new ArrayList<Pair>();
-
-		tree1.queryJoin(tree2, new DistanceJoinQuery(1), new QueryJoinResultVisitor<Object, Object>() {
-			@Override
-			public void visit(Object o1, Object o2)
-			{
-				visited1.add(new Pair(o1, o2));
-			}
-		});
-
-		tree2.queryJoin(tree1, new DistanceJoinQuery(1), new QueryJoinResultVisitor<Object, Object>() {
-			@Override
-			public void visit(Object o1, Object o2)
-			{
-				visited2.add(new Pair(o1, o2));
-			}
-		});
+		List<Pair> visited1 = this.getVisited(tree1, tree2, new DistanceJoinQuery(1));
+		List<Pair> visited2 = this.getVisited(tree2, tree1, new DistanceJoinQuery(2));
 
 		assertEquals(row1.size(), visited1.size());
 		assertEquals(row2.size(), visited2.size());

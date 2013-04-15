@@ -32,7 +32,7 @@ import org.junit.Test;
 /**
  * @author Eric Fritz
  */
-public class ContainedQueryTest
+public class ContainedQueryTest extends QueryTest
 {
 	@Test
 	public void test()
@@ -47,15 +47,7 @@ public class ContainedQueryTest
 		tree.insert(new Object(), new AABB2(3, 3, 1, 1)); // Intersects bounds
 		tree.insert(new Object(), new AABB2(4, 4, 1, 1)); // Outside of bounds
 
-		final List<Object> visited = new ArrayList<Object>();
-
-		tree.query(new ContainedQuery(new AABB2(2, 2, 1, 1)), new QueryResultVisitor<Object>() {
-			@Override
-			public void visit(Object o)
-			{
-				visited.add(o);
-			}
-		});
+		List<Object> visited = this.getVisited(tree, new ContainedQuery(new AABB2(2, 2, 1, 1)));
 
 		assertEquals(3, visited.size());
 		assertTrue(visited.contains(o1));
@@ -80,15 +72,7 @@ public class ContainedQueryTest
 			}
 		}
 
-		final List<Object> visited = new ArrayList<Object>();
-
-		tree.query(new ContainedQuery(new AABB2(300, 300, 400, 400)), new QueryResultVisitor<Object>() {
-			@Override
-			public void visit(Object o)
-			{
-				visited.add(o);
-			}
-		});
+		List<Object> visited = this.getVisited(tree, new ContainedQuery(new AABB2(300, 300, 400, 400)));
 
 		assertEquals(expected.size(), visited.size());
 
