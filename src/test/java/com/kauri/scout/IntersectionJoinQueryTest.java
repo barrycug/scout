@@ -62,6 +62,45 @@ public class IntersectionJoinQueryTest
 	}
 
 	@Test
+	public void testOneTreeBulk()
+	{
+		RTree<Object> tree = new RTree<Object>();
+
+		final List<Object> row1 = new ArrayList<Object>();
+		final List<Object> row2 = new ArrayList<Object>();
+
+		for (int i = 0; i < 200; i++) {
+			Object o1 = new Object();
+			Object o2 = new Object();
+
+			tree.insert(o1, new AABB2(2 * i, 0, 1, 2));
+			tree.insert(o2, new AABB2(2 * i, 1, 1, 2));
+
+			row1.add(o1);
+			row2.add(o2);
+		}
+
+		final List<Pair> visited = new ArrayList<Pair>();
+
+		tree.queryJoin(new IntersectionJoinQuery(), new QueryJoinResultVisitor<Object, Object>() {
+			@Override
+			public void visit(Object o1, Object o2)
+			{
+				visited.add(new Pair(o1, o2));
+			}
+		});
+
+		assertEquals(row1.size(), visited.size());
+
+		for (int i = 0; i < 200; i++) {
+			Object o1 = row1.get(i);
+			Object o2 = row2.get(i);
+
+			assertTrue(visited.contains(new Pair(o1, o2)) || visited.contains(new Pair(o2, o1)));
+		}
+	}
+
+	@Test
 	public void testTwoTrees()
 	{
 		RTree<Object> tree1 = new RTree<Object>();
@@ -109,5 +148,56 @@ public class IntersectionJoinQueryTest
 		assertTrue(visited2.contains(new Pair(o5, o2)));
 		assertTrue(visited2.contains(new Pair(o6, o2)));
 		assertTrue(visited2.contains(new Pair(o6, o3)));
+	}
+
+	@Test
+	public void testTwoTreesBulk()
+	{
+		RTree<Object> tree1 = new RTree<Object>();
+		RTree<Object> tree2 = new RTree<Object>();
+
+		final List<Object> row1 = new ArrayList<Object>();
+		final List<Object> row2 = new ArrayList<Object>();
+
+		for (int i = 0; i < 200; i++) {
+			Object o1 = new Object();
+			Object o2 = new Object();
+
+			tree1.insert(o1, new AABB2(2 * i, 0, 1, 2));
+			tree2.insert(o2, new AABB2(2 * i, 1, 1, 2));
+
+			row1.add(o1);
+			row2.add(o2);
+		}
+
+		final List<Pair> visited1 = new ArrayList<Pair>();
+		final List<Pair> visited2 = new ArrayList<Pair>();
+
+		tree1.queryJoin(tree2, new IntersectionJoinQuery(), new QueryJoinResultVisitor<Object, Object>() {
+			@Override
+			public void visit(Object o1, Object o2)
+			{
+				visited1.add(new Pair(o1, o2));
+			}
+		});
+
+		tree2.queryJoin(tree1, new IntersectionJoinQuery(), new QueryJoinResultVisitor<Object, Object>() {
+			@Override
+			public void visit(Object o1, Object o2)
+			{
+				visited2.add(new Pair(o1, o2));
+			}
+		});
+
+		assertEquals(row1.size(), visited1.size());
+		assertEquals(row2.size(), visited2.size());
+
+		for (int i = 0; i < 200; i++) {
+			Object o1 = row1.get(i);
+			Object o2 = row2.get(i);
+
+			assertTrue(visited1.contains(new Pair(o1, o2)));
+			assertTrue(visited2.contains(new Pair(o2, o1)));
+		}
 	}
 }
