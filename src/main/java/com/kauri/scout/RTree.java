@@ -316,7 +316,7 @@ public class RTree<E>
 	}
 
 	@SuppressWarnings("unchecked")
-	public void addEntry(Node<E> node, AABB aabb, Object object)
+	private void addEntry(Node<E> node, AABB aabb, Object object)
 	{
 		node.bounds[node.numEntries] = aabb;
 		node.entries[node.numEntries] = object;
@@ -327,7 +327,7 @@ public class RTree<E>
 		}
 	}
 
-	public boolean removeEntry(Node<E> node, Object object)
+	private boolean removeEntry(Node<E> node, Object object)
 	{
 		for (int i = 0; i < node.numEntries; i++) {
 			if (node.entries[i] == object) {
@@ -349,7 +349,7 @@ public class RTree<E>
 		return false;
 	}
 
-	public void clearEntries(Node<E> node)
+	private void clearEntries(Node<E> node)
 	{
 		for (int i = 0; i < node.numEntries; i++) {
 			if (node.isLeaf) {
