@@ -21,7 +21,8 @@
 
 package com.kauri.scout;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -30,6 +31,8 @@ import org.junit.Test;
  */
 public class RTreeTest extends QueryTest
 {
+	private static final int ENTITIES = 1000;
+
 	@Test
 	public void testUpdate()
 	{
@@ -41,15 +44,22 @@ public class RTreeTest extends QueryTest
 	{
 		RTree<Object> tree = new RTree<Object>();
 
-		Object o1, o2, o3;
-		tree.insert(o1 = new Object(), new AABB2(0, 0, 1, 1));
-		tree.insert(o2 = new Object(), new AABB2(1, 0, 1, 1));
-		tree.insert(o3 = new Object(), new AABB2(2, 0, 1, 1));
+		List<Object> set1 = new ArrayList<Object>();
+		List<Object> set2 = new ArrayList<Object>();
 
-		ensureSame(getVisited(tree, new AllQuery()), Arrays.asList(o1, o2, o3));
+		Object o1, o2;
+		for (int i = 0; i < ENTITIES; i++) {
+			set1.add(o1 = new Object());
+			set2.add(o2 = new Object());
 
-		tree.remove(o3);
+			tree.insert(o1, new AABB2(i, 0, 1, 1));
+			tree.insert(o2, new AABB2(i, 1, 1, 1));
+		}
 
-		ensureSame(getVisited(tree, new AllQuery()), Arrays.asList(o1, o2));
+		for (Object o : set2) {
+			tree.remove(o);
+		}
+
+		ensureSame(getVisited(tree, new AllQuery()), set1);
 	}
 }
