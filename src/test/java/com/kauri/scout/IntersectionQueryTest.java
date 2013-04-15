@@ -32,7 +32,7 @@ import org.junit.Test;
  */
 public class IntersectionQueryTest extends QueryTest
 {
-	private static final int NUM_BOUNDS = 1000;
+	private static final int ENTITIES = 1000;
 
 	@Test
 	public void test()
@@ -57,16 +57,16 @@ public class IntersectionQueryTest extends QueryTest
 		List<Object> expected = new ArrayList<Object>();
 
 		Object o1, o2;
-		for (int i = 0; i < NUM_BOUNDS; i++) {
+		for (int i = 0; i < ENTITIES; i++) {
 			tree.insert(o1 = new Object(), new AABB2(10 * i, 0, 10, 5));
 			tree.insert(o2 = new Object(), new AABB2(10 * i, 5, 10, 5));
 
-			if (i < NUM_BOUNDS / 4) {
+			if (i < ENTITIES / 4) {
 				expected.add(o1);
 				expected.add(o2);
 			}
 		}
 
-		ensureSame(getVisited(tree, new IntersectionQuery(new AABB2(1, 1, NUM_BOUNDS / 4 * 10 - 2, 8))), expected);
+		ensureSame(getVisited(tree, new IntersectionQuery(new AABB2(1, 1, ENTITIES / 4 * 10 - 2, 8))), expected);
 	}
 }

@@ -31,7 +31,7 @@ import org.junit.Test;
  */
 public class IntersectionJoinQueryTest extends QueryTest
 {
-	private static final int NUM_BOUNDS = 1000;
+	private static final int ENTITIES = 1000;
 
 	@Test
 	public void testOneTree()
@@ -59,7 +59,7 @@ public class IntersectionJoinQueryTest extends QueryTest
 		List<Pair<Object>> expected = new ArrayList<Pair<Object>>();
 
 		Object o1, o2;
-		for (int i = 0; i < NUM_BOUNDS; i++) {
+		for (int i = 0; i < ENTITIES; i++) {
 			tree.insert(o1 = new Object(), new AABB2(2 * i, 0, 1, 2));
 			tree.insert(o2 = new Object(), new AABB2(2 * i, 1, 1, 2));
 
@@ -113,7 +113,7 @@ public class IntersectionJoinQueryTest extends QueryTest
 		List<Pair<Object>> expected2 = new ArrayList<Pair<Object>>();
 
 		Object o1, o2;
-		for (int i = 0; i < NUM_BOUNDS; i++) {
+		for (int i = 0; i < ENTITIES; i++) {
 			tree1.insert(o1 = new Object(), new AABB2(2 * i, 0, 1, 2));
 			tree2.insert(o2 = new Object(), new AABB2(2 * i, 1, 1, 2));
 

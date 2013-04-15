@@ -32,7 +32,7 @@ import org.junit.Test;
  */
 public class ContainsQueryTest extends QueryTest
 {
-	private static final int NUM_BOUNDS = 1000;
+	private static final int ENTITIES = 1000;
 
 	@Test
 	public void test()
@@ -57,14 +57,14 @@ public class ContainsQueryTest extends QueryTest
 		List<Object> expected = new ArrayList<Object>();
 
 		Object o;
-		for (int i = 0; i < NUM_BOUNDS; i++) {
+		for (int i = 0; i < ENTITIES; i++) {
 			tree.insert(o = new Object(), new AABB2(5 * i, 0, 5, 5));
 
-			if (i < NUM_BOUNDS / 4) {
+			if (i < ENTITIES / 4) {
 				expected.add(o);
 			}
 		}
 
-		ensureSame(getVisited(tree, new ContainsQuery(new AABB2(0, 0, NUM_BOUNDS / 4 * 5, 5))), expected);
+		ensureSame(getVisited(tree, new ContainsQuery(new AABB2(0, 0, ENTITIES / 4 * 5, 5))), expected);
 	}
 }

@@ -31,7 +31,7 @@ import org.junit.Test;
  */
 public class ContainedJoinQueryTest extends QueryTest
 {
-	private static final int NUM_BOUNDS = 1000;
+	private static final int ENTITIES = 1000;
 
 	@Test
 	public void testOneTree()
@@ -62,7 +62,7 @@ public class ContainedJoinQueryTest extends QueryTest
 		List<Pair<Object>> expected = new ArrayList<Pair<Object>>();
 
 		Object o1, o2;
-		for (int i = 0; i < NUM_BOUNDS; i++) {
+		for (int i = 0; i < ENTITIES; i++) {
 			tree.insert(o1 = new Object(), new AABB2(5 * i + 0, 0, 5, 5));
 			tree.insert(o2 = new Object(), new AABB2(5 * i + 1, 1, 3, 3));
 
@@ -114,7 +114,7 @@ public class ContainedJoinQueryTest extends QueryTest
 		List<Pair<Object>> expected2 = new ArrayList<Pair<Object>>();
 
 		Object o1, o2, o3;
-		for (int i = 0; i < NUM_BOUNDS; i++) {
+		for (int i = 0; i < ENTITIES; i++) {
 			tree1.insert(o1 = new Object(), new AABB2(5 * i + 0, 0, 5, 5));
 			tree2.insert(o2 = new Object(), new AABB2(5 * i + 1, 1, 3, 3));
 			tree1.insert(o3 = new Object(), new AABB2(5 * i + 2, 2, 1, 1));
