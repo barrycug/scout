@@ -24,12 +24,12 @@ package com.kauri.scout;
 /**
  * @author Eric Fritz
  */
-class Pair
+class Pair<T>
 {
-	Object o1;
-	Object o2;
+	private T o1;
+	private T o2;
 
-	public Pair(Object o1, Object o2)
+	public Pair(T o1, T o2)
 	{
 		this.o1 = o1;
 		this.o2 = o2;
@@ -42,12 +42,12 @@ class Pair
 			return true;
 		}
 
-		if (o == null || !(o instanceof Pair)) {
+		if (o == null || !(o instanceof Pair<?>)) {
 			return false;
 		}
 
-		Pair pair = (Pair) o;
+		Pair<?> pair = (Pair<?>) o;
 
-		return pair.o1 == o1 && pair.o2 == o2;
+		return pair.o1.equals(o1) && pair.o2.equals(o2);
 	}
 }

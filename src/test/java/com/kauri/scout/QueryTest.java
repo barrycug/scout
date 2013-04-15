@@ -44,15 +44,15 @@ abstract public class QueryTest
 		return visited;
 	}
 
-	public <T> List<Pair> getVisited(RTree<T> tree1, RTree<T> tree2, JoinQuery query)
+	public <T> List<Pair<T>> getVisited(RTree<T> tree1, RTree<T> tree2, JoinQuery query)
 	{
-		final List<Pair> visited = new ArrayList<Pair>();
+		final List<Pair<T>> visited = new ArrayList<Pair<T>>();
 
 		tree1.queryJoin(tree2, query, new QueryJoinResultVisitor<T, T>() {
 			@Override
 			public void visit(T o1, T o2)
 			{
-				visited.add(new Pair(o1, o2));
+				visited.add(new Pair<T>(o1, o2));
 			}
 		});
 

@@ -47,12 +47,12 @@ public class IntersectionJoinQueryTest extends QueryTest
 		tree.insert(o3 = new Object(), new AABB2(3, 1, 2, 2)); // Intersects o2, o4
 		tree.insert(o4 = new Object(), new AABB2(5, 3, 1, 1)); // Intersects o3
 
-		List<Pair> visited = this.getVisited(tree, tree, new IntersectionJoinQuery());
+		List<Pair<Object>> visited = this.getVisited(tree, tree, new IntersectionJoinQuery());
 
 		assertEquals(3, visited.size());
-		assertTrue(visited.contains(new Pair(o1, o2)) || visited.contains(new Pair(o2, o1)));
-		assertTrue(visited.contains(new Pair(o2, o3)) || visited.contains(new Pair(o3, o2)));
-		assertTrue(visited.contains(new Pair(o3, o4)) || visited.contains(new Pair(o4, o3)));
+		assertTrue(visited.contains(new Pair<Object>(o1, o2)) || visited.contains(new Pair<Object>(o2, o1)));
+		assertTrue(visited.contains(new Pair<Object>(o2, o3)) || visited.contains(new Pair<Object>(o3, o2)));
+		assertTrue(visited.contains(new Pair<Object>(o3, o4)) || visited.contains(new Pair<Object>(o4, o3)));
 	}
 
 	@Test
@@ -74,7 +74,7 @@ public class IntersectionJoinQueryTest extends QueryTest
 			row2.add(o2);
 		}
 
-		List<Pair> visited = this.getVisited(tree, tree, new IntersectionJoinQuery());
+		List<Pair<Object>> visited = this.getVisited(tree, tree, new IntersectionJoinQuery());
 
 		assertEquals(row1.size(), visited.size());
 
@@ -82,7 +82,7 @@ public class IntersectionJoinQueryTest extends QueryTest
 			Object o1 = row1.get(i);
 			Object o2 = row2.get(i);
 
-			assertTrue(visited.contains(new Pair(o1, o2)) || visited.contains(new Pair(o2, o1)));
+			assertTrue(visited.contains(new Pair<Object>(o1, o2)) || visited.contains(new Pair<Object>(o2, o1)));
 		}
 	}
 
@@ -102,22 +102,22 @@ public class IntersectionJoinQueryTest extends QueryTest
 		tree2.insert(o5 = new Integer(5), new AABB2(0, 1, 2, 2)); // Intersects o2
 		tree2.insert(o6 = new Integer(6), new AABB2(2, 5, 2, 2)); // Intersects o2, o3
 
-		List<Pair> visited1 = this.getVisited(tree1, tree2, new IntersectionJoinQuery());
-		List<Pair> visited2 = this.getVisited(tree2, tree1, new IntersectionJoinQuery());
+		List<Pair<Object>> visited1 = this.getVisited(tree1, tree2, new IntersectionJoinQuery());
+		List<Pair<Object>> visited2 = this.getVisited(tree2, tree1, new IntersectionJoinQuery());
 
 		assertEquals(5, visited1.size());
-		assertTrue(visited1.contains(new Pair(o1, o4)));
-		assertTrue(visited1.contains(new Pair(o2, o4)));
-		assertTrue(visited1.contains(new Pair(o2, o5)));
-		assertTrue(visited1.contains(new Pair(o2, o6)));
-		assertTrue(visited1.contains(new Pair(o3, o6)));
+		assertTrue(visited1.contains(new Pair<Object>(o1, o4)));
+		assertTrue(visited1.contains(new Pair<Object>(o2, o4)));
+		assertTrue(visited1.contains(new Pair<Object>(o2, o5)));
+		assertTrue(visited1.contains(new Pair<Object>(o2, o6)));
+		assertTrue(visited1.contains(new Pair<Object>(o3, o6)));
 
 		assertEquals(5, visited2.size());
-		assertTrue(visited2.contains(new Pair(o4, o1)));
-		assertTrue(visited2.contains(new Pair(o4, o2)));
-		assertTrue(visited2.contains(new Pair(o5, o2)));
-		assertTrue(visited2.contains(new Pair(o6, o2)));
-		assertTrue(visited2.contains(new Pair(o6, o3)));
+		assertTrue(visited2.contains(new Pair<Object>(o4, o1)));
+		assertTrue(visited2.contains(new Pair<Object>(o4, o2)));
+		assertTrue(visited2.contains(new Pair<Object>(o5, o2)));
+		assertTrue(visited2.contains(new Pair<Object>(o6, o2)));
+		assertTrue(visited2.contains(new Pair<Object>(o6, o3)));
 	}
 
 	@Test
@@ -140,8 +140,8 @@ public class IntersectionJoinQueryTest extends QueryTest
 			row2.add(o2);
 		}
 
-		List<Pair> visited1 = this.getVisited(tree1, tree2, new IntersectionJoinQuery());
-		List<Pair> visited2 = this.getVisited(tree2, tree1, new IntersectionJoinQuery());
+		List<Pair<Object>> visited1 = this.getVisited(tree1, tree2, new IntersectionJoinQuery());
+		List<Pair<Object>> visited2 = this.getVisited(tree2, tree1, new IntersectionJoinQuery());
 
 		assertEquals(row1.size(), visited1.size());
 		assertEquals(row2.size(), visited2.size());
@@ -150,8 +150,8 @@ public class IntersectionJoinQueryTest extends QueryTest
 			Object o1 = row1.get(i);
 			Object o2 = row2.get(i);
 
-			assertTrue(visited1.contains(new Pair(o1, o2)));
-			assertTrue(visited2.contains(new Pair(o2, o1)));
+			assertTrue(visited1.contains(new Pair<Object>(o1, o2)));
+			assertTrue(visited2.contains(new Pair<Object>(o2, o1)));
 		}
 	}
 }

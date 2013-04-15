@@ -47,15 +47,15 @@ public class ContainedJoinQueryTest extends QueryTest
 		tree.insert(o3 = new Object(), new AABB2(2, 2, 3, 3)); // Contained by o1, o2
 		tree.insert(o4 = new Object(), new AABB2(3, 3, 1, 1)); // Contained by o1, o2, o3
 
-		List<Pair> visited = this.getVisited(tree, tree, new ContainedJoinQuery());
+		List<Pair<Object>> visited = this.getVisited(tree, tree, new ContainedJoinQuery());
 
 		assertEquals(6, visited.size());
-		assertTrue(visited.contains(new Pair(o2, o1)));
-		assertTrue(visited.contains(new Pair(o3, o1)));
-		assertTrue(visited.contains(new Pair(o3, o2)));
-		assertTrue(visited.contains(new Pair(o4, o1)));
-		assertTrue(visited.contains(new Pair(o4, o2)));
-		assertTrue(visited.contains(new Pair(o4, o3)));
+		assertTrue(visited.contains(new Pair<Object>(o2, o1)));
+		assertTrue(visited.contains(new Pair<Object>(o3, o1)));
+		assertTrue(visited.contains(new Pair<Object>(o3, o2)));
+		assertTrue(visited.contains(new Pair<Object>(o4, o1)));
+		assertTrue(visited.contains(new Pair<Object>(o4, o2)));
+		assertTrue(visited.contains(new Pair<Object>(o4, o3)));
 	}
 
 	@Test
@@ -77,7 +77,7 @@ public class ContainedJoinQueryTest extends QueryTest
 			row2.add(o2);
 		}
 
-		List<Pair> visited = this.getVisited(tree, tree, new ContainedJoinQuery());
+		List<Pair<Object>> visited = this.getVisited(tree, tree, new ContainedJoinQuery());
 
 		assertEquals(row1.size(), visited.size());
 
@@ -85,7 +85,7 @@ public class ContainedJoinQueryTest extends QueryTest
 			Object o1 = row1.get(i);
 			Object o2 = row2.get(i);
 
-			assertTrue(visited.contains(new Pair(o2, o1)));
+			assertTrue(visited.contains(new Pair<Object>(o2, o1)));
 		}
 	}
 
@@ -105,20 +105,20 @@ public class ContainedJoinQueryTest extends QueryTest
 		tree2.insert(o5 = new Object(), new AABB2(2, 2, 4, 4)); // Contained by o1
 		tree2.insert(o6 = new Object(), new AABB2(3, 3, 1, 1)); // Contained by o1, o2
 
-		List<Pair> visited1 = this.getVisited(tree1, tree2, new ContainedJoinQuery());
-		List<Pair> visited2 = this.getVisited(tree2, tree1, new ContainedJoinQuery());
+		List<Pair<Object>> visited1 = this.getVisited(tree1, tree2, new ContainedJoinQuery());
+		List<Pair<Object>> visited2 = this.getVisited(tree2, tree1, new ContainedJoinQuery());
 
 		assertEquals(4, visited1.size());
-		assertTrue(visited1.contains(new Pair(o2, o4)));
-		assertTrue(visited1.contains(new Pair(o2, o5)));
-		assertTrue(visited1.contains(new Pair(o3, o4)));
-		assertTrue(visited1.contains(new Pair(o3, o5)));
+		assertTrue(visited1.contains(new Pair<Object>(o2, o4)));
+		assertTrue(visited1.contains(new Pair<Object>(o2, o5)));
+		assertTrue(visited1.contains(new Pair<Object>(o3, o4)));
+		assertTrue(visited1.contains(new Pair<Object>(o3, o5)));
 
 		assertEquals(4, visited2.size());
-		assertTrue(visited2.contains(new Pair(o4, o1)));
-		assertTrue(visited2.contains(new Pair(o5, o1)));
-		assertTrue(visited2.contains(new Pair(o6, o1)));
-		assertTrue(visited2.contains(new Pair(o6, o2)));
+		assertTrue(visited2.contains(new Pair<Object>(o4, o1)));
+		assertTrue(visited2.contains(new Pair<Object>(o5, o1)));
+		assertTrue(visited2.contains(new Pair<Object>(o6, o1)));
+		assertTrue(visited2.contains(new Pair<Object>(o6, o2)));
 	}
 
 	@Test
@@ -145,8 +145,8 @@ public class ContainedJoinQueryTest extends QueryTest
 			row3.add(o3);
 		}
 
-		List<Pair> visited1 = this.getVisited(tree1, tree2, new ContainedJoinQuery());
-		List<Pair> visited2 = this.getVisited(tree2, tree1, new ContainedJoinQuery());
+		List<Pair<Object>> visited1 = this.getVisited(tree1, tree2, new ContainedJoinQuery());
+		List<Pair<Object>> visited2 = this.getVisited(tree2, tree1, new ContainedJoinQuery());
 
 		assertEquals(row1.size(), visited1.size());
 		assertEquals(row2.size(), visited2.size());
@@ -156,8 +156,8 @@ public class ContainedJoinQueryTest extends QueryTest
 			Object o2 = row2.get(i);
 			Object o3 = row3.get(i);
 
-			assertTrue(visited1.contains(new Pair(o3, o2)));
-			assertTrue(visited2.contains(new Pair(o2, o1)));
+			assertTrue(visited1.contains(new Pair<Object>(o3, o2)));
+			assertTrue(visited2.contains(new Pair<Object>(o2, o1)));
 		}
 	}
 }
