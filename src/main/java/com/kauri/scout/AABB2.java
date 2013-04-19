@@ -187,4 +187,30 @@ public class AABB2 implements AABB
 		x2 = Math.max(x2, aabb.getMaximum(0));
 		y2 = Math.max(y2, aabb.getMaximum(1));
 	}
+
+	@Override
+	public float distanceSquared(AABB aabb)
+	{
+		if (aabb.getDimensions() != 2) {
+			throw new IllegalArgumentException();
+		}
+
+		float dist = 0;
+
+		for (int i = 0; i < 2; i++) {
+			float ext = aabb.getMaximum(i) - aabb.getMinimum(i);
+			float pnt = aabb.getMinimum(i);
+
+			float min = this.getMinimum(i) - ext;
+			float max = this.getMaximum(i);
+
+			if (pnt < min) {
+				dist += (min - pnt) * (min - pnt);
+			} else if (pnt > max) {
+				dist += (pnt - max) * (pnt - max);
+			}
+		}
+
+		return dist;
+	}
 }

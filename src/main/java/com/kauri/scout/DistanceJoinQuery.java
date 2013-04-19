@@ -36,7 +36,7 @@ public class DistanceJoinQuery implements JoinQuery
 	@Override
 	public QueryResult query(AABB aabb1, AABB aabb2, boolean queryPartial)
 	{
-		if (getDistanceSquared(aabb1, aabb2) <= distanceSquared) {
+		if (aabb1.distanceSquared(aabb2) <= distanceSquared) {
 			return queryPartial ? QueryResult.SOME : QueryResult.ALL;
 		}
 
@@ -47,29 +47,5 @@ public class DistanceJoinQuery implements JoinQuery
 	public boolean isSymmetricRelation()
 	{
 		return true;
-	}
-
-	//
-	// TODO - document and abstract for reuse
-
-	private float getDistanceSquared(AABB aabb1, AABB aabb2)
-	{
-		float dist = 0;
-
-		for (int i = 0; i < aabb1.getDimensions(); i++) {
-			float ext = aabb2.getMaximum(i) - aabb2.getMinimum(i);
-			float pnt = aabb2.getMinimum(i);
-
-			float min = aabb1.getMinimum(i) - ext;
-			float max = aabb1.getMaximum(i);
-
-			if (pnt < min) {
-				dist += (min - pnt) * (min - pnt);
-			} else if (pnt > max) {
-				dist += (pnt - max) * (pnt - max);
-			}
-		}
-
-		return dist;
 	}
 }

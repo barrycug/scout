@@ -99,4 +99,13 @@ public interface AABB
 	 *            The other box.
 	 */
 	public void expand(AABB aabb);
+
+	/**
+	 * Returns the minimum distance between this box and the specified box.
+	 * 
+	 * @param aabb
+	 *            The other box.
+	 * @return The minimum distance between this box and the specified box.
+	 */
+	public float distanceSquared(AABB aabb);
 }
