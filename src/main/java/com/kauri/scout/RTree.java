@@ -250,14 +250,17 @@ public class RTree<E>
 	{
 		AABB[] volumes1 = new AABB[MAX_OBJECTS_PER_NODE + 1];
 		AABB[] volumes2 = new AABB[MAX_OBJECTS_PER_NODE + 1];
+
 		Object[] objects1 = new Object[MAX_OBJECTS_PER_NODE + 1];
 		Object[] objects2 = new Object[MAX_OBJECTS_PER_NODE + 1];
 
-		volumes1[0] = oldNode.volumes[0];
-		volumes2[0] = volume;
+		int seed = chooseSecondSeed(oldNode, volume);
 
-		objects1[0] = oldNode.entries[0];
-		objects2[0] = object;
+		volumes1[0] = volume;
+		objects1[0] = object;
+
+		volumes2[0] = oldNode.volumes[seed];
+		objects2[0] = oldNode.entries[seed];
 
 		int size1 = 1;
 		int size2 = 1;
@@ -265,11 +268,15 @@ public class RTree<E>
 		AABB median1 = volumes1[0].copy();
 		AABB median2 = volumes2[0].copy();
 
-		for (int i = 1; i < oldNode.numEntries; i++) {
-			double a = AABBUtil.distanceSquared(oldNode.volumes[i], median1);
-			double b = AABBUtil.distanceSquared(oldNode.volumes[i], median2);
+		for (int i = 0; i < oldNode.numEntries; i++) {
+			if (i == seed) {
+				continue;
+			}
 
-			if (a < b) {
+			double dist1 = AABBUtil.distanceSquared(oldNode.volumes[i], median1);
+			double dist2 = AABBUtil.distanceSquared(oldNode.volumes[i], median2);
+
+			if (dist1 < dist2) {
 				volumes1[size1] = oldNode.volumes[i];
 				objects1[size1] = oldNode.entries[i];
 				size1++;
@@ -311,57 +318,67 @@ public class RTree<E>
 		return newNode;
 	}
 
-	private void adjustMedian(AABB median, AABB[] volumes, int size)
+	private int chooseSecondSeed(Node<E> node, AABB firstSeed)
 	{
-		//
-		// TODO - combine loops?
+		int seed = 0;
+		float best = Float.NEGATIVE_INFINITY;
 
-		float[] sums = new float[median.getDimensions()];
-		float mass = 0;
+		for (int i = 0; i < MAX_OBJECTS_PER_NODE; i++) {
+			float dist = AABBUtil.distanceSquared(firstSeed, node.volumes[i]);
 
-		for (int i = 0; i < size; i++) {
-			AABB volume = volumes[i];
-
-			float t = 1;
-			for (int j = 0; j < volume.getDimensions(); j++) {
-				t *= volume.getMaximum(j) - volume.getMinimum(j);
+			if (dist > best) {
+				best = dist;
+				seed = i;
 			}
-
-			for (int j = 0; j < volume.getDimensions(); j++) {
-				sums[j] += (volume.getMinimum(j) + (volume.getMaximum(j) - volume.getMinimum(j)) / 2) * t;
-			}
-
-			mass += t;
 		}
 
-		for (int i = 0; i < sums.length; i++) {
-			median.setMinimum(i, sums[i] / mass);
-			median.setMaximum(i, sums[i] / mass);
+		return seed;
+	}
+
+	private void adjustMedian(AABB median, AABB[] volumes, int size)
+	{
+		float totalmass = 0;
+		float[] centers = new float[median.getDimensions()];
+
+		for (int i = 0; i < size; i++) {
+			float mass = volumes[i].getVolume();
+
+			for (int j = 0; j < median.getDimensions(); j++) {
+				centers[j] += AABBUtil.getCenter(volumes[i], j) * mass;
+			}
+
+			totalmass += mass;
+		}
+
+		for (int j = 0; j < median.getDimensions(); j++) {
+			median.setMinimum(j, centers[j] / totalmass);
+			median.setMaximum(j, centers[j] / totalmass);
 		}
 	}
 
 	private int moveToGroup(AABB[] volumes1, Object[] entries1, int size1, AABB[] volumes2, Object[] entries2, int size2, AABB median1, AABB median2)
 	{
-		int k = 0;
 		int i = 0;
-		while (i < size1 - k && size1 - k > 1) {
-			float a = AABBUtil.distanceSquared(volumes1[i], median1);
-			float b = AABBUtil.distanceSquared(volumes1[i], median2);
+		int transfers = 0;
 
-			if (b < a) {
-				volumes2[size2 + k] = volumes1[i];
-				entries2[size2 + k] = entries1[i];
+		while (i < size1 - transfers && size1 - transfers > 1) {
+			float dist1 = AABBUtil.distanceSquared(volumes1[i], median1);
+			float dist2 = AABBUtil.distanceSquared(volumes1[i], median2);
 
-				k++;
+			if (dist2 < dist1) {
+				volumes2[size2 + transfers] = volumes1[i];
+				entries2[size2 + transfers] = entries1[i];
 
-				volumes1[i] = volumes1[size1 - k];
-				entries1[i] = entries1[size1 - k];
+				transfers++;
+
+				volumes1[i] = volumes1[size1 - transfers];
+				entries1[i] = entries1[size1 - transfers];
 			} else {
 				i++;
 			}
 		}
 
-		return k;
+		return transfers;
 	}
 
 	@SuppressWarnings("unchecked")

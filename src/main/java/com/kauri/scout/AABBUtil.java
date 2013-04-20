@@ -27,6 +27,24 @@ package com.kauri.scout;
 public class AABBUtil
 {
 	/**
+	 * Returns the center point of the bounding box with respect to the specified dimension.
+	 * 
+	 * @param aabb
+	 *            The box.
+	 * @param dimension
+	 *            The dimension.
+	 * @return The center point of the bounding box with respect to the specified dimension.
+	 */
+	public static float getCenter(AABB aabb, int dimension)
+	{
+		if (dimension > aabb.getDimensions()) {
+			throw new IllegalArgumentException();
+		}
+
+		return aabb.getMinimum(dimension) + (aabb.getMaximum(dimension) - aabb.getMinimum(dimension)) / 2;
+	}
+
+	/**
 	 * Returns the minimum distance between two bounding boxes.
 	 * 
 	 * @param aabb1
