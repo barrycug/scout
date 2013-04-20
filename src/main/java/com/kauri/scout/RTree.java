@@ -33,6 +33,7 @@ public class RTree<E>
 {
 	private final static int MIN_OBJECTS_PER_NODE = 24;
 	private final static int MAX_OBJECTS_PER_NODE = 32;
+	private final static int MAX_SPLIT_ITERATIONS = 8;
 
 	private Node<E> root;
 	private Map<E, Node<E>> leafMap = new HashMap<E, Node<E>>();
@@ -245,36 +246,134 @@ public class RTree<E>
 		return node;
 	}
 
-	@SuppressWarnings("unchecked")
-	private Node<E> splitNode(Node<E> node, AABB aabb, Object object, boolean createLeaves)
+	private Node<E> splitNode(Node<E> oldNode, AABB aabb, Object object, boolean createLeaves)
 	{
-		Node<E> node1 = node;
-		Node<E> node2 = new Node<E>(createLeaves);
+		AABB[] volumes1 = new AABB[MAX_OBJECTS_PER_NODE + 1];
+		AABB[] volumes2 = new AABB[MAX_OBJECTS_PER_NODE + 1];
+		Object[] objects1 = new Object[MAX_OBJECTS_PER_NODE + 1];
+		Object[] objects2 = new Object[MAX_OBJECTS_PER_NODE + 1];
 
-		List<AABB> aabbs = new ArrayList<AABB>();
-		List<Object> objects = new ArrayList<Object>();
+		volumes1[0] = oldNode.bounds[0];
+		volumes2[0] = aabb;
 
-		for (int i = 0; i < node1.numEntries; i++) {
-			aabbs.add(node1.bounds[i]);
-			objects.add(node1.entries[i]);
-		}
+		objects1[0] = oldNode.entries[0];
+		objects2[0] = object;
 
-		clearEntries(node1);
+		int size1 = 1;
+		int size2 = 1;
 
-		aabbs.add(aabb);
-		objects.add(object);
+		AABB median1 = volumes1[0].copy();
+		AABB median2 = volumes2[0].copy();
 
-		for (int i = 0; i < aabbs.size(); i++) {
-			Node<E> target = i % 2 == 0 ? node1 : node2;
+		for (int i = 1; i < oldNode.numEntries; i++) {
+			double a = oldNode.bounds[i].distanceSquared(median1);
+			double b = oldNode.bounds[i].distanceSquared(median2);
 
-			addEntry(target, aabbs.get(i), objects.get(i));
-
-			if (!createLeaves) {
-				((Node<E>) objects.get(i)).parent = target;
+			if (a < b) {
+				volumes1[size1] = oldNode.bounds[i];
+				objects1[size1] = oldNode.entries[i];
+				size1++;
+			} else {
+				volumes2[size2] = oldNode.bounds[i];
+				objects2[size2] = oldNode.entries[i];
+				size2++;
 			}
 		}
 
-		return node2;
+		int iterations = 0;
+		while (iterations < MAX_SPLIT_ITERATIONS) {
+			adjustMedian(median1, volumes1, size1);
+			adjustMedian(median2, volumes2, size2);
+
+			int n = moveToGroup(volumes1, objects1, size1, volumes2, objects2, size2, median1, median2);
+
+			size1 -= n;
+			size2 += n;
+
+			int m = moveToGroup(volumes2, objects2, size2, volumes1, objects1, size1, median2, median1);
+
+			size1 += m;
+			size2 -= m;
+
+			if (n == 0 && m == 0) {
+				break;
+			}
+
+			iterations++;
+		}
+
+		clearEntries(oldNode);
+
+		Node<E> newNode = new Node<E>(createLeaves);
+		bulkAddEntry(oldNode, volumes1, objects1, size1, createLeaves);
+		bulkAddEntry(newNode, volumes2, objects2, size2, createLeaves);
+
+		return newNode;
+	}
+
+	private void adjustMedian(AABB median, AABB[] aabbs, int size)
+	{
+		//
+		// TODO - combine loops?
+
+		float[] sums = new float[median.getDimensions()];
+		float mass = 0;
+
+		for (int i = 0; i < size; i++) {
+			AABB a = aabbs[i];
+
+			float t = 1;
+			for (int j = 0; j < a.getDimensions(); j++) {
+				t *= a.getMaximum(j) - a.getMinimum(j);
+			}
+
+			for (int j = 0; j < a.getDimensions(); j++) {
+				sums[j] += (a.getMinimum(j) + (a.getMaximum(j) - a.getMinimum(j)) / 2) * t;
+			}
+
+			mass += t;
+		}
+
+		for (int i = 0; i < sums.length; i++) {
+			median.setMinimum(i, sums[i] / mass);
+			median.setMaximum(i, sums[i] / mass);
+		}
+	}
+
+	private int moveToGroup(AABB[] volumes1, Object[] entries1, int size1, AABB[] volumes2, Object[] entries2, int size2, AABB median1, AABB median2)
+	{
+		int k = 0;
+		int i = 0;
+		while (i < size1 - k && size1 - k > 1) {
+			float a = volumes1[i].distanceSquared(median1);
+			float b = volumes1[i].distanceSquared(median2);
+
+			if (b < a) {
+				volumes2[size2 + k] = volumes1[i];
+				entries2[size2 + k] = entries1[i];
+
+				k++;
+
+				volumes1[i] = volumes1[size1 - k];
+				entries1[i] = entries1[size1 - k];
+			} else {
+				i++;
+			}
+		}
+
+		return k;
+	}
+
+	@SuppressWarnings("unchecked")
+	private void bulkAddEntry(Node<E> target, AABB[] bounds, Object[] objects, int size, boolean createLeaves)
+	{
+		for (int i = 0; i < size; i++) {
+			addEntry(target, bounds[i], objects[i]);
+
+			if (!createLeaves) {
+				((Node<E>) objects[i]).parent = target;
+			}
+		}
 	}
 
 	//
