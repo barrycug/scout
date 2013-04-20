@@ -35,12 +35,12 @@ public class RTree<E>
 	private final static int MAX_OBJECTS_PER_NODE = 32;
 	private final static int MAX_SPLIT_ITERATIONS = 8;
 
-	private Node<E> root;
-	private Map<E, Node<E>> leafMap = new HashMap<E, Node<E>>();
+	private Node root;
+	private Map<E, Node> leafMap = new HashMap<E, Node>();
 
 	public RTree()
 	{
-		root = new Node<E>(true);
+		root = new Node(true);
 	}
 
 	public void query(Query query, QueryResultVisitor<E> visitor)
@@ -62,7 +62,7 @@ public class RTree<E>
 	// RECURSIVE
 
 	@SuppressWarnings("unchecked")
-	private void query(Query query, QueryResultVisitor<E> visitor, Node<E> node)
+	private void query(Query query, QueryResultVisitor<E> visitor, Node node)
 	{
 		if (node.isLeaf) {
 			for (int i = 0; i < node.numEntries; i++) {
@@ -75,9 +75,9 @@ public class RTree<E>
 				QueryResult result = query.query(node.volumes[i], true);
 
 				if (result == QueryResult.ALL) {
-					visitAllObjects(visitor, (Node<E>) node.entries[i]);
+					visitAllObjects(visitor, (Node) node.entries[i]);
 				} else if (result == QueryResult.SOME) {
-					query(query, visitor, (Node<E>) node.entries[i]);
+					query(query, visitor, (Node) node.entries[i]);
 				}
 			}
 		}
@@ -87,7 +87,7 @@ public class RTree<E>
 	// RECURSIVE
 
 	@SuppressWarnings("unchecked")
-	private <E2> void query(JoinQuery query, QueryJoinResultVisitor<E, E2> visitor, Node<E> node1, Node<E2> node2, boolean sameTree)
+	private <E2> void query(JoinQuery query, QueryJoinResultVisitor<E, E2> visitor, RTree<E>.Node node1, RTree<E2>.Node node2, boolean sameTree)
 	{
 		boolean queryBoth = sameTree && !query.isSymmetricRelation();
 
@@ -103,17 +103,17 @@ public class RTree<E>
 			}
 		} else if (node1.isLeaf) {
 			for (int i = 0; i < node2.numEntries; i++) {
-				query(query, visitor, node1, (Node<E2>) node2.entries[i], sameTree);
+				query(query, visitor, node1, (RTree<E2>.Node) node2.entries[i], sameTree);
 			}
 		} else if (node2.isLeaf) {
 			for (int i = 0; i < node1.numEntries; i++) {
-				query(query, visitor, (Node<E>) node1.entries[i], node2, sameTree);
+				query(query, visitor, (RTree<E>.Node) node1.entries[i], node2, sameTree);
 			}
 		} else {
 			for (int i = 0; i < node1.numEntries; i++) {
 				for (int j = node1 == node2 ? i : 0; j < node2.numEntries; j++) {
 					if (query.query(node1.volumes[i], node2.volumes[j], true) != QueryResult.NONE || (queryBoth && query.query(node2.volumes[j], node1.volumes[i], true) != QueryResult.NONE)) {
-						query(query, visitor, (Node<E>) node1.entries[i], (Node<E2>) node2.entries[j], sameTree);
+						query(query, visitor, (RTree<E>.Node) node1.entries[i], (RTree<E2>.Node) node2.entries[j], sameTree);
 					}
 				}
 			}
@@ -124,7 +124,7 @@ public class RTree<E>
 	// RECURSIVE
 
 	@SuppressWarnings("unchecked")
-	private void visitAllObjects(QueryResultVisitor<E> visitor, Node<E> node)
+	private void visitAllObjects(QueryResultVisitor<E> visitor, Node node)
 	{
 		if (node.isLeaf) {
 			for (int i = 0; i < node.numEntries; i++) {
@@ -132,31 +132,31 @@ public class RTree<E>
 			}
 		} else {
 			for (int i = 0; i < node.numEntries; i++) {
-				visitAllObjects(visitor, (Node<E>) node.entries[i]);
+				visitAllObjects(visitor, (Node) node.entries[i]);
 			}
 		}
 	}
 
 	public void insert(E object, AABB volume)
 	{
-		Node<E> node1 = chooseLeaf(volume);
-		Node<E> node2 = null;
+		Node node1 = chooseLeaf(volume);
+		Node node2 = null;
 
 		if (node1.numEntries + 1 <= MAX_OBJECTS_PER_NODE) {
-			addEntry(node1, volume, object);
+			node1.add(volume, object);
 		} else {
 			node2 = splitNode(node1, volume, object, true);
 		}
 
 		while (node1 != root) {
-			Node<E> parent = node1.parent;
-			Node<E> psplit = null;
+			Node parent = node1.parent;
+			Node psplit = null;
 
 			updateVolumes(parent, node1);
 
 			if (node2 != null) {
 				if (parent.numEntries + 1 <= MAX_OBJECTS_PER_NODE) {
-					addEntry(parent, getVolumeForNode(node2), node2);
+					parent.add(getVolumeForNode(node2), node2);
 					node2.parent = parent;
 				} else {
 					psplit = splitNode(parent, getVolumeForNode(node2), node2, false);
@@ -168,9 +168,9 @@ public class RTree<E>
 		}
 
 		if (node2 != null) {
-			root = new Node<E>(false);
-			addEntry(root, getVolumeForNode(node1), node1);
-			addEntry(root, getVolumeForNode(node2), node2);
+			root = new Node(false);
+			root.add(getVolumeForNode(node1), node1);
+			root.add(getVolumeForNode(node2), node2);
 
 			node1.parent = root;
 			node2.parent = root;
@@ -178,9 +178,9 @@ public class RTree<E>
 	}
 
 	@SuppressWarnings("unchecked")
-	private Node<E> chooseLeaf(AABB volume)
+	private Node chooseLeaf(AABB volume)
 	{
-		Node<E> node = root;
+		Node node = root;
 
 		while (!node.isLeaf) {
 			int index = 0;
@@ -202,13 +202,13 @@ public class RTree<E>
 				}
 			}
 
-			node = (Node<E>) node.entries[index];
+			node = (Node) node.entries[index];
 		}
 
 		return node;
 	}
 
-	private Node<E> splitNode(Node<E> oldNode, AABB volume, Object object, boolean createLeaves)
+	private Node splitNode(Node oldNode, AABB volume, Object object, boolean createLeaves)
 	{
 		AABB[] volumes1 = new AABB[MAX_OBJECTS_PER_NODE + 1];
 		AABB[] volumes2 = new AABB[MAX_OBJECTS_PER_NODE + 1];
@@ -258,14 +258,14 @@ public class RTree<E>
 
 		clearEntries(oldNode);
 
-		Node<E> newNode = new Node<E>(createLeaves);
+		Node newNode = new Node(createLeaves);
 
 		partitionEntries(oldNode, newNode, volumes1, volumes2, entries1, entries2, size1, size2, createLeaves);
 
 		return newNode;
 	}
 
-	private void partitionEntries(Node<E> oldNode, Node<E> newNode, AABB[] volumes1, AABB[] volumes2, Object[] entries1, Object[] entries2, int size1, int size2, boolean createLeaves)
+	private void partitionEntries(Node oldNode, Node newNode, AABB[] volumes1, AABB[] volumes2, Object[] entries1, Object[] entries2, int size1, int size2, boolean createLeaves)
 	{
 		AABB median1 = volumes1[0].copy();
 		AABB median2 = volumes2[0].copy();
@@ -342,7 +342,7 @@ public class RTree<E>
 		return transfers;
 	}
 
-	private void clearEntries(Node<E> node)
+	private void clearEntries(Node node)
 	{
 		for (int i = 0; i < node.numEntries; i++) {
 			if (node.isLeaf) {
@@ -357,18 +357,18 @@ public class RTree<E>
 	}
 
 	@SuppressWarnings("unchecked")
-	private void bulkAddEntry(Node<E> target, AABB[] volumes, Object[] entries, int size, boolean createLeaves)
+	private void bulkAddEntry(Node target, AABB[] volumes, Object[] entries, int size, boolean createLeaves)
 	{
 		for (int i = 0; i < size; i++) {
-			addEntry(target, volumes[i], entries[i]);
+			target.add(volumes[i], entries[i]);
 
 			if (!createLeaves) {
-				((Node<E>) entries[i]).parent = target;
+				((Node) entries[i]).parent = target;
 			}
 		}
 	}
 
-	private boolean updateVolumes(Node<E> parent, Node<E> node)
+	private boolean updateVolumes(Node parent, Node node)
 	{
 		for (int i = 0; i < parent.numEntries; i++) {
 			if (parent.entries[i] == node) {
@@ -380,7 +380,7 @@ public class RTree<E>
 		return false;
 	}
 
-	private AABB getVolumeForNode(Node<E> node)
+	private AABB getVolumeForNode(Node node)
 	{
 		AABB volume = node.volumes[0].copy();
 
@@ -413,21 +413,21 @@ public class RTree<E>
 	@SuppressWarnings("unchecked")
 	public void remove(E object)
 	{
-		Node<E> node = leafMap.get(object);
+		Node node = leafMap.get(object);
 
 		if (node == null) {
 			return;
 		}
 
-		removeEntry(node, object);
+		node.remove(object);
 
-		List<Node<E>> queue = new ArrayList<Node<E>>();
+		List<Node> queue = new ArrayList<Node>();
 
 		while (node != root) {
-			Node<E> parent = node.parent;
+			Node parent = node.parent;
 
 			if (node.numEntries < MIN_OBJECTS_PER_NODE) {
-				removeEntry(parent, node);
+				parent.remove(node);
 				queue.add(node);
 			} else {
 				updateVolumes(parent, node);
@@ -436,12 +436,12 @@ public class RTree<E>
 			node = parent;
 		}
 
-		for (Node<E> n : queue) {
+		for (Node n : queue) {
 			reinsert(n);
 		}
 
 		if (!root.isLeaf && root.numEntries == 1) {
-			root = (Node<E>) root.entries[0];
+			root = (Node) root.entries[0];
 			root.parent = null;
 		}
 	}
@@ -450,54 +450,20 @@ public class RTree<E>
 	// RECURSIVE
 
 	@SuppressWarnings("unchecked")
-	private void reinsert(Node<E> node)
+	private void reinsert(Node node)
 	{
 		for (int i = 0; i < node.numEntries; i++) {
 			if (node.isLeaf) {
 				insert((E) node.entries[i], node.volumes[i]);
 			} else {
-				reinsert((Node<E>) node.entries[i]);
+				reinsert((Node) node.entries[i]);
 			}
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private void addEntry(Node<E> node, AABB volume, Object object)
+	private class Node
 	{
-		node.volumes[node.numEntries] = volume;
-		node.entries[node.numEntries] = object;
-		node.numEntries++;
-
-		if (node.isLeaf) {
-			leafMap.put((E) object, node);
-		}
-	}
-
-	private boolean removeEntry(Node<E> node, Object object)
-	{
-		for (int i = 0; i < node.numEntries; i++) {
-			if (node.entries[i] == object) {
-				if (node.isLeaf) {
-					leafMap.remove(object);
-				}
-
-				node.volumes[i] = node.volumes[node.numEntries - 1];
-				node.entries[i] = node.entries[node.numEntries - 1];
-
-				node.volumes[node.numEntries - 1] = null;
-				node.entries[node.numEntries - 1] = null;
-
-				node.numEntries--;
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	static class Node<E>
-	{
-		private Node<E> parent;
+		private Node parent;
 		private boolean isLeaf;
 		private int numEntries;
 		private AABB[] volumes = new AABB[MAX_OBJECTS_PER_NODE];
@@ -506,6 +472,36 @@ public class RTree<E>
 		public Node(boolean isLeaf)
 		{
 			this.isLeaf = isLeaf;
+		}
+
+		@SuppressWarnings("unchecked")
+		public void add(AABB volume, Object object)
+		{
+			volumes[numEntries] = volume;
+			entries[numEntries] = object;
+			numEntries++;
+
+			if (isLeaf) {
+				leafMap.put((E) object, this);
+			}
+		}
+
+		public void remove(Object object)
+		{
+			for (int i = 0; i < numEntries; i++) {
+				if (entries[i] == object) {
+					if (isLeaf) {
+						leafMap.remove(object);
+					}
+
+					numEntries--;
+					volumes[i] = volumes[numEntries];
+					entries[i] = entries[numEntries];
+
+					volumes[numEntries] = null;
+					entries[numEntries] = null;
+				}
+			}
 		}
 	}
 }
