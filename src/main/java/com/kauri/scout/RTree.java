@@ -133,15 +133,15 @@ public class RTree<E>
 		}
 	}
 
-	public void insert(E object, AABB aabb)
+	public void insert(E object, AABB volume)
 	{
-		Node<E> node1 = chooseLeaf(aabb);
+		Node<E> node1 = chooseLeaf(volume);
 		Node<E> node2 = null;
 
 		if (node1.numEntries + 1 <= MAX_OBJECTS_PER_NODE) {
-			addEntry(node1, aabb, object);
+			addEntry(node1, volume, object);
 		} else {
-			node2 = splitNode(node1, aabb, object, true);
+			node2 = splitNode(node1, volume, object, true);
 		}
 
 		while (node1 != root) {
@@ -209,14 +209,14 @@ public class RTree<E>
 		}
 	}
 
-	public void update(E object, AABB aabb)
+	public void update(E object, AABB volume)
 	{
 		remove(object);
-		insert(object, aabb);
+		insert(object, volume);
 	}
 
 	@SuppressWarnings("unchecked")
-	private Node<E> chooseLeaf(AABB aabb)
+	private Node<E> chooseLeaf(AABB volume)
 	{
 		Node<E> node = root;
 
@@ -227,9 +227,9 @@ public class RTree<E>
 			for (int i = 0; i < node.numEntries; i++) {
 				float increase = 1;
 
-				for (int j = 0; j < aabb.getDimensions(); j++) {
-					float min = Math.min(node.volumes[i].getMinimum(j), aabb.getMinimum(j));
-					float max = Math.max(node.volumes[i].getMaximum(j), aabb.getMaximum(j));
+				for (int j = 0; j < volume.getDimensions(); j++) {
+					float min = Math.min(node.volumes[i].getMinimum(j), volume.getMinimum(j));
+					float max = Math.max(node.volumes[i].getMaximum(j), volume.getMaximum(j));
 
 					increase *= max - min;
 				}
@@ -246,7 +246,7 @@ public class RTree<E>
 		return node;
 	}
 
-	private Node<E> splitNode(Node<E> oldNode, AABB aabb, Object object, boolean createLeaves)
+	private Node<E> splitNode(Node<E> oldNode, AABB volume, Object object, boolean createLeaves)
 	{
 		AABB[] volumes1 = new AABB[MAX_OBJECTS_PER_NODE + 1];
 		AABB[] volumes2 = new AABB[MAX_OBJECTS_PER_NODE + 1];
@@ -254,7 +254,7 @@ public class RTree<E>
 		Object[] objects2 = new Object[MAX_OBJECTS_PER_NODE + 1];
 
 		volumes1[0] = oldNode.volumes[0];
-		volumes2[0] = aabb;
+		volumes2[0] = volume;
 
 		objects1[0] = oldNode.entries[0];
 		objects2[0] = object;
@@ -311,7 +311,7 @@ public class RTree<E>
 		return newNode;
 	}
 
-	private void adjustMedian(AABB median, AABB[] aabbs, int size)
+	private void adjustMedian(AABB median, AABB[] volumes, int size)
 	{
 		//
 		// TODO - combine loops?
@@ -320,15 +320,15 @@ public class RTree<E>
 		float mass = 0;
 
 		for (int i = 0; i < size; i++) {
-			AABB a = aabbs[i];
+			AABB volume = volumes[i];
 
 			float t = 1;
-			for (int j = 0; j < a.getDimensions(); j++) {
-				t *= a.getMaximum(j) - a.getMinimum(j);
+			for (int j = 0; j < volume.getDimensions(); j++) {
+				t *= volume.getMaximum(j) - volume.getMinimum(j);
 			}
 
-			for (int j = 0; j < a.getDimensions(); j++) {
-				sums[j] += (a.getMinimum(j) + (a.getMaximum(j) - a.getMinimum(j)) / 2) * t;
+			for (int j = 0; j < volume.getDimensions(); j++) {
+				sums[j] += (volume.getMinimum(j) + (volume.getMaximum(j) - volume.getMinimum(j)) / 2) * t;
 			}
 
 			mass += t;
@@ -405,19 +405,19 @@ public class RTree<E>
 
 	private AABB getVolumeForNode(Node<E> node)
 	{
-		AABB aabb = node.volumes[0].copy();
+		AABB volume = node.volumes[0].copy();
 
 		for (int i = 1; i < node.numEntries; i++) {
-			aabb.expand(node.volumes[i]);
+			volume.expand(node.volumes[i]);
 		}
 
-		return aabb;
+		return volume;
 	}
 
 	@SuppressWarnings("unchecked")
-	private void addEntry(Node<E> node, AABB aabb, Object object)
+	private void addEntry(Node<E> node, AABB volume, Object object)
 	{
-		node.volumes[node.numEntries] = aabb;
+		node.volumes[node.numEntries] = volume;
 		node.entries[node.numEntries] = object;
 		node.numEntries++;
 
