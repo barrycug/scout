@@ -132,6 +132,20 @@ public class AABB3 implements AABB
 	}
 
 	@Override
+	public void setMinimum(int dimension, float minimum)
+	{
+		if (dimension == 0) {
+			x1 = minimum;
+		} else if (dimension == 1) {
+			y1 = minimum;
+		} else if (dimension == 2) {
+			z1 = minimum;
+		} else {
+			throw new IllegalArgumentException();
+		}
+	}
+
+	@Override
 	public float getMaximum(int dimension)
 	{
 		if (dimension == 0) {
@@ -147,6 +161,20 @@ public class AABB3 implements AABB
 		}
 
 		throw new IllegalArgumentException();
+	}
+
+	@Override
+	public void setMaximum(int dimension, float maximum)
+	{
+		if (dimension == 0) {
+			x2 = maximum;
+		} else if (dimension == 1) {
+			y2 = maximum;
+		} else if (dimension == 2) {
+			z2 = maximum;
+		} else {
+			throw new IllegalArgumentException();
+		}
 	}
 
 	@Override

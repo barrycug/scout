@@ -52,6 +52,16 @@ public interface AABB
 	public float getMinimum(int dimension);
 
 	/**
+	 * Updates the minimum value in the given dimension.
+	 * 
+	 * @param dimension
+	 *            The dimension.
+	 * @param minimum
+	 *            The minimum value in the given dimension.
+	 */
+	public void setMinimum(int dimension, float minimum);
+
+	/**
 	 * Returns the maximum value in the given dimension.
 	 * 
 	 * @param dimension
@@ -59,6 +69,16 @@ public interface AABB
 	 * @return The maximum value in the given dimension.
 	 */
 	public float getMaximum(int dimension);
+
+	/**
+	 * Updates the maximum value in the given dimension.
+	 * 
+	 * @param dimension
+	 *            The dimension.
+	 * @param minimum
+	 *            The maximum value in the given dimension.
+	 */
+	public void setMaximum(int dimension, float maximum);
 
 	/**
 	 * Returns the sum of the edges composing the box.
