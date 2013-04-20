@@ -64,12 +64,14 @@ public class RTree<E>
 	@SuppressWarnings("unchecked")
 	private void query(Query query, QueryResultVisitor<E> visitor, Node<E> node)
 	{
-		for (int i = 0; i < node.numEntries; i++) {
-			if (node.isLeaf) {
+		if (node.isLeaf) {
+			for (int i = 0; i < node.numEntries; i++) {
 				if (query.query(node.volumes[i], false) == QueryResult.ALL) {
 					visitor.visit((E) node.entries[i]);
 				}
-			} else {
+			}
+		} else {
+			for (int i = 0; i < node.numEntries; i++) {
 				QueryResult result = query.query(node.volumes[i], true);
 
 				if (result == QueryResult.ALL) {
@@ -124,10 +126,12 @@ public class RTree<E>
 	@SuppressWarnings("unchecked")
 	private void visitAllObjects(QueryResultVisitor<E> visitor, Node<E> node)
 	{
-		for (int i = 0; i < node.numEntries; i++) {
-			if (node.isLeaf) {
+		if (node.isLeaf) {
+			for (int i = 0; i < node.numEntries; i++) {
 				visitor.visit((E) node.entries[i]);
-			} else {
+			}
+		} else {
+			for (int i = 0; i < node.numEntries; i++) {
 				visitAllObjects(visitor, (Node<E>) node.entries[i]);
 			}
 		}
@@ -171,48 +175,6 @@ public class RTree<E>
 			node1.parent = root;
 			node2.parent = root;
 		}
-	}
-
-	@SuppressWarnings("unchecked")
-	public void remove(E object)
-	{
-		Node<E> node = leafMap.get(object);
-
-		if (node == null) {
-			return;
-		}
-
-		removeEntry(node, object);
-
-		List<Node<E>> queue = new ArrayList<Node<E>>();
-
-		while (node != root) {
-			Node<E> parent = node.parent;
-
-			if (node.numEntries < MIN_OBJECTS_PER_NODE) {
-				removeEntry(parent, node);
-				queue.add(node);
-			} else {
-				updateVolumes(parent, node);
-			}
-
-			node = parent;
-		}
-
-		for (Node<E> n : queue) {
-			reinsert(n);
-		}
-
-		if (!root.isLeaf && root.numEntries == 1) {
-			root = (Node<E>) root.entries[0];
-			root.parent = null;
-		}
-	}
-
-	public void update(E object, AABB volume)
-	{
-		remove(object);
-		insert(object, volume);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -406,21 +368,6 @@ public class RTree<E>
 		}
 	}
 
-	//
-	// RECURSIVE
-
-	@SuppressWarnings("unchecked")
-	private void reinsert(Node<E> node)
-	{
-		for (int i = 0; i < node.numEntries; i++) {
-			if (node.isLeaf) {
-				insert((E) node.entries[i], node.volumes[i]);
-			} else {
-				reinsert((Node<E>) node.entries[i]);
-			}
-		}
-	}
-
 	private boolean updateVolumes(Node<E> parent, Node<E> node)
 	{
 		for (int i = 0; i < parent.numEntries; i++) {
@@ -455,6 +402,63 @@ public class RTree<E>
 		}
 
 		return volume;
+	}
+
+	public void update(E object, AABB volume)
+	{
+		remove(object);
+		insert(object, volume);
+	}
+
+	@SuppressWarnings("unchecked")
+	public void remove(E object)
+	{
+		Node<E> node = leafMap.get(object);
+
+		if (node == null) {
+			return;
+		}
+
+		removeEntry(node, object);
+
+		List<Node<E>> queue = new ArrayList<Node<E>>();
+
+		while (node != root) {
+			Node<E> parent = node.parent;
+
+			if (node.numEntries < MIN_OBJECTS_PER_NODE) {
+				removeEntry(parent, node);
+				queue.add(node);
+			} else {
+				updateVolumes(parent, node);
+			}
+
+			node = parent;
+		}
+
+		for (Node<E> n : queue) {
+			reinsert(n);
+		}
+
+		if (!root.isLeaf && root.numEntries == 1) {
+			root = (Node<E>) root.entries[0];
+			root.parent = null;
+		}
+	}
+
+	//
+	// RECURSIVE
+
+	@SuppressWarnings("unchecked")
+	private void reinsert(Node<E> node)
+	{
+		for (int i = 0; i < node.numEntries; i++) {
+			if (node.isLeaf) {
+				insert((E) node.entries[i], node.volumes[i]);
+			} else {
+				reinsert((Node<E>) node.entries[i]);
+			}
+		}
 	}
 
 	@SuppressWarnings("unchecked")
