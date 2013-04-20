@@ -251,53 +251,74 @@ public class RTree<E>
 		AABB[] volumes1 = new AABB[MAX_OBJECTS_PER_NODE + 1];
 		AABB[] volumes2 = new AABB[MAX_OBJECTS_PER_NODE + 1];
 
-		Object[] objects1 = new Object[MAX_OBJECTS_PER_NODE + 1];
-		Object[] objects2 = new Object[MAX_OBJECTS_PER_NODE + 1];
+		Object[] entries1 = new Object[MAX_OBJECTS_PER_NODE + 1];
+		Object[] entries2 = new Object[MAX_OBJECTS_PER_NODE + 1];
 
-		int seed = chooseSecondSeed(oldNode, volume);
+		int seed = 0;
+		float best = Float.NEGATIVE_INFINITY;
+
+		for (int i = 0; i < MAX_OBJECTS_PER_NODE; i++) {
+			float dist = AABBUtil.distanceSquared(volume, oldNode.volumes[i]);
+
+			if (dist > best) {
+				best = dist;
+				seed = i;
+			}
+		}
 
 		volumes1[0] = volume;
-		objects1[0] = object;
+		entries1[0] = object;
 
 		volumes2[0] = oldNode.volumes[seed];
-		objects2[0] = oldNode.entries[seed];
+		entries2[0] = oldNode.entries[seed];
 
 		int size1 = 1;
 		int size2 = 1;
-
-		AABB median1 = volumes1[0].copy();
-		AABB median2 = volumes2[0].copy();
 
 		for (int i = 0; i < oldNode.numEntries; i++) {
 			if (i == seed) {
 				continue;
 			}
 
-			double dist1 = AABBUtil.distanceSquared(oldNode.volumes[i], median1);
-			double dist2 = AABBUtil.distanceSquared(oldNode.volumes[i], median2);
+			double dist1 = AABBUtil.distanceSquared(oldNode.volumes[i], volumes1[0]);
+			double dist2 = AABBUtil.distanceSquared(oldNode.volumes[i], volumes2[0]);
 
 			if (dist1 < dist2) {
 				volumes1[size1] = oldNode.volumes[i];
-				objects1[size1] = oldNode.entries[i];
+				entries1[size1] = oldNode.entries[i];
 				size1++;
 			} else {
 				volumes2[size2] = oldNode.volumes[i];
-				objects2[size2] = oldNode.entries[i];
+				entries2[size2] = oldNode.entries[i];
 				size2++;
 			}
 		}
+
+		clearEntries(oldNode);
+
+		Node<E> newNode = new Node<E>(createLeaves);
+
+		partitionEntries(oldNode, newNode, volumes1, volumes2, entries1, entries2, size1, size2, createLeaves);
+
+		return newNode;
+	}
+
+	private void partitionEntries(Node<E> oldNode, Node<E> newNode, AABB[] volumes1, AABB[] volumes2, Object[] entries1, Object[] entries2, int size1, int size2, boolean createLeaves)
+	{
+		AABB median1 = volumes1[0].copy();
+		AABB median2 = volumes2[0].copy();
 
 		int iterations = 0;
 		while (iterations < MAX_SPLIT_ITERATIONS) {
 			adjustMedian(median1, volumes1, size1);
 			adjustMedian(median2, volumes2, size2);
 
-			int n = moveToGroup(volumes1, objects1, size1, volumes2, objects2, size2, median1, median2);
+			int n = moveToGroup(volumes1, entries1, size1, volumes2, entries2, size2, median1, median2);
 
 			size1 -= n;
 			size2 += n;
 
-			int m = moveToGroup(volumes2, objects2, size2, volumes1, objects1, size1, median2, median1);
+			int m = moveToGroup(volumes2, entries2, size2, volumes1, entries1, size1, median2, median1);
 
 			size1 += m;
 			size2 -= m;
@@ -309,30 +330,8 @@ public class RTree<E>
 			iterations++;
 		}
 
-		clearEntries(oldNode);
-
-		Node<E> newNode = new Node<E>(createLeaves);
-		bulkAddEntry(oldNode, volumes1, objects1, size1, createLeaves);
-		bulkAddEntry(newNode, volumes2, objects2, size2, createLeaves);
-
-		return newNode;
-	}
-
-	private int chooseSecondSeed(Node<E> node, AABB firstSeed)
-	{
-		int seed = 0;
-		float best = Float.NEGATIVE_INFINITY;
-
-		for (int i = 0; i < MAX_OBJECTS_PER_NODE; i++) {
-			float dist = AABBUtil.distanceSquared(firstSeed, node.volumes[i]);
-
-			if (dist > best) {
-				best = dist;
-				seed = i;
-			}
-		}
-
-		return seed;
+		bulkAddEntry(oldNode, volumes1, entries1, size1, createLeaves);
+		bulkAddEntry(newNode, volumes2, entries2, size2, createLeaves);
 	}
 
 	private void adjustMedian(AABB median, AABB[] volumes, int size)
@@ -379,6 +378,20 @@ public class RTree<E>
 		}
 
 		return transfers;
+	}
+
+	private void clearEntries(Node<E> node)
+	{
+		for (int i = 0; i < node.numEntries; i++) {
+			if (node.isLeaf) {
+				leafMap.remove(node.entries[i]);
+			}
+
+			node.volumes[i] = null;
+			node.entries[i] = null;
+		}
+
+		node.numEntries = 0;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -476,20 +489,6 @@ public class RTree<E>
 		}
 
 		return false;
-	}
-
-	private void clearEntries(Node<E> node)
-	{
-		for (int i = 0; i < node.numEntries; i++) {
-			if (node.isLeaf) {
-				leafMap.remove(node.entries[i]);
-			}
-
-			node.volumes[i] = null;
-			node.entries[i] = null;
-		}
-
-		node.numEntries = 0;
 	}
 
 	static class Node<E>
