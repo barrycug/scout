@@ -36,7 +36,7 @@ public class DistanceJoinQuery implements JoinQuery
 	@Override
 	public QueryResult query(AABB aabb1, AABB aabb2, boolean queryPartial)
 	{
-		if (aabb1.distanceSquared(aabb2) <= distanceSquared) {
+		if (AABBUtil.distanceSquared(aabb1, aabb2) <= distanceSquared) {
 			return queryPartial ? QueryResult.SOME : QueryResult.ALL;
 		}
 

@@ -178,12 +178,6 @@ public class AABB3 implements AABB
 	}
 
 	@Override
-	public float getMargin()
-	{
-		return (x2 - x1) + (y2 - y1) + (z2 - z1);
-	}
-
-	@Override
 	public float getVolume()
 	{
 		return (x2 - x1) * (y2 - y1) * (z2 - z1);
@@ -231,46 +225,5 @@ public class AABB3 implements AABB
 		}
 
 		return true;
-	}
-
-	@Override
-	public void expand(AABB aabb)
-	{
-		if (aabb.getDimensions() != 3) {
-			throw new IllegalArgumentException();
-		}
-
-		x1 = Math.min(x1, aabb.getMinimum(0));
-		y1 = Math.min(y1, aabb.getMinimum(1));
-		z1 = Math.min(z1, aabb.getMinimum(2));
-		x2 = Math.max(x2, aabb.getMaximum(0));
-		y2 = Math.max(y2, aabb.getMaximum(1));
-		z2 = Math.max(z2, aabb.getMaximum(2));
-	}
-
-	@Override
-	public float distanceSquared(AABB aabb)
-	{
-		if (aabb.getDimensions() != 3) {
-			throw new IllegalArgumentException();
-		}
-
-		float dist = 0;
-
-		for (int i = 0; i < 3; i++) {
-			float ext = aabb.getMaximum(i) - aabb.getMinimum(i);
-			float pnt = aabb.getMinimum(i);
-
-			float min = this.getMinimum(i) - ext;
-			float max = this.getMaximum(i);
-
-			if (pnt < min) {
-				dist += (min - pnt) * (min - pnt);
-			} else if (pnt > max) {
-				dist += (pnt - max) * (pnt - max);
-			}
-		}
-
-		return dist;
 	}
 }

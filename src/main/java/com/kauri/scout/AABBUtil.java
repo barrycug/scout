@@ -24,24 +24,38 @@ package com.kauri.scout;
 /**
  * @author Eric Fritz
  */
-class DistanceQuery implements Query
+public class AABBUtil
 {
-	private AABB aabb;
-	private float distanceSquared;
-
-	public DistanceQuery(AABB aabb, float distance)
+	/**
+	 * Returns the minimum distance between two bounding boxes.
+	 * 
+	 * @param aabb1
+	 *            The first box.
+	 * @param aabb2
+	 *            The second box.
+	 * @return The minimum distance between two bounding boxes.
+	 */
+	public static float distanceSquared(AABB aabb1, AABB aabb2)
 	{
-		this.aabb = aabb;
-		this.distanceSquared = distance * distance;
-	}
-
-	@Override
-	public QueryResult query(AABB aabb, boolean queryPartial)
-	{
-		if (AABBUtil.distanceSquared(this.aabb, aabb) <= distanceSquared) {
-			return queryPartial ? QueryResult.SOME : QueryResult.ALL;
+		if (aabb1.getDimensions() != aabb2.getDimensions()) {
+			throw new IllegalArgumentException();
 		}
 
-		return QueryResult.NONE;
+		float dist = 0;
+		for (int i = 0; i < aabb1.getDimensions(); i++) {
+			float ext = aabb2.getMaximum(i) - aabb2.getMinimum(i);
+			float pnt = aabb2.getMinimum(i);
+
+			float min = aabb1.getMinimum(i) - ext;
+			float max = aabb1.getMaximum(i);
+
+			if (pnt < min) {
+				dist += (min - pnt) * (min - pnt);
+			} else if (pnt > max) {
+				dist += (pnt - max) * (pnt - max);
+			}
+		}
+
+		return dist;
 	}
 }

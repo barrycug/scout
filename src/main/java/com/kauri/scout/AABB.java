@@ -81,13 +81,6 @@ public interface AABB
 	public void setMaximum(int dimension, float maximum);
 
 	/**
-	 * Returns the sum of the edges composing the box.
-	 * 
-	 * @return The sum of the edges composing the box.
-	 */
-	public float getMargin();
-
-	/**
 	 * Returns the product of the edges composing the box.
 	 * 
 	 * @return The product of the edges composing the box.
@@ -111,21 +104,4 @@ public interface AABB
 	 * @return <tt>true</tt> if this box intersects with the specified box.
 	 */
 	public boolean intersects(AABB aabb);
-
-	/**
-	 * Expands the bounds of this box so that it contains the specified box.
-	 * 
-	 * @param aabb
-	 *            The other box.
-	 */
-	public void expand(AABB aabb);
-
-	/**
-	 * Returns the minimum distance between this box and the specified box.
-	 * 
-	 * @param aabb
-	 *            The other box.
-	 * @return The minimum distance between this box and the specified box.
-	 */
-	public float distanceSquared(AABB aabb);
 }

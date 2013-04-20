@@ -266,8 +266,8 @@ public class RTree<E>
 		AABB median2 = volumes2[0].copy();
 
 		for (int i = 1; i < oldNode.numEntries; i++) {
-			double a = oldNode.volumes[i].distanceSquared(median1);
-			double b = oldNode.volumes[i].distanceSquared(median2);
+			double a = AABBUtil.distanceSquared(oldNode.volumes[i], median1);
+			double b = AABBUtil.distanceSquared(oldNode.volumes[i], median2);
 
 			if (a < b) {
 				volumes1[size1] = oldNode.volumes[i];
@@ -345,8 +345,8 @@ public class RTree<E>
 		int k = 0;
 		int i = 0;
 		while (i < size1 - k && size1 - k > 1) {
-			float a = volumes1[i].distanceSquared(median1);
-			float b = volumes1[i].distanceSquared(median2);
+			float a = AABBUtil.distanceSquared(volumes1[i], median1);
+			float b = AABBUtil.distanceSquared(volumes1[i], median2);
 
 			if (b < a) {
 				volumes2[size2 + k] = volumes1[i];
@@ -408,7 +408,20 @@ public class RTree<E>
 		AABB volume = node.volumes[0].copy();
 
 		for (int i = 1; i < node.numEntries; i++) {
-			volume.expand(node.volumes[i]);
+			for (int j = 0; j < volume.getDimensions(); j++) {
+				float min1 = volume.getMinimum(j);
+				float max1 = volume.getMaximum(j);
+				float min2 = node.volumes[i].getMinimum(j);
+				float max2 = node.volumes[i].getMaximum(j);
+
+				if (min2 < min1) {
+					volume.setMinimum(j, min2);
+				}
+
+				if (max2 > max1) {
+					volume.setMaximum(j, max2);
+				}
+			}
 		}
 
 		return volume;
