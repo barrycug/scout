@@ -256,7 +256,7 @@ public class RTree<E>
 			}
 		}
 
-		clearEntries(oldNode);
+		oldNode.clear();
 
 		Node newNode = new Node(createLeaves);
 
@@ -340,20 +340,6 @@ public class RTree<E>
 		}
 
 		return transfers;
-	}
-
-	private void clearEntries(Node node)
-	{
-		for (int i = 0; i < node.numEntries; i++) {
-			if (node.isLeaf) {
-				leafMap.remove(node.entries[i]);
-			}
-
-			node.volumes[i] = null;
-			node.entries[i] = null;
-		}
-
-		node.numEntries = 0;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -502,6 +488,20 @@ public class RTree<E>
 					entries[numEntries] = null;
 				}
 			}
+		}
+
+		public void clear()
+		{
+			for (int i = 0; i < numEntries; i++) {
+				if (isLeaf) {
+					leafMap.remove(entries[i]);
+				}
+
+				volumes[i] = null;
+				entries[i] = null;
+			}
+
+			numEntries = 0;
 		}
 	}
 }
