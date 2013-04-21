@@ -31,8 +31,8 @@ import java.util.Queue;
  */
 public class RTree<E>
 {
-	private final static int MIN_OBJECTS_PER_NODE = 24;
-	private final static int MAX_OBJECTS_PER_NODE = 32;
+	private final static int MIN_OBJECTS_PER_NODE = 5;
+	private final static int MAX_OBJECTS_PER_NODE = 8;
 	private final static int MAX_SPLIT_ITERATIONS = 8;
 
 	private Node root;
