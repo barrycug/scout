@@ -258,29 +258,38 @@ public class RTree<E>
 		Object[] entries1 = new Object[MAX_OBJECTS_PER_NODE];
 		Object[] entries2 = new Object[MAX_OBJECTS_PER_NODE];
 
-		int seed = 0;
-		float best = Float.NEGATIVE_INFINITY;
+		int seed1 = (int) (Math.random() * MAX_OBJECTS_PER_NODE);
+		int seed2 = 0;
 
-		for (int i = 0; i < MAX_OBJECTS_PER_NODE; i++) {
-			float dist = AABBUtil.distanceSquared(volume, oldNode.volumes[i]);
+		do {
+			seed2 = (int) (Math.random() * MAX_OBJECTS_PER_NODE);
+		} while (seed1 == seed2);
 
-			if (dist > best) {
-				best = dist;
-				seed = i;
-			}
-		}
-
-		volumes1[0] = volume;
-		entries1[0] = object;
-
-		volumes2[0] = oldNode.volumes[seed];
-		entries2[0] = oldNode.entries[seed];
+		volumes1[0] = oldNode.volumes[seed1];
+		entries1[0] = oldNode.entries[seed1];
+		volumes2[0] = oldNode.volumes[seed2];
+		entries2[0] = oldNode.entries[seed2];
 
 		int size1 = 1;
 		int size2 = 1;
 
+		{
+			double dist1 = AABBUtil.distanceSquared(volume, volumes1[0]);
+			double dist2 = AABBUtil.distanceSquared(volume, volumes2[0]);
+
+			if (dist1 < dist2) {
+				volumes1[size1] = volume;
+				entries1[size1] = object;
+				size1++;
+			} else {
+				volumes2[size2] = volume;
+				entries2[size2] = object;
+				size2++;
+			}
+		}
+
 		for (int i = 0; i < oldNode.numEntries; i++) {
-			if (i == seed) {
+			if (i == seed1 || i == seed2) {
 				continue;
 			}
 
