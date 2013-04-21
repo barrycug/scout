@@ -157,7 +157,6 @@ public class RTree<E>
 			if (node2 != null) {
 				if (parent.numEntries + 1 <= MAX_OBJECTS_PER_NODE) {
 					parent.add(getVolumeForNode(node2), node2);
-					node2.parent = parent;
 				} else {
 					psplit = splitNode(parent, getVolumeForNode(node2), node2);
 				}
@@ -171,9 +170,6 @@ public class RTree<E>
 			root = new Node(false);
 			root.add(getVolumeForNode(node1), node1);
 			root.add(getVolumeForNode(node2), node2);
-
-			node1.parent = root;
-			node2.parent = root;
 		}
 	}
 
@@ -342,15 +338,10 @@ public class RTree<E>
 		return transfers;
 	}
 
-	@SuppressWarnings("unchecked")
 	private void bulkAddEntry(Node target, AABB[] volumes, Object[] entries, int size)
 	{
 		for (int i = 0; i < size; i++) {
 			target.add(volumes[i], entries[i]);
-
-			if (!target.isLeaf) {
-				((Node) entries[i]).parent = target;
-			}
 		}
 	}
 
@@ -469,6 +460,8 @@ public class RTree<E>
 
 			if (isLeaf) {
 				leafMap.put((E) object, this);
+			} else {
+				((Node) object).parent = this;
 			}
 		}
 
