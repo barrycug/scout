@@ -238,6 +238,8 @@ public class RTree<E>
 					increase *= max - min;
 				}
 
+				increase -= node.volumes[i].getVolume();
+
 				if (increase < best || (increase == best && node.volumes[i].getVolume() < node.volumes[index].getVolume())) {
 					index = i;
 					best = increase;
