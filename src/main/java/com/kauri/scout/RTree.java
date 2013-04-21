@@ -96,6 +96,12 @@ public class RTree<E>
 
 	public void update(E object, AABB volume)
 	{
+		Node node = leafMap.get(object);
+
+		if (node == null) {
+			return;
+		}
+
 		remove(object);
 		insert(object, volume);
 	}
