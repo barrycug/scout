@@ -252,11 +252,11 @@ public class RTree<E>
 
 	private Node splitNode(Node oldNode, AABB volume, Object object)
 	{
-		AABB[] volumes1 = new AABB[MAX_OBJECTS_PER_NODE + 1];
-		AABB[] volumes2 = new AABB[MAX_OBJECTS_PER_NODE + 1];
+		AABB[] volumes1 = new AABB[MAX_OBJECTS_PER_NODE];
+		AABB[] volumes2 = new AABB[MAX_OBJECTS_PER_NODE];
 
-		Object[] entries1 = new Object[MAX_OBJECTS_PER_NODE + 1];
-		Object[] entries2 = new Object[MAX_OBJECTS_PER_NODE + 1];
+		Object[] entries1 = new Object[MAX_OBJECTS_PER_NODE];
+		Object[] entries2 = new Object[MAX_OBJECTS_PER_NODE];
 
 		int seed = 0;
 		float best = Float.NEGATIVE_INFINITY;
