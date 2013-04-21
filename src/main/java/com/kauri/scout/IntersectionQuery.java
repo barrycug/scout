@@ -24,7 +24,7 @@ package com.kauri.scout;
 /**
  * @author Eric Fritz
  */
-class IntersectionQuery implements Query
+public class IntersectionQuery implements Query
 {
 	private AABB aabb;
 

@@ -24,7 +24,7 @@ package com.kauri.scout;
 /**
  * @author Eric Fritz
  */
-interface Query
+public interface Query
 {
 	public QueryResult query(AABB aabb, boolean queryPartial);
 }

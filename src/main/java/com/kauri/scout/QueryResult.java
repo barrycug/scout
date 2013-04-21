@@ -24,6 +24,6 @@ package com.kauri.scout;
 /**
  * @author Eric Fritz
  */
-enum QueryResult {
+public enum QueryResult {
 	ALL, NONE, SOME
 }

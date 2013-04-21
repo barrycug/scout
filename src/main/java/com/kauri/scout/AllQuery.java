@@ -24,7 +24,7 @@ package com.kauri.scout;
 /**
  * @author Eric Fritz
  */
-class AllQuery implements Query
+public class AllQuery implements Query
 {
 	@Override
 	public QueryResult query(AABB aabb, boolean queryPartial)

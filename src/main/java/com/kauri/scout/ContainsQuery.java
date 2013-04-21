@@ -24,7 +24,7 @@ package com.kauri.scout;
 /**
  * @author Eric Fritz
  */
-class ContainsQuery implements Query
+public class ContainsQuery implements Query
 {
 	private AABB aabb;
 

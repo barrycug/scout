@@ -24,7 +24,7 @@ package com.kauri.scout;
 /**
  * @author Eric Fritz
  */
-class DistanceQuery implements Query
+public class DistanceQuery implements Query
 {
 	private AABB aabb;
 	private float distanceSquared;
