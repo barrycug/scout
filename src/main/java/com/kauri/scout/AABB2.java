@@ -152,6 +152,20 @@ public class AABB2 implements AABB
 	}
 
 	@Override
+	public float getExtent(int dimension)
+	{
+		if (dimension == 0) {
+			return x2 - x1;
+		}
+
+		if (dimension == 1) {
+			return y2 - y1;
+		}
+
+		throw new IllegalArgumentException();
+	}
+
+	@Override
 	public float getVolume()
 	{
 		return (x2 - x1) * (y2 - y1);

@@ -81,6 +81,15 @@ public interface AABB
 	public void setMaximum(int dimension, float maximum);
 
 	/**
+	 * Returns the extent of the given dimension.
+	 * 
+	 * @param dimension
+	 *            The dimension.
+	 * @return The extent of the given dimension.
+	 */
+	public float getExtent(int dimension);
+
+	/**
 	 * Returns the product of the edges composing the box.
 	 * 
 	 * @return The product of the edges composing the box.

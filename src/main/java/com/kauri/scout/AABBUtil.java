@@ -41,7 +41,7 @@ public class AABBUtil
 			throw new IllegalArgumentException();
 		}
 
-		return aabb.getMinimum(dimension) + (aabb.getMaximum(dimension) - aabb.getMinimum(dimension)) / 2;
+		return aabb.getMinimum(dimension) + aabb.getExtent(dimension) / 2;
 	}
 
 	/**
@@ -61,11 +61,9 @@ public class AABBUtil
 
 		float dist = 0;
 		for (int i = 0; i < aabb1.getDimensions(); i++) {
-			float ext = aabb2.getMaximum(i) - aabb2.getMinimum(i);
-			float pnt = aabb2.getMinimum(i);
-
-			float min = aabb1.getMinimum(i) - ext;
+			float min = aabb1.getMinimum(i) - aabb2.getExtent(i);
 			float max = aabb1.getMaximum(i);
+			float pnt = aabb2.getMinimum(i);
 
 			if (pnt < min) {
 				dist += (min - pnt) * (min - pnt);

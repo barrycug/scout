@@ -178,6 +178,24 @@ public class AABB3 implements AABB
 	}
 
 	@Override
+	public float getExtent(int dimension)
+	{
+		if (dimension == 0) {
+			return x2 - x1;
+		}
+
+		if (dimension == 1) {
+			return y2 - y1;
+		}
+
+		if (dimension == 2) {
+			return z2 - z1;
+		}
+
+		throw new IllegalArgumentException();
+	}
+
+	@Override
 	public float getVolume()
 	{
 		return (x2 - x1) * (y2 - y1) * (z2 - z1);
