@@ -431,7 +431,6 @@ public class RTree<E>
 	{
 		if (node.isLeaf) {
 			for (int i = 0; i < node.numEntries; i++) {
-
 				insert((E) node.entries[i], node.volumes[i]);
 			}
 		} else {
