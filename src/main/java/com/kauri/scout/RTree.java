@@ -429,10 +429,13 @@ public class RTree<E>
 	@SuppressWarnings("unchecked")
 	private void reinsert(Node node)
 	{
-		for (int i = 0; i < node.numEntries; i++) {
-			if (node.isLeaf) {
+		if (node.isLeaf) {
+			for (int i = 0; i < node.numEntries; i++) {
+
 				insert((E) node.entries[i], node.volumes[i]);
-			} else {
+			}
+		} else {
+			for (int i = 0; i < node.numEntries; i++) {
 				reinsert((Node) node.entries[i]);
 			}
 		}
