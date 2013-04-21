@@ -53,88 +53,9 @@ public class RTree<E>
 		query(query, visitor, root, root, true);
 	}
 
-	public <E2> void queryJoin(RTree<E2> tree, JoinQuery query, QueryJoinResultVisitor<E, E2> visitor)
+	public <F> void queryJoin(RTree<F> tree, JoinQuery query, QueryJoinResultVisitor<E, F> visitor)
 	{
 		query(query, visitor, root, tree.root, tree == this);
-	}
-
-	//
-	// RECURSIVE
-
-	@SuppressWarnings("unchecked")
-	private void query(Query query, QueryResultVisitor<E> visitor, Node node)
-	{
-		if (node.isLeaf) {
-			for (int i = 0; i < node.numEntries; i++) {
-				if (query.query(node.volumes[i], false) == QueryResult.ALL) {
-					visitor.visit((E) node.entries[i]);
-				}
-			}
-		} else {
-			for (int i = 0; i < node.numEntries; i++) {
-				QueryResult result = query.query(node.volumes[i], true);
-
-				if (result == QueryResult.ALL) {
-					visitAllObjects(visitor, (Node) node.entries[i]);
-				} else if (result == QueryResult.SOME) {
-					query(query, visitor, (Node) node.entries[i]);
-				}
-			}
-		}
-	}
-
-	//
-	// RECURSIVE
-
-	@SuppressWarnings("unchecked")
-	private <E2> void query(JoinQuery query, QueryJoinResultVisitor<E, E2> visitor, RTree<E>.Node node1, RTree<E2>.Node node2, boolean sameTree)
-	{
-		boolean queryBoth = sameTree && !query.isSymmetricRelation();
-
-		if (node1.isLeaf && node2.isLeaf) {
-			for (int i = 0; i < node1.numEntries; i++) {
-				for (int j = node1 == node2 ? i + 1 : 0; j < node2.numEntries; j++) {
-					if (query.query(node1.volumes[i], node2.volumes[j], false) == QueryResult.ALL) {
-						visitor.visit((E) node1.entries[i], (E2) node2.entries[j]);
-					} else if (queryBoth && query.query(node2.volumes[j], node1.volumes[i], false) == QueryResult.ALL) {
-						visitor.visit((E) node2.entries[j], (E2) node1.entries[i]);
-					}
-				}
-			}
-		} else if (node1.isLeaf) {
-			for (int i = 0; i < node2.numEntries; i++) {
-				query(query, visitor, node1, (RTree<E2>.Node) node2.entries[i], sameTree);
-			}
-		} else if (node2.isLeaf) {
-			for (int i = 0; i < node1.numEntries; i++) {
-				query(query, visitor, (RTree<E>.Node) node1.entries[i], node2, sameTree);
-			}
-		} else {
-			for (int i = 0; i < node1.numEntries; i++) {
-				for (int j = node1 == node2 ? i : 0; j < node2.numEntries; j++) {
-					if (query.query(node1.volumes[i], node2.volumes[j], true) != QueryResult.NONE || (queryBoth && query.query(node2.volumes[j], node1.volumes[i], true) != QueryResult.NONE)) {
-						query(query, visitor, (RTree<E>.Node) node1.entries[i], (RTree<E2>.Node) node2.entries[j], sameTree);
-					}
-				}
-			}
-		}
-	}
-
-	//
-	// RECURSIVE
-
-	@SuppressWarnings("unchecked")
-	private void visitAllObjects(QueryResultVisitor<E> visitor, Node node)
-	{
-		if (node.isLeaf) {
-			for (int i = 0; i < node.numEntries; i++) {
-				visitor.visit((E) node.entries[i]);
-			}
-		} else {
-			for (int i = 0; i < node.numEntries; i++) {
-				visitAllObjects(visitor, (Node) node.entries[i]);
-			}
-		}
 	}
 
 	public void insert(E object, AABB volume)
@@ -170,6 +91,131 @@ public class RTree<E>
 			root = new Node(false);
 			root.add(getVolumeForNode(node1), node1);
 			root.add(getVolumeForNode(node2), node2);
+		}
+	}
+
+	public void update(E object, AABB volume)
+	{
+		remove(object);
+		insert(object, volume);
+	}
+
+	@SuppressWarnings("unchecked")
+	public void remove(E object)
+	{
+		Node node = leafMap.get(object);
+
+		if (node == null) {
+			return;
+		}
+
+		node.remove(object);
+
+		List<Node> queue = new ArrayList<Node>();
+
+		while (node != root) {
+			Node parent = node.parent;
+
+			if (node.numEntries < MIN_OBJECTS_PER_NODE) {
+				parent.remove(node);
+				queue.add(node);
+			} else {
+				updateVolumes(parent, node);
+			}
+
+			node = parent;
+		}
+
+		for (Node n : queue) {
+			reinsert(n);
+		}
+
+		if (!root.isLeaf && root.numEntries == 1) {
+			root = (Node) root.entries[0];
+			root.parent = null;
+		}
+	}
+
+	//
+	// RECURSIVE
+
+	@SuppressWarnings("unchecked")
+	private void query(Query query, QueryResultVisitor<E> visitor, Node node)
+	{
+		if (node.isLeaf) {
+			for (int i = 0; i < node.numEntries; i++) {
+				if (query.query(node.volumes[i], false) == QueryResult.ALL) {
+					visitor.visit((E) node.entries[i]);
+				}
+			}
+		} else {
+			for (int i = 0; i < node.numEntries; i++) {
+				QueryResult result = query.query(node.volumes[i], true);
+
+				if (result == QueryResult.ALL) {
+					visitAllObjects(visitor, (Node) node.entries[i]);
+				} else if (result == QueryResult.SOME) {
+					query(query, visitor, (Node) node.entries[i]);
+				}
+			}
+		}
+	}
+
+	//
+	// RECURSIVE
+
+	@SuppressWarnings("unchecked")
+	private void visitAllObjects(QueryResultVisitor<E> visitor, Node node)
+	{
+		if (node.isLeaf) {
+			for (int i = 0; i < node.numEntries; i++) {
+				visitor.visit((E) node.entries[i]);
+			}
+		} else {
+			for (int i = 0; i < node.numEntries; i++) {
+				visitAllObjects(visitor, (Node) node.entries[i]);
+			}
+		}
+	}
+
+	//
+	// RECURSIVE
+
+	@SuppressWarnings("unchecked")
+	private <F> void query(JoinQuery query, QueryJoinResultVisitor<E, F> visitor, RTree<E>.Node node1, RTree<F>.Node node2, boolean sameTree)
+	{
+		boolean queryBoth = sameTree && !query.isSymmetricRelation();
+
+		if (node1.isLeaf && node2.isLeaf) {
+			for (int i = 0; i < node1.numEntries; i++) {
+				for (int j = node1 == node2 ? i + 1 : 0; j < node2.numEntries; j++) {
+					if (query.query(node1.volumes[i], node2.volumes[j], false) == QueryResult.ALL) {
+						visitor.visit((E) node1.entries[i], (F) node2.entries[j]);
+					} else if (queryBoth && query.query(node2.volumes[j], node1.volumes[i], false) == QueryResult.ALL) {
+						visitor.visit((E) node2.entries[j], (F) node1.entries[i]);
+					}
+				}
+			}
+		} else if (node1.isLeaf) {
+			for (int i = 0; i < node2.numEntries; i++) {
+				query(query, visitor, node1, (RTree<F>.Node) node2.entries[i], sameTree);
+			}
+		} else if (node2.isLeaf) {
+			for (int i = 0; i < node1.numEntries; i++) {
+				query(query, visitor, (RTree<E>.Node) node1.entries[i], node2, sameTree);
+			}
+		} else {
+			for (int i = 0; i < node1.numEntries; i++) {
+				int k = sameTree && node1 == node2 ? i : 0;
+
+				for (int j = k; j < node2.numEntries; j++) {
+					if (query.query(node1.volumes[i], node2.volumes[j], true) != QueryResult.NONE) {
+						query(query, visitor, (RTree<E>.Node) node1.entries[i], (RTree<F>.Node) node2.entries[j], sameTree);
+					} else if (queryBoth && query.query(node2.volumes[j], node1.volumes[i], true) != QueryResult.NONE) {
+						query(query, visitor, (RTree<E>.Node) node1.entries[i], (RTree<F>.Node) node2.entries[j], sameTree);
+					}
+				}
+			}
 		}
 	}
 
@@ -379,48 +425,6 @@ public class RTree<E>
 		}
 
 		return volume;
-	}
-
-	public void update(E object, AABB volume)
-	{
-		remove(object);
-		insert(object, volume);
-	}
-
-	@SuppressWarnings("unchecked")
-	public void remove(E object)
-	{
-		Node node = leafMap.get(object);
-
-		if (node == null) {
-			return;
-		}
-
-		node.remove(object);
-
-		List<Node> queue = new ArrayList<Node>();
-
-		while (node != root) {
-			Node parent = node.parent;
-
-			if (node.numEntries < MIN_OBJECTS_PER_NODE) {
-				parent.remove(node);
-				queue.add(node);
-			} else {
-				updateVolumes(parent, node);
-			}
-
-			node = parent;
-		}
-
-		for (Node n : queue) {
-			reinsert(n);
-		}
-
-		if (!root.isLeaf && root.numEntries == 1) {
-			root = (Node) root.entries[0];
-			root.parent = null;
-		}
 	}
 
 	//
