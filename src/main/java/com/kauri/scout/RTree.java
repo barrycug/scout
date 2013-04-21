@@ -145,7 +145,7 @@ public class RTree<E>
 		if (node1.numEntries + 1 <= MAX_OBJECTS_PER_NODE) {
 			node1.add(volume, object);
 		} else {
-			node2 = splitNode(node1, volume, object, true);
+			node2 = splitNode(node1, volume, object);
 		}
 
 		while (node1 != root) {
@@ -159,7 +159,7 @@ public class RTree<E>
 					parent.add(getVolumeForNode(node2), node2);
 					node2.parent = parent;
 				} else {
-					psplit = splitNode(parent, getVolumeForNode(node2), node2, false);
+					psplit = splitNode(parent, getVolumeForNode(node2), node2);
 				}
 			}
 
@@ -208,7 +208,7 @@ public class RTree<E>
 		return node;
 	}
 
-	private Node splitNode(Node oldNode, AABB volume, Object object, boolean createLeaves)
+	private Node splitNode(Node oldNode, AABB volume, Object object)
 	{
 		AABB[] volumes1 = new AABB[MAX_OBJECTS_PER_NODE + 1];
 		AABB[] volumes2 = new AABB[MAX_OBJECTS_PER_NODE + 1];
@@ -258,14 +258,14 @@ public class RTree<E>
 
 		oldNode.clear();
 
-		Node newNode = new Node(createLeaves);
+		Node newNode = new Node(oldNode.isLeaf);
 
-		partitionEntries(oldNode, newNode, volumes1, volumes2, entries1, entries2, size1, size2, createLeaves);
+		partitionEntries(oldNode, newNode, volumes1, volumes2, entries1, entries2, size1, size2);
 
 		return newNode;
 	}
 
-	private void partitionEntries(Node oldNode, Node newNode, AABB[] volumes1, AABB[] volumes2, Object[] entries1, Object[] entries2, int size1, int size2, boolean createLeaves)
+	private void partitionEntries(Node oldNode, Node newNode, AABB[] volumes1, AABB[] volumes2, Object[] entries1, Object[] entries2, int size1, int size2)
 	{
 		AABB median1 = volumes1[0].copy();
 		AABB median2 = volumes2[0].copy();
@@ -292,8 +292,8 @@ public class RTree<E>
 			iterations++;
 		}
 
-		bulkAddEntry(oldNode, volumes1, entries1, size1, createLeaves);
-		bulkAddEntry(newNode, volumes2, entries2, size2, createLeaves);
+		bulkAddEntry(oldNode, volumes1, entries1, size1);
+		bulkAddEntry(newNode, volumes2, entries2, size2);
 	}
 
 	private void adjustMedian(AABB median, AABB[] volumes, int size)
@@ -343,12 +343,12 @@ public class RTree<E>
 	}
 
 	@SuppressWarnings("unchecked")
-	private void bulkAddEntry(Node target, AABB[] volumes, Object[] entries, int size, boolean createLeaves)
+	private void bulkAddEntry(Node target, AABB[] volumes, Object[] entries, int size)
 	{
 		for (int i = 0; i < size; i++) {
 			target.add(volumes[i], entries[i]);
 
-			if (!createLeaves) {
+			if (!target.isLeaf) {
 				((Node) entries[i]).parent = target;
 			}
 		}
