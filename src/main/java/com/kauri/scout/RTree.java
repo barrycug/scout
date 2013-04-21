@@ -21,10 +21,10 @@
 
 package com.kauri.scout;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 
 /**
  * @author Eric Fritz
@@ -111,7 +111,7 @@ public class RTree<E>
 
 		node.remove(object);
 
-		List<Node> queue = new ArrayList<Node>();
+		Queue<Node> queue = new LinkedList<Node>();
 
 		while (node != root) {
 			Node parent = node.parent;
