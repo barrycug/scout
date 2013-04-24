@@ -38,9 +38,9 @@ abstract public class QueryTest
 
 		tree.query(query, new QueryResultVisitor<T>() {
 			@Override
-			public void visit(T o)
+			public boolean visit(T o)
 			{
-				visited.add(o);
+				return visited.add(o);
 			}
 		});
 
@@ -53,9 +53,9 @@ abstract public class QueryTest
 
 		tree1.queryJoin(tree2, query, new QueryJoinResultVisitor<T, T>() {
 			@Override
-			public void visit(T o1, T o2)
+			public boolean visit(T o1, T o2)
 			{
-				visited.add(new Pair<T>(o1, o2));
+				return visited.add(new Pair<T>(o1, o2));
 			}
 		});
 

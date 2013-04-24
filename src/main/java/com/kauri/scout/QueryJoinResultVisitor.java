@@ -26,5 +26,5 @@ package com.kauri.scout;
  */
 public interface QueryJoinResultVisitor<E1, E2>
 {
-	public void visit(E1 o1, E2 o2);
+	public boolean visit(E1 o1, E2 o2);
 }

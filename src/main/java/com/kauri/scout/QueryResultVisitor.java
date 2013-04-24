@@ -26,5 +26,5 @@ package com.kauri.scout;
  */
 public interface QueryResultVisitor<E>
 {
-	public void visit(E o);
+	public boolean visit(E o);
 }

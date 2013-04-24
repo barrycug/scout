@@ -176,12 +176,14 @@ public class RTree<E>
 	// RECURSIVE
 
 	@SuppressWarnings("unchecked")
-	private void query(Query query, QueryResultVisitor<E> visitor, Node node)
+	private boolean query(Query query, QueryResultVisitor<E> visitor, Node node)
 	{
 		if (node.isLeaf) {
 			for (int i = 0; i < node.numEntries; i++) {
 				if (query.query(node.volumes[i], false) == QueryResult.ALL) {
-					visitor.visit((E) node.entries[i]);
+					if (!visitor.visit((E) node.entries[i])) {
+						return false;
+					}
 				}
 			}
 		} else {
@@ -189,36 +191,48 @@ public class RTree<E>
 				QueryResult result = query.query(node.volumes[i], true);
 
 				if (result == QueryResult.ALL) {
-					visitAllObjects(visitor, (Node) node.entries[i]);
+					if (!visitAllObjects(visitor, (Node) node.entries[i])) {
+						return false;
+					}
 				} else if (result == QueryResult.SOME) {
-					query(query, visitor, (Node) node.entries[i]);
+					if (!query(query, visitor, (Node) node.entries[i])) {
+						return false;
+					}
 				}
 			}
 		}
+
+		return true;
 	}
 
 	//
 	// RECURSIVE
 
 	@SuppressWarnings("unchecked")
-	private void visitAllObjects(QueryResultVisitor<E> visitor, Node node)
+	private boolean visitAllObjects(QueryResultVisitor<E> visitor, Node node)
 	{
 		if (node.isLeaf) {
 			for (int i = 0; i < node.numEntries; i++) {
-				visitor.visit((E) node.entries[i]);
+				if (!visitor.visit((E) node.entries[i])) {
+					return false;
+				}
 			}
 		} else {
 			for (int i = 0; i < node.numEntries; i++) {
-				visitAllObjects(visitor, (Node) node.entries[i]);
+				if (!visitAllObjects(visitor, (Node) node.entries[i])) {
+					return false;
+				}
 			}
 		}
+
+		return true;
 	}
 
 	//
 	// RECURSIVE
 
 	@SuppressWarnings("unchecked")
-	private <F> void query(JoinQuery query, QueryJoinResultVisitor<E, F> visitor, RTree<E>.Node node1, RTree<F>.Node node2, boolean sameTree)
+	private <F> boolean query(JoinQuery query, QueryJoinResultVisitor<E, F> visitor, RTree<E>.Node node1, RTree<F>.Node node2, boolean sameTree)
 	{
 		boolean queryBoth = sameTree && !query.isSymmetricRelation();
 
@@ -226,19 +240,27 @@ public class RTree<E>
 			for (int i = 0; i < node1.numEntries; i++) {
 				for (int j = node1 == node2 ? i + 1 : 0; j < node2.numEntries; j++) {
 					if (query.query(node1.volumes[i], node2.volumes[j], false) == QueryResult.ALL) {
-						visitor.visit((E) node1.entries[i], (F) node2.entries[j]);
+						if (!visitor.visit((E) node1.entries[i], (F) node2.entries[j])) {
+							return false;
+						}
 					} else if (queryBoth && query.query(node2.volumes[j], node1.volumes[i], false) == QueryResult.ALL) {
-						visitor.visit((E) node2.entries[j], (F) node1.entries[i]);
+						if (!visitor.visit((E) node2.entries[j], (F) node1.entries[i])) {
+							return false;
+						}
 					}
 				}
 			}
 		} else if (node1.isLeaf) {
 			for (int i = 0; i < node2.numEntries; i++) {
-				query(query, visitor, node1, (RTree<F>.Node) node2.entries[i], sameTree);
+				if (!query(query, visitor, node1, (RTree<F>.Node) node2.entries[i], sameTree)) {
+					return false;
+				}
 			}
 		} else if (node2.isLeaf) {
 			for (int i = 0; i < node1.numEntries; i++) {
-				query(query, visitor, (RTree<E>.Node) node1.entries[i], node2, sameTree);
+				if (!query(query, visitor, (RTree<E>.Node) node1.entries[i], node2, sameTree)) {
+					return false;
+				}
 			}
 		} else {
 			for (int i = 0; i < node1.numEntries; i++) {
@@ -246,13 +268,19 @@ public class RTree<E>
 
 				for (int j = k; j < node2.numEntries; j++) {
 					if (query.query(node1.volumes[i], node2.volumes[j], true) != QueryResult.NONE) {
-						query(query, visitor, (RTree<E>.Node) node1.entries[i], (RTree<F>.Node) node2.entries[j], sameTree);
+						if (!query(query, visitor, (RTree<E>.Node) node1.entries[i], (RTree<F>.Node) node2.entries[j], sameTree)) {
+							return false;
+						}
 					} else if (queryBoth && query.query(node2.volumes[j], node1.volumes[i], true) != QueryResult.NONE) {
-						query(query, visitor, (RTree<E>.Node) node1.entries[i], (RTree<F>.Node) node2.entries[j], sameTree);
+						if (!query(query, visitor, (RTree<E>.Node) node1.entries[i], (RTree<F>.Node) node2.entries[j], sameTree)) {
+							return false;
+						}
 					}
 				}
 			}
 		}
+
+		return true;
 	}
 
 	@SuppressWarnings("unchecked")

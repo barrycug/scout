@@ -34,9 +34,15 @@ public class RTreeTest extends QueryTest
 	private static final int ENTITIES = 1000;
 
 	@Test
+	public void testQueryEarlyExit()
+	{
+		// TODO - implement
+	}
+
+	@Test
 	public void testUpdate()
 	{
-		// TODO
+		// TODO - implement
 	}
 
 	@Test
