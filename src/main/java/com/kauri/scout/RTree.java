@@ -60,7 +60,7 @@ public class RTree<E>
 
 	public void insert(E object, AABB volume)
 	{
-		Node node1 = chooseLeaf(volume);
+		Node node1 = chooseLeaf(root, volume);
 		Node node2 = null;
 
 		if (node1.numEntries + 1 <= MAX_OBJECTS_PER_NODE) {
@@ -256,10 +256,8 @@ public class RTree<E>
 	}
 
 	@SuppressWarnings("unchecked")
-	private Node chooseLeaf(AABB volume)
+	private Node chooseLeaf(Node node, AABB volume)
 	{
-		Node node = root;
-
 		while (!node.isLeaf) {
 			int index = 0;
 			float best = Float.POSITIVE_INFINITY;
