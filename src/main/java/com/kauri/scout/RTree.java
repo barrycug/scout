@@ -102,6 +102,36 @@ public class RTree<E>
 			return;
 		}
 
+		if (node != root && node.parent != root) {
+			Node p1 = node.parent;
+			Node p2 = node.parent.parent;
+
+			outer: for (int i = 0; i < p2.numEntries; i++) {
+				if (p2.entries[i] == p1) {
+					if (!p2.volumes[i].contains(volume)) {
+						break outer;
+					}
+
+					for (int j = 0; j < p1.numEntries; j++) {
+						if (p1.entries[j] == node) {
+							p1.volumes[j] = volume;
+							return;
+						}
+					}
+				}
+			}
+		}
+
+		if (node.numEntries - 1 < MIN_OBJECTS_PER_NODE) {
+			remove(object);
+			insert(object, volume);
+			return;
+		}
+
+		//
+		// TODO - Try to insert from the leaves instead of the root.
+		//
+
 		remove(object);
 		insert(object, volume);
 	}
