@@ -53,9 +53,9 @@ public class SpatialIndex<E>
 		query(query, visitor, root, root, true);
 	}
 
-	public <F> void queryJoin(SpatialIndex<F> tree, JoinQuery query, QueryJoinResultVisitor<E, F> visitor)
+	public <F> void queryJoin(SpatialIndex<F> index, JoinQuery query, QueryJoinResultVisitor<E, F> visitor)
 	{
-		query(query, visitor, root, tree.root, tree == this);
+		query(query, visitor, root, index.root, index == this);
 	}
 
 	public void insert(E object, AABB volume)
@@ -221,9 +221,9 @@ public class SpatialIndex<E>
 	// RECURSIVE
 
 	@SuppressWarnings("unchecked")
-	private <F> boolean query(JoinQuery query, QueryJoinResultVisitor<E, F> visitor, SpatialIndex<E>.Node node1, SpatialIndex<F>.Node node2, boolean sameTree)
+	private <F> boolean query(JoinQuery query, QueryJoinResultVisitor<E, F> visitor, SpatialIndex<E>.Node node1, SpatialIndex<F>.Node node2, boolean sameIndex)
 	{
-		boolean queryBoth = sameTree && !query.isSymmetricRelation();
+		boolean queryBoth = sameIndex && !query.isSymmetricRelation();
 
 		if (node1.isLeaf && node2.isLeaf) {
 			for (int i = 0; i < node1.numEntries; i++) {
@@ -241,27 +241,27 @@ public class SpatialIndex<E>
 			}
 		} else if (node1.isLeaf) {
 			for (int i = 0; i < node2.numEntries; i++) {
-				if (!query(query, visitor, node1, (SpatialIndex<F>.Node) node2.entries[i], sameTree)) {
+				if (!query(query, visitor, node1, (SpatialIndex<F>.Node) node2.entries[i], sameIndex)) {
 					return false;
 				}
 			}
 		} else if (node2.isLeaf) {
 			for (int i = 0; i < node1.numEntries; i++) {
-				if (!query(query, visitor, (SpatialIndex<E>.Node) node1.entries[i], node2, sameTree)) {
+				if (!query(query, visitor, (SpatialIndex<E>.Node) node1.entries[i], node2, sameIndex)) {
 					return false;
 				}
 			}
 		} else {
 			for (int i = 0; i < node1.numEntries; i++) {
-				int k = sameTree && node1 == node2 ? i : 0;
+				int k = sameIndex && node1 == node2 ? i : 0;
 
 				for (int j = k; j < node2.numEntries; j++) {
 					if (query.query(node1.volumes[i], node2.volumes[j], true) != QueryResult.NONE) {
-						if (!query(query, visitor, (SpatialIndex<E>.Node) node1.entries[i], (SpatialIndex<F>.Node) node2.entries[j], sameTree)) {
+						if (!query(query, visitor, (SpatialIndex<E>.Node) node1.entries[i], (SpatialIndex<F>.Node) node2.entries[j], sameIndex)) {
 							return false;
 						}
 					} else if (queryBoth && query.query(node2.volumes[j], node1.volumes[i], true) != QueryResult.NONE) {
-						if (!query(query, visitor, (SpatialIndex<E>.Node) node1.entries[i], (SpatialIndex<F>.Node) node2.entries[j], sameTree)) {
+						if (!query(query, visitor, (SpatialIndex<E>.Node) node1.entries[i], (SpatialIndex<F>.Node) node2.entries[j], sameIndex)) {
 							return false;
 						}
 					}
