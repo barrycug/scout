@@ -32,14 +32,14 @@ import org.junit.Test;
 /**
  * @author Eric Fritz
  */
-public class RTreeTest extends QueryTest
+public class SpatialIndexTest extends QueryTest
 {
 	private static final int ENTITIES = 1000;
 
 	@Test
 	public void testQueryEarlyExit()
 	{
-		RTree<Object> tree = new RTree<Object>();
+		SpatialIndex<Object> tree = new SpatialIndex<Object>();
 
 		for (int i = 0; i < ENTITIES; i++) {
 			tree.insert(new Object(), new AABB2(i, 0, 1, 1));
@@ -51,8 +51,8 @@ public class RTreeTest extends QueryTest
 	@Test
 	public void testJoinQueryEarlyExit()
 	{
-		RTree<Object> tree1 = new RTree<Object>();
-		RTree<Object> tree2 = new RTree<Object>();
+		SpatialIndex<Object> tree1 = new SpatialIndex<Object>();
+		SpatialIndex<Object> tree2 = new SpatialIndex<Object>();
 
 		for (int i = 0; i < ENTITIES * 2; i++) {
 			tree1.insert(new Object(), new AABB2(i, 0, 1, 1));
@@ -65,7 +65,7 @@ public class RTreeTest extends QueryTest
 	@Test
 	public void testUpdate()
 	{
-		RTree<Object> tree = new RTree<Object>();
+		SpatialIndex<Object> tree = new SpatialIndex<Object>();
 
 		List<Object> set1 = new ArrayList<Object>();
 		List<Object> set2 = new ArrayList<Object>();
@@ -98,7 +98,7 @@ public class RTreeTest extends QueryTest
 	@Test
 	public void testRemove()
 	{
-		RTree<Object> tree = new RTree<Object>();
+		SpatialIndex<Object> tree = new SpatialIndex<Object>();
 
 		List<Object> set1 = new ArrayList<Object>();
 		List<Object> set2 = new ArrayList<Object>();

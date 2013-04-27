@@ -29,7 +29,7 @@ import java.util.Queue;
 /**
  * @author Eric Fritz
  */
-public class RTree<E>
+public class SpatialIndex<E>
 {
 	private final static int MIN_OBJECTS_PER_NODE = 3;
 	private final static int MAX_OBJECTS_PER_NODE = 8;
@@ -38,7 +38,7 @@ public class RTree<E>
 	private Node root;
 	private Map<E, Node> leafMap = new HashMap<E, Node>();
 
-	public RTree()
+	public SpatialIndex()
 	{
 		root = new Node(true);
 	}
@@ -53,7 +53,7 @@ public class RTree<E>
 		query(query, visitor, root, root, true);
 	}
 
-	public <F> void queryJoin(RTree<F> tree, JoinQuery query, QueryJoinResultVisitor<E, F> visitor)
+	public <F> void queryJoin(SpatialIndex<F> tree, JoinQuery query, QueryJoinResultVisitor<E, F> visitor)
 	{
 		query(query, visitor, root, tree.root, tree == this);
 	}
@@ -221,7 +221,7 @@ public class RTree<E>
 	// RECURSIVE
 
 	@SuppressWarnings("unchecked")
-	private <F> boolean query(JoinQuery query, QueryJoinResultVisitor<E, F> visitor, RTree<E>.Node node1, RTree<F>.Node node2, boolean sameTree)
+	private <F> boolean query(JoinQuery query, QueryJoinResultVisitor<E, F> visitor, SpatialIndex<E>.Node node1, SpatialIndex<F>.Node node2, boolean sameTree)
 	{
 		boolean queryBoth = sameTree && !query.isSymmetricRelation();
 
@@ -241,13 +241,13 @@ public class RTree<E>
 			}
 		} else if (node1.isLeaf) {
 			for (int i = 0; i < node2.numEntries; i++) {
-				if (!query(query, visitor, node1, (RTree<F>.Node) node2.entries[i], sameTree)) {
+				if (!query(query, visitor, node1, (SpatialIndex<F>.Node) node2.entries[i], sameTree)) {
 					return false;
 				}
 			}
 		} else if (node2.isLeaf) {
 			for (int i = 0; i < node1.numEntries; i++) {
-				if (!query(query, visitor, (RTree<E>.Node) node1.entries[i], node2, sameTree)) {
+				if (!query(query, visitor, (SpatialIndex<E>.Node) node1.entries[i], node2, sameTree)) {
 					return false;
 				}
 			}
@@ -257,11 +257,11 @@ public class RTree<E>
 
 				for (int j = k; j < node2.numEntries; j++) {
 					if (query.query(node1.volumes[i], node2.volumes[j], true) != QueryResult.NONE) {
-						if (!query(query, visitor, (RTree<E>.Node) node1.entries[i], (RTree<F>.Node) node2.entries[j], sameTree)) {
+						if (!query(query, visitor, (SpatialIndex<E>.Node) node1.entries[i], (SpatialIndex<F>.Node) node2.entries[j], sameTree)) {
 							return false;
 						}
 					} else if (queryBoth && query.query(node2.volumes[j], node1.volumes[i], true) != QueryResult.NONE) {
-						if (!query(query, visitor, (RTree<E>.Node) node1.entries[i], (RTree<F>.Node) node2.entries[j], sameTree)) {
+						if (!query(query, visitor, (SpatialIndex<E>.Node) node1.entries[i], (SpatialIndex<F>.Node) node2.entries[j], sameTree)) {
 							return false;
 						}
 					}

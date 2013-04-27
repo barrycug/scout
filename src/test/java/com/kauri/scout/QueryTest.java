@@ -32,12 +32,12 @@ import java.util.List;
  */
 abstract public class QueryTest
 {
-	public <T> List<T> getVisited(RTree<T> tree, Query query)
+	public <T> List<T> getVisited(SpatialIndex<T> tree, Query query)
 	{
 		return getVisited(tree, query, Integer.MAX_VALUE);
 	}
 
-	public <T> List<T> getVisited(RTree<T> tree, Query query, final int limit)
+	public <T> List<T> getVisited(SpatialIndex<T> tree, Query query, final int limit)
 	{
 		final List<T> visited = new ArrayList<T>();
 
@@ -52,12 +52,12 @@ abstract public class QueryTest
 		return visited;
 	}
 
-	public <T> List<Pair<T>> getVisited(RTree<T> tree1, RTree<T> tree2, JoinQuery query)
+	public <T> List<Pair<T>> getVisited(SpatialIndex<T> tree1, SpatialIndex<T> tree2, JoinQuery query)
 	{
 		return getVisited(tree1, tree2, query, Integer.MAX_VALUE);
 	}
 
-	public <T> List<Pair<T>> getVisited(RTree<T> tree1, RTree<T> tree2, JoinQuery query, final int limit)
+	public <T> List<Pair<T>> getVisited(SpatialIndex<T> tree1, SpatialIndex<T> tree2, JoinQuery query, final int limit)
 	{
 		final List<Pair<T>> visited = new ArrayList<Pair<T>>();
 

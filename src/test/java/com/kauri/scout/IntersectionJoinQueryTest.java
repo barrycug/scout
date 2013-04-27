@@ -36,7 +36,7 @@ public class IntersectionJoinQueryTest extends QueryTest
 	@Test
 	public void testOneTree()
 	{
-		RTree<Object> tree = new RTree<Object>();
+		SpatialIndex<Object> tree = new SpatialIndex<Object>();
 
 		Object o1, o2, o3, o4;
 		tree.insert(o1 = new Object(), new AABB2(0, 1, 2, 2)); // Intersects o2
@@ -55,7 +55,7 @@ public class IntersectionJoinQueryTest extends QueryTest
 	@Test
 	public void testOneTreeBulk()
 	{
-		RTree<Object> tree = new RTree<Object>();
+		SpatialIndex<Object> tree = new SpatialIndex<Object>();
 		List<Pair<Object>> expected = new ArrayList<Pair<Object>>();
 
 		Object o1, o2;
@@ -72,8 +72,8 @@ public class IntersectionJoinQueryTest extends QueryTest
 	@Test
 	public void testTwoTrees()
 	{
-		RTree<Object> tree1 = new RTree<Object>();
-		RTree<Object> tree2 = new RTree<Object>();
+		SpatialIndex<Object> tree1 = new SpatialIndex<Object>();
+		SpatialIndex<Object> tree2 = new SpatialIndex<Object>();
 
 		Object o1, o2, o3;
 		tree1.insert(o1 = new Integer(1), new AABB2(3, 0, 2, 2)); // Intersects o4
@@ -106,8 +106,8 @@ public class IntersectionJoinQueryTest extends QueryTest
 	@Test
 	public void testTwoTreesBulk()
 	{
-		RTree<Object> tree1 = new RTree<Object>();
-		RTree<Object> tree2 = new RTree<Object>();
+		SpatialIndex<Object> tree1 = new SpatialIndex<Object>();
+		SpatialIndex<Object> tree2 = new SpatialIndex<Object>();
 
 		List<Pair<Object>> expected1 = new ArrayList<Pair<Object>>();
 		List<Pair<Object>> expected2 = new ArrayList<Pair<Object>>();

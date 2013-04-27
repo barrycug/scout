@@ -37,7 +37,7 @@ public class DistanceQueryTest extends QueryTest
 	@Test
 	public void test()
 	{
-		RTree<Object> tree = new RTree<Object>();
+		SpatialIndex<Object> tree = new SpatialIndex<Object>();
 
 		Object o1, o2, o3;
 		tree.insert(o1 = new Object(), new AABB2(1, 1, 1, 1)); // Intersects
@@ -53,7 +53,7 @@ public class DistanceQueryTest extends QueryTest
 	@Test
 	public void testBulk()
 	{
-		RTree<Object> tree = new RTree<Object>();
+		SpatialIndex<Object> tree = new SpatialIndex<Object>();
 		List<Object> expected = new ArrayList<Object>();
 
 		Object o1, o2, o3, o4;
