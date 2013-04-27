@@ -51,24 +51,9 @@ public class AABB3 implements AABB
 	 */
 	public AABB3(float x, float y, float z, float w, float h, float d)
 	{
-		if (w < 0) {
-			throw new IllegalArgumentException();
-		}
-
-		if (h < 0) {
-			throw new IllegalArgumentException();
-		}
-
-		if (d < 0) {
-			throw new IllegalArgumentException();
-		}
-
-		this.x1 = x;
-		this.y1 = y;
-		this.z1 = z;
-		this.x2 = x + w;
-		this.y2 = y + h;
-		this.z2 = z + d;
+		setBounds(0, x, x + w);
+		setBounds(1, y, y + h);
+		setBounds(2, z, z + d);
 	}
 
 	@Override

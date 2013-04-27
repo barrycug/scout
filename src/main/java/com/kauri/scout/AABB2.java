@@ -45,18 +45,8 @@ public class AABB2 implements AABB
 	 */
 	public AABB2(float x, float y, float w, float h)
 	{
-		if (w < 0) {
-			throw new IllegalArgumentException();
-		}
-
-		if (h < 0) {
-			throw new IllegalArgumentException();
-		}
-
-		this.x1 = x;
-		this.y1 = y;
-		this.x2 = x + w;
-		this.y2 = y + h;
+		setBounds(0, x, x + w);
+		setBounds(1, y, y + h);
 	}
 
 	@Override
