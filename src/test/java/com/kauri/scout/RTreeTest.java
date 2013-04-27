@@ -21,7 +21,10 @@
 
 package com.kauri.scout;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
@@ -36,13 +39,60 @@ public class RTreeTest extends QueryTest
 	@Test
 	public void testQueryEarlyExit()
 	{
-		// TODO - implement
+		RTree<Object> tree = new RTree<Object>();
+
+		for (int i = 0; i < ENTITIES; i++) {
+			tree.insert(new Object(), new AABB2(i, 0, 1, 1));
+		}
+
+		assertEquals(10, getVisited(tree, new AllQuery(), 10).size());
+	}
+
+	@Test
+	public void testJoinQueryEarlyExit()
+	{
+		RTree<Object> tree1 = new RTree<Object>();
+		RTree<Object> tree2 = new RTree<Object>();
+
+		for (int i = 0; i < ENTITIES * 2; i++) {
+			tree1.insert(new Object(), new AABB2(i, 0, 1, 1));
+			tree2.insert(new Object(), new AABB2(i, 0, 1, 1));
+		}
+
+		assertEquals(10, getVisited(tree1, tree2, new AllJoinQuery(), 10).size());
 	}
 
 	@Test
 	public void testUpdate()
 	{
-		// TODO - implement
+		RTree<Object> tree = new RTree<Object>();
+
+		List<Object> set1 = new ArrayList<Object>();
+		List<Object> set2 = new ArrayList<Object>();
+		List<Object> set3 = new ArrayList<Object>();
+
+		Object o1, o2, o3;
+		for (int i = 0; i < ENTITIES; i++) {
+			set1.add(o1 = new Object());
+			set2.add(o2 = new Object());
+			set3.add(o3 = new Object());
+
+			tree.insert(o1, new AABB2(3 * i + 0, 0, 1, 1));
+			tree.insert(o2, new AABB2(3 * i + 1, 0, 1, 1));
+			tree.insert(o3, new AABB2(3 * i + 2, 0, 1, 1));
+		}
+
+		for (int i = 0; i < ENTITIES; i++) {
+			tree.update(set1.get(i), new AABB2(3 * i + 0, 0, 1, 1)); // Moves none
+			tree.update(set2.get(i), new AABB2(3 * i + 2, 0, 1, 1)); // Moves within leaf (likely)
+			tree.update(set3.get(i), new AABB2(3 * i + 2, 1, 1, 1)); // Moves out of leaf
+		}
+
+		for (int i = 0; i < ENTITIES; i++) {
+			ensureSame(getVisited(tree, new ContainsQuery(new AABB2(3 * i + 0, 0, 1, 1))), Arrays.asList(set1.get(i)));
+			ensureSame(getVisited(tree, new ContainsQuery(new AABB2(3 * i + 2, 0, 1, 1))), Arrays.asList(set2.get(i)));
+			ensureSame(getVisited(tree, new ContainsQuery(new AABB2(3 * i + 2, 1, 1, 1))), Arrays.asList(set3.get(i)));
+		}
 	}
 
 	@Test
@@ -59,13 +109,15 @@ public class RTreeTest extends QueryTest
 			set2.add(o2 = new Object());
 
 			tree.insert(o1, new AABB2(i, 0, 1, 1));
-			tree.insert(o2, new AABB2(i, 1, 1, 1));
+			tree.insert(o2, new AABB2(i, 0, 1, 1));
 		}
 
-		for (Object o : set2) {
-			tree.remove(o);
+		for (int i = 0; i < ENTITIES; i++) {
+			tree.remove(set2.get(i));
 		}
 
-		ensureSame(getVisited(tree, new AllQuery()), set1);
+		for (int i = 0; i < ENTITIES; i++) {
+			ensureSame(getVisited(tree, new ContainsQuery(new AABB2(i, 0, 1, 1))), Arrays.asList(set1.get(i)));
+		}
 	}
 }

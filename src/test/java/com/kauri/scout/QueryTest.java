@@ -34,13 +34,18 @@ abstract public class QueryTest
 {
 	public <T> List<T> getVisited(RTree<T> tree, Query query)
 	{
+		return getVisited(tree, query, Integer.MAX_VALUE);
+	}
+
+	public <T> List<T> getVisited(RTree<T> tree, Query query, final int limit)
+	{
 		final List<T> visited = new ArrayList<T>();
 
 		tree.query(query, new QueryResultVisitor<T>() {
 			@Override
 			public boolean visit(T o)
 			{
-				return visited.add(o);
+				return visited.add(o) && visited.size() < limit;
 			}
 		});
 
@@ -49,13 +54,18 @@ abstract public class QueryTest
 
 	public <T> List<Pair<T>> getVisited(RTree<T> tree1, RTree<T> tree2, JoinQuery query)
 	{
+		return getVisited(tree1, tree2, query, Integer.MAX_VALUE);
+	}
+
+	public <T> List<Pair<T>> getVisited(RTree<T> tree1, RTree<T> tree2, JoinQuery query, final int limit)
+	{
 		final List<Pair<T>> visited = new ArrayList<Pair<T>>();
 
 		tree1.queryJoin(tree2, query, new QueryJoinResultVisitor<T, T>() {
 			@Override
 			public boolean visit(T o1, T o2)
 			{
-				return visited.add(new Pair<T>(o1, o2));
+				return visited.add(new Pair<T>(o1, o2)) && visited.size() < limit;
 			}
 		});
 
