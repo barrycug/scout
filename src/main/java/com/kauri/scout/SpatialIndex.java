@@ -48,12 +48,12 @@ public class SpatialIndex<E>
 		query(query, visitor, root);
 	}
 
-	public void query(JoinQuery query, QueryJoinResultVisitor<E, E> visitor)
+	public void query(JoinQuery query, JoinQueryResultVisitor<E, E> visitor)
 	{
 		query(query, visitor, root, root, true);
 	}
 
-	public <F> void query(SpatialIndex<F> index, JoinQuery query, QueryJoinResultVisitor<E, F> visitor)
+	public <F> void query(SpatialIndex<F> index, JoinQuery query, JoinQueryResultVisitor<E, F> visitor)
 	{
 		query(query, visitor, root, index.root, index == this);
 	}
@@ -221,7 +221,7 @@ public class SpatialIndex<E>
 	// RECURSIVE
 
 	@SuppressWarnings("unchecked")
-	private <F> boolean query(JoinQuery query, QueryJoinResultVisitor<E, F> visitor, SpatialIndex<E>.Node node1, SpatialIndex<F>.Node node2, boolean sameIndex)
+	private <F> boolean query(JoinQuery query, JoinQueryResultVisitor<E, F> visitor, SpatialIndex<E>.Node node1, SpatialIndex<F>.Node node2, boolean sameIndex)
 	{
 		boolean queryBoth = sameIndex && !query.isSymmetricRelation();
 
