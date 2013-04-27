@@ -416,8 +416,7 @@ public class RTree<E>
 		}
 
 		for (int j = 0; j < median.getDimensions(); j++) {
-			median.setMinimum(j, centers[j] / totalmass);
-			median.setMaximum(j, centers[j] / totalmass);
+			median.setBounds(j, centers[j] / totalmass, centers[j] / totalmass);
 		}
 	}
 
@@ -476,13 +475,7 @@ public class RTree<E>
 				float min2 = node.volumes[i].getMinimum(j);
 				float max2 = node.volumes[i].getMaximum(j);
 
-				if (min2 < min1) {
-					volume.setMinimum(j, min2);
-				}
-
-				if (max2 > max1) {
-					volume.setMaximum(j, max2);
-				}
+				volume.setBounds(j, Math.min(min1, min2), Math.max(max1, max2));
 			}
 		}
 

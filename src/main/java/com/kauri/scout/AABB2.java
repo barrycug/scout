@@ -114,18 +114,6 @@ public class AABB2 implements AABB
 	}
 
 	@Override
-	public void setMinimum(int dimension, float minimum)
-	{
-		if (dimension == 0) {
-			x1 = minimum;
-		} else if (dimension == 1) {
-			y1 = minimum;
-		} else {
-			throw new IllegalArgumentException();
-		}
-	}
-
-	@Override
 	public float getMaximum(int dimension)
 	{
 		if (dimension == 0) {
@@ -140,11 +128,17 @@ public class AABB2 implements AABB
 	}
 
 	@Override
-	public void setMaximum(int dimension, float maximum)
+	public void setBounds(int dimension, float minimum, float maximum)
 	{
+		if (maximum < minimum) {
+			throw new IllegalArgumentException();
+		}
+
 		if (dimension == 0) {
+			x1 = minimum;
 			x2 = maximum;
 		} else if (dimension == 1) {
+			y1 = minimum;
 			y2 = maximum;
 		} else {
 			throw new IllegalArgumentException();

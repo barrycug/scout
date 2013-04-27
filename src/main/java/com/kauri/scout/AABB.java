@@ -52,16 +52,6 @@ public interface AABB
 	public float getMinimum(int dimension);
 
 	/**
-	 * Updates the minimum value in the given dimension.
-	 * 
-	 * @param dimension
-	 *            The dimension.
-	 * @param minimum
-	 *            The minimum value in the given dimension.
-	 */
-	public void setMinimum(int dimension, float minimum);
-
-	/**
 	 * Returns the maximum value in the given dimension.
 	 * 
 	 * @param dimension
@@ -71,14 +61,16 @@ public interface AABB
 	public float getMaximum(int dimension);
 
 	/**
-	 * Updates the maximum value in the given dimension.
+	 * Updates the minimum and maximum value in the given dimension.
 	 * 
 	 * @param dimension
 	 *            The dimension.
 	 * @param minimum
+	 *            The minimum value in the given dimension.
+	 * @param maximum
 	 *            The maximum value in the given dimension.
 	 */
-	public void setMaximum(int dimension, float maximum);
+	public void setBounds(int dimension, float minimum, float maximum);
 
 	/**
 	 * Returns the extent of the given dimension.
