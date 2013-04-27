@@ -61,7 +61,7 @@ abstract public class QueryTest
 	{
 		final List<Pair<T>> visited = new ArrayList<Pair<T>>();
 
-		tree1.queryJoin(tree2, query, new QueryJoinResultVisitor<T, T>() {
+		tree1.query(tree2, query, new QueryJoinResultVisitor<T, T>() {
 			@Override
 			public boolean visit(T o1, T o2)
 			{

@@ -48,12 +48,12 @@ public class SpatialIndex<E>
 		query(query, visitor, root);
 	}
 
-	public void queryJoin(JoinQuery query, QueryJoinResultVisitor<E, E> visitor)
+	public void query(JoinQuery query, QueryJoinResultVisitor<E, E> visitor)
 	{
 		query(query, visitor, root, root, true);
 	}
 
-	public <F> void queryJoin(SpatialIndex<F> index, JoinQuery query, QueryJoinResultVisitor<E, F> visitor)
+	public <F> void query(SpatialIndex<F> index, JoinQuery query, QueryJoinResultVisitor<E, F> visitor)
 	{
 		query(query, visitor, root, index.root, index == this);
 	}
