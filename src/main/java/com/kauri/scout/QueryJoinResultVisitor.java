@@ -24,7 +24,7 @@ package com.kauri.scout;
 /**
  * @author Eric Fritz
  */
-public interface QueryJoinResultVisitor<E1, E2>
+public interface QueryJoinResultVisitor<E, F>
 {
-	public boolean visit(E1 o1, E2 o2);
+	public boolean visit(E o1, F o2);
 }
