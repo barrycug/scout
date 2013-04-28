@@ -245,6 +245,10 @@ public class SpatialIndex<E>
 			node = parent;
 		}
 
+		if (!root.isLeaf && root.numEntries == 0) {
+			root.isLeaf = true;
+		}
+
 		for (Node n : queue) {
 			reinsert(n);
 		}
