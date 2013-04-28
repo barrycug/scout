@@ -22,24 +22,35 @@
 package com.kauri.scout;
 
 /**
+ * A query that matches volumes contained within the specified <tt>volume</tt>.
+ * 
  * @author Eric Fritz
  */
 public class ContainsQuery implements Query
 {
-	private AABB aabb;
+	/**
+	 * The reference volume.
+	 */
+	private AABB volume;
 
-	public ContainsQuery(AABB aabb)
+	/**
+	 * Creates a new ContainsQuery.
+	 * 
+	 * @param volume
+	 *            The reference volume.
+	 */
+	public ContainsQuery(AABB volume)
 	{
-		this.aabb = aabb;
+		this.volume = volume;
 	}
 
 	@Override
-	public QueryResult query(AABB aabb, boolean queryPartial)
+	public QueryResult query(AABB volume, boolean partial)
 	{
-		if (this.aabb.contains(aabb)) {
-			return QueryResult.ALL;
+		if (this.volume.contains(volume)) {
+			return QueryResult.PASS;
 		}
 
-		return queryPartial && this.aabb.intersects(aabb) ? QueryResult.SOME : QueryResult.NONE;
+		return partial && this.volume.intersects(volume) ? QueryResult.PARTIAL : QueryResult.FAIL;
 	}
 }

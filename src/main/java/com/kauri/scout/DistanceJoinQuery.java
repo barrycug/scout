@@ -22,29 +22,37 @@
 package com.kauri.scout;
 
 /**
+ * A join query that matches all pairs of volumes between two indices which are at most
+ * <tt>distance</tt> away from one another.
+ * 
  * @author Eric Fritz
  */
 public class DistanceJoinQuery implements JoinQuery
 {
+	/**
+	 * The maximum allowed distance.
+	 */
 	private float distanceSquared;
 
+	/**
+	 * Creates a new DistanceJoinQuery.
+	 * 
+	 * @param distance
+	 *            The maximum distance matched volumes must be from one another.
+	 */
 	public DistanceJoinQuery(float distance)
 	{
 		this.distanceSquared = distance * distance;
 	}
 
 	@Override
-	public QueryResult query(AABB aabb1, AABB aabb2, boolean queryPartial)
+	public boolean query(AABB volume1, AABB volume2, boolean partial)
 	{
-		if (AABBUtil.distanceSquared(aabb1, aabb2) <= distanceSquared) {
-			return queryPartial ? QueryResult.SOME : QueryResult.ALL;
-		}
-
-		return QueryResult.NONE;
+		return AABBUtil.distanceSquared(volume1, volume2) <= distanceSquared;
 	}
 
 	@Override
-	public boolean isSymmetricRelation()
+	public boolean isSymmetric()
 	{
 		return true;
 	}

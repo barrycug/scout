@@ -22,22 +22,21 @@
 package com.kauri.scout;
 
 /**
+ * A join query that matches all pairs of volumes between two indices where the volume from the
+ * first index contains the volume from the second index.
+ * 
  * @author Eric Fritz
  */
 public class ContainsJoinQuery implements JoinQuery
 {
 	@Override
-	public QueryResult query(AABB aabb1, AABB aabb2, boolean queryPartial)
+	public boolean query(AABB volume1, AABB volume2, boolean partial)
 	{
-		if (aabb1.contains(aabb2)) {
-			return QueryResult.ALL;
-		}
-
-		return queryPartial && aabb1.intersects(aabb2) ? QueryResult.SOME : QueryResult.NONE;
+		return volume1.contains(volume2) || (partial && volume1.intersects(volume2));
 	}
 
 	@Override
-	public boolean isSymmetricRelation()
+	public boolean isSymmetric()
 	{
 		return false;
 	}

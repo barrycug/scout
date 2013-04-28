@@ -22,28 +22,33 @@
 package com.kauri.scout;
 
 /**
+ * A query that matches volumes which intersect the specified <tt>volume</tt>.
+ * 
  * @author Eric Fritz
  */
 public class IntersectionQuery implements Query
 {
-	private AABB aabb;
+	/**
+	 * The reference volume.
+	 */
+	private AABB volume;
 
-	public IntersectionQuery(AABB aabb)
+	public IntersectionQuery(AABB volume)
 	{
-		this.aabb = aabb;
+		this.volume = volume;
 	}
 
 	@Override
-	public QueryResult query(AABB aabb, boolean queryPartial)
+	public QueryResult query(AABB volume, boolean partial)
 	{
-		if (this.aabb.contains(aabb)) {
-			return QueryResult.ALL;
+		if (this.volume.contains(volume)) {
+			return QueryResult.PASS;
 		}
 
-		if (this.aabb.intersects(aabb)) {
-			return queryPartial ? QueryResult.SOME : QueryResult.ALL;
+		if (this.volume.intersects(volume)) {
+			return partial ? QueryResult.PARTIAL : QueryResult.PASS;
 		}
 
-		return QueryResult.NONE;
+		return QueryResult.FAIL;
 	}
 }

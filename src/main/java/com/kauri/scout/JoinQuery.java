@@ -22,11 +22,41 @@
 package com.kauri.scout;
 
 /**
+ * Defines the query criteria used by
+ * {@link SpatialIndex#query(SpatialIndex, JoinQuery, JoinQueryResultVisitor) spatial joins}.
+ * 
  * @author Eric Fritz
  */
 public interface JoinQuery
 {
-	public QueryResult query(AABB aabb1, AABB aabb2, boolean queryPartial);
+	/**
+	 * Determines if the specified volumes match the query criteria.
+	 * 
+	 * <p>
+	 * If <tt>partial</tt> queries are allowed, then <tt>volume1</tt> and <tt>volume2</tt> represent
+	 * the minimum bounding volume of a group of objects. In this case, the query criteria should be
+	 * relaxed, and the return value should reflect the possibility that subsequent queries on pairs
+	 * of sub-volumes (one from <tt>volume1</tt> and one from <tt>volume2</tt>) may match.
+	 * 
+	 * @param volume1
+	 *            The first volume.
+	 * @param volume2
+	 *            The second volume.
+	 * @param partial
+	 *            Whether to allow partial matches.
+	 * @return <tt>true</tt> if the volumes match the query criteria, <tt>false</tt> otherwise.
+	 */
+	public boolean query(AABB volume1, AABB volume2, boolean partial);
 
-	public boolean isSymmetricRelation();
+	/**
+	 * Returns <tt>true</tt> if this query criteria is symmetric, <tt>false</tt> otherwise.
+	 * 
+	 * <p>
+	 * A query criteria is symmetric if the query does not depend on the order of the volume
+	 * parameters. That is, the query result should be the same after swapping the values of
+	 * <tt>volume1</tt> and <tt>volume2</tt> (all else being identical).
+	 * 
+	 * @return <tt>true</tt> if this query criteria is symmetric, <tt>false</tt> otherwise.
+	 */
+	public boolean isSymmetric();
 }

@@ -22,26 +22,20 @@
 package com.kauri.scout;
 
 /**
+ * A join query that matches all pairs of volumes between two indices which are intersecting.
+ * 
  * @author Eric Fritz
  */
 public class IntersectionJoinQuery implements JoinQuery
 {
 	@Override
-	public QueryResult query(AABB aabb1, AABB aabb2, boolean queryPartial)
+	public boolean query(AABB volume1, AABB volume2, boolean partial)
 	{
-		if (aabb1.contains(aabb2)) {
-			return QueryResult.ALL;
-		}
-
-		if (aabb1.intersects(aabb2)) {
-			return queryPartial ? QueryResult.SOME : QueryResult.ALL;
-		}
-
-		return QueryResult.NONE;
+		return volume1.contains(volume2) || volume1.intersects(volume2);
 	}
 
 	@Override
-	public boolean isSymmetricRelation()
+	public boolean isSymmetric()
 	{
 		return true;
 	}

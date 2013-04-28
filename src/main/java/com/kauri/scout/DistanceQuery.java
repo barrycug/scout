@@ -22,26 +22,43 @@
 package com.kauri.scout;
 
 /**
+ * A query that matches volumes at most <tt>distance</tt> away from the specified <tt>volume</tt>.
+ * 
  * @author Eric Fritz
  */
 public class DistanceQuery implements Query
 {
-	private AABB aabb;
+	/**
+	 * The reference volume.
+	 */
+	private AABB volume;
+
+	/**
+	 * The maximum allowed distance.
+	 */
 	private float distanceSquared;
 
-	public DistanceQuery(AABB aabb, float distance)
+	/**
+	 * Creates a new DistanceQuery.
+	 * 
+	 * @param volume
+	 *            The reference volume.
+	 * @param distance
+	 *            The maximum distance matched volumes must be from <tt>volume</tt>.
+	 */
+	public DistanceQuery(AABB volume, float distance)
 	{
-		this.aabb = aabb;
+		this.volume = volume;
 		this.distanceSquared = distance * distance;
 	}
 
 	@Override
-	public QueryResult query(AABB aabb, boolean queryPartial)
+	public QueryResult query(AABB volume, boolean partial)
 	{
-		if (AABBUtil.distanceSquared(this.aabb, aabb) <= distanceSquared) {
-			return queryPartial ? QueryResult.SOME : QueryResult.ALL;
+		if (AABBUtil.distanceSquared(this.volume, volume) <= distanceSquared) {
+			return partial ? QueryResult.PARTIAL : QueryResult.PASS;
 		}
 
-		return QueryResult.NONE;
+		return QueryResult.FAIL;
 	}
 }

@@ -22,18 +22,20 @@
 package com.kauri.scout;
 
 /**
+ * A join query that matches all pairs of volumes between two indices.
+ * 
  * @author Eric Fritz
  */
 public class AllJoinQuery implements JoinQuery
 {
 	@Override
-	public QueryResult query(AABB aabb1, AABB aabb2, boolean queryPartial)
+	public boolean query(AABB volume1, AABB volume2, boolean partial)
 	{
-		return QueryResult.ALL;
+		return true;
 	}
 
 	@Override
-	public boolean isSymmetricRelation()
+	public boolean isSymmetric()
 	{
 		return true;
 	}

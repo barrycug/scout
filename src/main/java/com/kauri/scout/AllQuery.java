@@ -22,13 +22,15 @@
 package com.kauri.scout;
 
 /**
+ * A query that matches all volumes in the index.
+ * 
  * @author Eric Fritz
  */
 public class AllQuery implements Query
 {
 	@Override
-	public QueryResult query(AABB aabb, boolean queryPartial)
+	public QueryResult query(AABB volume, boolean partial)
 	{
-		return QueryResult.ALL;
+		return QueryResult.PASS;
 	}
 }

@@ -22,6 +22,8 @@
 package com.kauri.scout;
 
 /**
+ * A three-dimensional bounding volume.
+ * 
  * @author Eric Fritz
  */
 public class AABB3 implements AABB

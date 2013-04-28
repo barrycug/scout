@@ -22,6 +22,8 @@
 package com.kauri.scout;
 
 /**
+ * Common methods relating to arbitrary bounding volumes.
+ * 
  * @author Eric Fritz
  */
 public class AABBUtil

@@ -22,7 +22,7 @@
 package com.kauri.scout;
 
 /**
- * An axis-aligned bounding box.
+ * An axis-aligned bounding volume.
  * 
  * @author Eric Fritz
  */
@@ -36,9 +36,9 @@ public interface AABB
 	public AABB copy();
 
 	/**
-	 * Returns the number of edges composing this box.
+	 * Returns the number of dimensions this volume occupies.
 	 * 
-	 * @return The number of edges composing this box.
+	 * @return The number of dimensions this volume occupies.
 	 */
 	public int getDimensions();
 
@@ -82,27 +82,27 @@ public interface AABB
 	public float getExtent(int dimension);
 
 	/**
-	 * Returns the product of the edges composing the box.
+	 * Returns the amount of space occupied by this volume.
 	 * 
-	 * @return The product of the edges composing the box.
+	 * @return The amount of space occupied by this volume.
 	 */
 	public float getVolume();
 
 	/**
-	 * Determines whether this box contains the specified box.
+	 * Determines whether this volume contains the specified volume.
 	 * 
 	 * @param aabb
-	 *            The other box.
-	 * @return <tt>true</tt> if this box contains the specified box.
+	 *            The other volume.
+	 * @return <tt>true</tt> if this volume contains the specified volume.
 	 */
 	public boolean contains(AABB aabb);
 
 	/**
-	 * Determines whether this box intersects with the specified box.
+	 * Determines whether this volume intersects with the specified volume.
 	 * 
 	 * @param aabb
-	 *            The other box.
-	 * @return <tt>true</tt> if this box intersects with the specified box.
+	 *            The other volume.
+	 * @return <tt>true</tt> if this volume intersects with the specified volume.
 	 */
 	public boolean intersects(AABB aabb);
 }

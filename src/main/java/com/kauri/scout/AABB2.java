@@ -22,6 +22,8 @@
 package com.kauri.scout;
 
 /**
+ * A two-dimensional bounding volume.
+ * 
  * @author Eric Fritz
  */
 public class AABB2 implements AABB

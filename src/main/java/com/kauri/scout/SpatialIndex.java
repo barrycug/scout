@@ -26,38 +26,116 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 
+import com.kauri.scout.Query.QueryResult;
+
 /**
+ * A spatial-aware collection of elements.
+ * 
+ * <p>
+ * This class implements an R-tree variant designed for efficient traversal and efficient
+ * common-case updates.
+ * 
+ * <p>
+ * <b>Note that this implementation is not synchronized.</b> If multiple threads access the index
+ * concurrently, and at least one of the threads modifies the tree structurally, it <i>must</i> be
+ * synchronized externally. A structural modification is a successful {@link #insert(Object, AABB)
+ * insert}, {@link #update(Object, AABB) update}, or {@link #remove(Object) remove} operation.
+ * 
  * @author Eric Fritz
  */
 public class SpatialIndex<E>
 {
+	/**
+	 * The minimum number of objects a node can hold before underflow.
+	 */
 	private final static int MIN_OBJECTS_PER_NODE = 3;
+
+	/**
+	 * The maximum number of objects a node can hold before overflow.
+	 */
 	private final static int MAX_OBJECTS_PER_NODE = 8;
+
+	/**
+	 * The maximum number of iterations of the k-means clustering algorithm to perform during node
+	 * overflow operations.
+	 */
 	private final static int MAX_SPLIT_ITERATIONS = 8;
 
+	/**
+	 * The root node.
+	 */
 	private Node root;
+
+	/**
+	 * An auxiliary map of objects to the leaf node where they are stored. This allows for
+	 * constant-time retrieval in the case of updates and deletions.
+	 */
 	private Map<E, Node> leafMap = new HashMap<E, Node>();
 
+	/**
+	 * Creates a new SpatialIndex.
+	 */
 	public SpatialIndex()
 	{
 		root = new Node(true);
 	}
 
+	/**
+	 * Performs a spatial query on the index, visiting all of the matching elements that satisfy the
+	 * query criteria.
+	 * 
+	 * @param query
+	 *            The spatial query.
+	 * @param visitor
+	 *            The visitor to call for each matching element.
+	 */
 	public void query(Query query, QueryResultVisitor<E> visitor)
 	{
 		query(query, visitor, root);
 	}
 
+	/**
+	 * Performs a spatial join on the index with itself, visiting all of the matching element pairs
+	 * that satisfy the query criteria.
+	 * 
+	 * @param query
+	 *            The spatial query.
+	 * @param visitor
+	 *            The visitor to call for each matching element.
+	 */
 	public void query(JoinQuery query, JoinQueryResultVisitor<E, E> visitor)
 	{
 		query(query, visitor, root, root, true);
 	}
 
+	/**
+	 * Performs a spatial join on this index and another spatial index, visiting all of the matching
+	 * element pairs that satisfy the query criteria.
+	 * 
+	 * @param index
+	 *            The other spatial index.
+	 * @param query
+	 *            The spatial query.
+	 * @param visitor
+	 *            The visitor to call for each matching element.
+	 */
 	public <F> void query(SpatialIndex<F> index, JoinQuery query, JoinQueryResultVisitor<E, F> visitor)
 	{
 		query(query, visitor, root, index.root, index == this);
 	}
 
+	/**
+	 * Inserts an object into the index.
+	 * 
+	 * <p>
+	 * If <tt>volume</tt> is modified after insertion, {@link #update(Object, AABB)} should be
+	 * called in order to keep the tree well-formed.
+	 * 
+	 * @param object
+	 *            The object to insert.
+	 * @param volume
+	 *            The bounding volume of the object.
+	 */
 	public void insert(E object, AABB volume)
 	{
 		Node node1 = chooseLeaf(root, volume);
@@ -94,6 +172,15 @@ public class SpatialIndex<E>
 		}
 	}
 
+	/**
+	 * Updates the bounds of an object in the index. If the object was not already in the index, no
+	 * action is performed.
+	 * 
+	 * @param object
+	 *            The object to update.
+	 * @param volume
+	 *            The new (current) bounding volume of the object.
+	 */
 	public void update(E object, AABB volume)
 	{
 		Node node = leafMap.get(object);
@@ -125,6 +212,13 @@ public class SpatialIndex<E>
 		insert(object, volume);
 	}
 
+	/**
+	 * Removes an object from the index.
+	 * 
+	 * @param object
+	 *            The object to remove. If the object was not already in the index, no action is
+	 *            performed.
+	 */
 	@SuppressWarnings("unchecked")
 	public void remove(E object)
 	{
@@ -169,7 +263,7 @@ public class SpatialIndex<E>
 	{
 		if (node.isLeaf) {
 			for (int i = 0; i < node.numEntries; i++) {
-				if (query.query(node.volumes[i], false) == QueryResult.ALL) {
+				if (query.query(node.volumes[i], false) == QueryResult.PASS) {
 					if (!visitor.visit((E) node.entries[i])) {
 						return false;
 					}
@@ -179,11 +273,11 @@ public class SpatialIndex<E>
 			for (int i = 0; i < node.numEntries; i++) {
 				QueryResult result = query.query(node.volumes[i], true);
 
-				if (result == QueryResult.ALL) {
+				if (result == QueryResult.PASS) {
 					if (!visitAllObjects(visitor, (Node) node.entries[i])) {
 						return false;
 					}
-				} else if (result == QueryResult.SOME) {
+				} else if (result == QueryResult.PARTIAL) {
 					if (!query(query, visitor, (Node) node.entries[i])) {
 						return false;
 					}
@@ -223,16 +317,16 @@ public class SpatialIndex<E>
 	@SuppressWarnings("unchecked")
 	private <F> boolean query(JoinQuery query, JoinQueryResultVisitor<E, F> visitor, SpatialIndex<E>.Node node1, SpatialIndex<F>.Node node2, boolean sameIndex)
 	{
-		boolean queryBoth = sameIndex && !query.isSymmetricRelation();
+		boolean queryBoth = sameIndex && !query.isSymmetric();
 
 		if (node1.isLeaf && node2.isLeaf) {
 			for (int i = 0; i < node1.numEntries; i++) {
 				for (int j = node1 == node2 ? i + 1 : 0; j < node2.numEntries; j++) {
-					if (query.query(node1.volumes[i], node2.volumes[j], false) == QueryResult.ALL) {
+					if (query.query(node1.volumes[i], node2.volumes[j], false)) {
 						if (!visitor.visit((E) node1.entries[i], (F) node2.entries[j])) {
 							return false;
 						}
-					} else if (queryBoth && query.query(node2.volumes[j], node1.volumes[i], false) == QueryResult.ALL) {
+					} else if (queryBoth && query.query(node2.volumes[j], node1.volumes[i], false)) {
 						if (!visitor.visit((E) node2.entries[j], (F) node1.entries[i])) {
 							return false;
 						}
@@ -256,11 +350,11 @@ public class SpatialIndex<E>
 				int k = sameIndex && node1 == node2 ? i : 0;
 
 				for (int j = k; j < node2.numEntries; j++) {
-					if (query.query(node1.volumes[i], node2.volumes[j], true) != QueryResult.NONE) {
+					if (query.query(node1.volumes[i], node2.volumes[j], true)) {
 						if (!query(query, visitor, (SpatialIndex<E>.Node) node1.entries[i], (SpatialIndex<F>.Node) node2.entries[j], sameIndex)) {
 							return false;
 						}
-					} else if (queryBoth && query.query(node2.volumes[j], node1.volumes[i], true) != QueryResult.NONE) {
+					} else if (queryBoth && query.query(node2.volumes[j], node1.volumes[i], true)) {
 						if (!query(query, visitor, (SpatialIndex<E>.Node) node1.entries[i], (SpatialIndex<F>.Node) node2.entries[j], sameIndex)) {
 							return false;
 						}
