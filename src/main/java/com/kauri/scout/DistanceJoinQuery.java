@@ -22,7 +22,7 @@
 package com.kauri.scout;
 
 /**
- * A join query that matches all pairs of volumes between two indices which are at most
+ * A join query that matches all pairs of volumes between two spatial indices which are at most
  * <tt>distance</tt> away from one another.
  * 
  * @author Eric Fritz

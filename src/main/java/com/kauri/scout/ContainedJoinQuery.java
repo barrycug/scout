@@ -22,8 +22,8 @@
 package com.kauri.scout;
 
 /**
- * A join query that matches all pairs of volumes between two indices where the volume from the
- * second index contains the volume from the first index.
+ * A join query that matches all pairs of volumes between two spatial indices where the volume from
+ * the second index contains the volume from the first index.
  * 
  * @author Eric Fritz
  */

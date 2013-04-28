@@ -22,7 +22,8 @@
 package com.kauri.scout;
 
 /**
- * A join query that matches all pairs of volumes between two indices which are intersecting.
+ * A join query that matches all pairs of volumes between two spatial indices which are
+ * intersecting.
  * 
  * @author Eric Fritz
  */
