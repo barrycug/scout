@@ -91,7 +91,7 @@ public class SpatialIndex<E>
 	 */
 	public void query(Query query, QueryResultVisitor<E> visitor)
 	{
-		query(query, visitor, root);
+		query(query, visitor, root, false);
 	}
 
 	/**
@@ -255,15 +255,12 @@ public class SpatialIndex<E>
 		}
 	}
 
-	//
-	// RECURSIVE
-
 	@SuppressWarnings("unchecked")
-	private boolean query(Query query, QueryResultVisitor<E> visitor, Node node)
+	private boolean query(Query query, QueryResultVisitor<E> visitor, Node node, boolean addAll)
 	{
 		if (node.isLeaf) {
 			for (int i = 0; i < node.numEntries; i++) {
-				if (query.query(node.volumes[i], false) == QueryResult.PASS) {
+				if (addAll || query.query(node.volumes[i], false) == QueryResult.PASS) {
 					if (!visitor.visit((E) node.entries[i])) {
 						return false;
 					}
@@ -271,15 +268,17 @@ public class SpatialIndex<E>
 			}
 		} else {
 			for (int i = 0; i < node.numEntries; i++) {
-				QueryResult result = query.query(node.volumes[i], true);
-
-				if (result == QueryResult.PASS) {
-					if (!visitAllObjects(visitor, (Node) node.entries[i])) {
+				if (addAll) {
+					if (!query(query, visitor, (Node) node.entries[i], true)) {
 						return false;
 					}
-				} else if (result == QueryResult.PARTIAL) {
-					if (!query(query, visitor, (Node) node.entries[i])) {
-						return false;
+				} else {
+					QueryResult result = query.query(node.volumes[i], true);
+
+					if (result != QueryResult.FAIL) {
+						if (!query(query, visitor, (Node) node.entries[i], result == QueryResult.PASS)) {
+							return false;
+						}
 					}
 				}
 			}
@@ -287,32 +286,6 @@ public class SpatialIndex<E>
 
 		return true;
 	}
-
-	//
-	// RECURSIVE
-
-	@SuppressWarnings("unchecked")
-	private boolean visitAllObjects(QueryResultVisitor<E> visitor, Node node)
-	{
-		if (node.isLeaf) {
-			for (int i = 0; i < node.numEntries; i++) {
-				if (!visitor.visit((E) node.entries[i])) {
-					return false;
-				}
-			}
-		} else {
-			for (int i = 0; i < node.numEntries; i++) {
-				if (!visitAllObjects(visitor, (Node) node.entries[i])) {
-					return false;
-				}
-			}
-		}
-
-		return true;
-	}
-
-	//
-	// RECURSIVE
 
 	@SuppressWarnings("unchecked")
 	private <F> boolean query(JoinQuery query, JoinQueryResultVisitor<E, F> visitor, SpatialIndex<E>.Node node1, SpatialIndex<F>.Node node2, boolean sameIndex)
@@ -575,9 +548,6 @@ public class SpatialIndex<E>
 
 		return volume;
 	}
-
-	//
-	// RECURSIVE
 
 	@SuppressWarnings("unchecked")
 	private void reinsert(Node node)
