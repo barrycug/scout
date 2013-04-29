@@ -544,14 +544,7 @@ public class SpatialIndex<E>
 		AABB volume = node.volumes[0].copy();
 
 		for (int i = 1; i < node.numEntries; i++) {
-			for (int j = 0; j < volume.getDimensions(); j++) {
-				float min1 = volume.getMinimum(j);
-				float max1 = volume.getMaximum(j);
-				float min2 = node.volumes[i].getMinimum(j);
-				float max2 = node.volumes[i].getMaximum(j);
-
-				volume.setBounds(j, Math.min(min1, min2), Math.max(max1, max2));
-			}
+			AABBUtil.expand(volume, node.volumes[i]);
 		}
 
 		return volume;

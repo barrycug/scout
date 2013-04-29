@@ -76,4 +76,28 @@ public class AABBUtil
 
 		return dist;
 	}
+
+	/**
+	 * Minimally expands <tt>volume1</tt> so that it complete contains <tt>volume2</tt>.
+	 * 
+	 * @param volume1
+	 *            The volume to expand.
+	 * @param volume2
+	 *            The reference volume.
+	 */
+	public static void expand(AABB volume1, AABB volume2)
+	{
+		if (volume1.getDimensions() != volume2.getDimensions()) {
+			throw new IllegalArgumentException();
+		}
+
+		for (int i = 0; i < volume1.getDimensions(); i++) {
+			float min1 = volume1.getMinimum(i);
+			float max1 = volume1.getMaximum(i);
+			float min2 = volume2.getMinimum(i);
+			float max2 = volume2.getMaximum(i);
+
+			volume1.setBounds(i, Math.min(min1, min2), Math.max(max1, max2));
+		}
+	}
 }
