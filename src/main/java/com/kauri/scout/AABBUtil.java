@@ -29,43 +29,43 @@ package com.kauri.scout;
 public class AABBUtil
 {
 	/**
-	 * Returns the center point of the bounding box with respect to the specified dimension.
+	 * Returns the center point of the bounding volume with respect to the specified dimension.
 	 * 
-	 * @param aabb
-	 *            The box.
+	 * @param volume
+	 *            The volume.
 	 * @param dimension
 	 *            The dimension.
-	 * @return The center point of the bounding box with respect to the specified dimension.
+	 * @return The center point of the bounding volume with respect to the specified dimension.
 	 */
-	public static float getCenter(AABB aabb, int dimension)
+	public static float getCenter(AABB volume, int dimension)
 	{
-		if (dimension > aabb.getDimensions()) {
+		if (dimension > volume.getDimensions()) {
 			throw new IllegalArgumentException();
 		}
 
-		return aabb.getMinimum(dimension) + aabb.getExtent(dimension) / 2;
+		return volume.getMinimum(dimension) + volume.getExtent(dimension) / 2;
 	}
 
 	/**
-	 * Returns the minimum distance between two bounding boxes.
+	 * Returns the minimum distance between two bounding volumes.
 	 * 
-	 * @param aabb1
-	 *            The first box.
-	 * @param aabb2
-	 *            The second box.
-	 * @return The minimum distance between two bounding boxes.
+	 * @param volume1
+	 *            The first volume.
+	 * @param volume2
+	 *            The second volume.
+	 * @return The minimum distance between two bounding volumes.
 	 */
-	public static float distanceSquared(AABB aabb1, AABB aabb2)
+	public static float distanceSquared(AABB volume1, AABB volume2)
 	{
-		if (aabb1.getDimensions() != aabb2.getDimensions()) {
+		if (volume1.getDimensions() != volume2.getDimensions()) {
 			throw new IllegalArgumentException();
 		}
 
 		float dist = 0;
-		for (int i = 0; i < aabb1.getDimensions(); i++) {
-			float min = aabb1.getMinimum(i) - aabb2.getExtent(i);
-			float max = aabb1.getMaximum(i);
-			float pnt = aabb2.getMinimum(i);
+		for (int i = 0; i < volume1.getDimensions(); i++) {
+			float min = volume1.getMinimum(i) - volume2.getExtent(i);
+			float max = volume1.getMaximum(i);
+			float pnt = volume2.getMinimum(i);
 
 			if (pnt < min) {
 				dist += (min - pnt) * (min - pnt);
