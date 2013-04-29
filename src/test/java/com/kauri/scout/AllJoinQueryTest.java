@@ -31,7 +31,7 @@ import org.junit.Test;
  */
 public class AllJoinQueryTest extends QueryTest
 {
-	private static final int ENTITIES = 100;
+	private static final int ENTITIES = 50;
 
 	@Test
 	public void testOneTreeBulk()
