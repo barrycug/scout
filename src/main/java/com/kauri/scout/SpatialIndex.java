@@ -262,16 +262,14 @@ public class SpatialIndex<E>
 	@SuppressWarnings("unchecked")
 	private boolean query(Query query, QueryResultVisitor<E> visitor, Node node, boolean addAll)
 	{
-		if (node.isLeaf) {
-			for (int i = 0; i < node.numEntries; i++) {
+		for (int i = 0; i < node.numEntries; i++) {
+			if (node.isLeaf) {
 				if (addAll || query.query(node.volumes[i], false) == QueryResult.PASS) {
 					if (!visitor.visit((E) node.entries[i])) {
 						return false;
 					}
 				}
-			}
-		} else {
-			for (int i = 0; i < node.numEntries; i++) {
+			} else {
 				if (addAll) {
 					if (!query(query, visitor, (Node) node.entries[i], true)) {
 						return false;
