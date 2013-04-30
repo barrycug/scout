@@ -91,7 +91,7 @@ public class SpatialIndex<E>
 	 */
 	public void query(Query query, QueryResultVisitor<E> visitor)
 	{
-		query(query, visitor, root, false);
+		query(query, visitor, root);
 	}
 
 	/**
@@ -260,28 +260,46 @@ public class SpatialIndex<E>
 	}
 
 	@SuppressWarnings("unchecked")
-	private boolean query(Query query, QueryResultVisitor<E> visitor, Node node, boolean addAll)
+	private boolean query(Query query, QueryResultVisitor<E> visitor, Node node)
 	{
 		for (int i = 0; i < node.numEntries; i++) {
 			if (node.isLeaf) {
-				if (addAll || query.query(node.volumes[i], false) == QueryResult.PASS) {
+				if (query.query(node.volumes[i], false) == QueryResult.PASS) {
 					if (!visitor.visit((E) node.entries[i])) {
 						return false;
 					}
 				}
 			} else {
-				if (addAll) {
-					if (!query(query, visitor, (Node) node.entries[i], true)) {
-						return false;
-					}
-				} else {
-					QueryResult result = query.query(node.volumes[i], true);
+				QueryResult result = query.query(node.volumes[i], true);
 
-					if (result != QueryResult.FAIL) {
-						if (!query(query, visitor, (Node) node.entries[i], result == QueryResult.PASS)) {
+				if (result != QueryResult.FAIL) {
+					if (result == QueryResult.PASS) {
+						if (!visitAll(visitor, (Node) node.entries[i])) {
+							return false;
+						}
+					} else {
+						if (!query(query, visitor, (Node) node.entries[i])) {
 							return false;
 						}
 					}
+				}
+			}
+		}
+
+		return true;
+	}
+
+	@SuppressWarnings("unchecked")
+	private boolean visitAll(QueryResultVisitor<E> visitor, Node node)
+	{
+		for (int i = 0; i < node.numEntries; i++) {
+			if (node.isLeaf) {
+				if (!visitor.visit((E) node.entries[i])) {
+					return false;
+				}
+			} else {
+				if (!visitAll(visitor, (Node) node.entries[i])) {
+					return false;
 				}
 			}
 		}
