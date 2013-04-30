@@ -121,7 +121,7 @@ public class SpatialIndex<E>
 	 */
 	public <F> void query(SpatialIndex<F> index, JoinQuery query, JoinQueryResultVisitor<E, F> visitor)
 	{
-		query(query, visitor, root, index.root, index == this);
+		query(query, visitor, root, index.root);
 	}
 
 	/**
@@ -292,50 +292,68 @@ public class SpatialIndex<E>
 	}
 
 	@SuppressWarnings("unchecked")
-	private <F> boolean query(JoinQuery query, JoinQueryResultVisitor<E, F> visitor, SpatialIndex<E>.Node node1, SpatialIndex<F>.Node node2, boolean sameIndex)
+	private <F> boolean query(JoinQuery query, JoinQueryResultVisitor<E, F> visitor, SpatialIndex<E>.Node node1, SpatialIndex<F>.Node node2)
 	{
-		if (node1.isLeaf) {
-			if (node2.isLeaf) {
-				for (int i = 0; i < node1.numEntries; i++) {
-					int k = node1 == node2 ? i + 1 : 0;
-
-					for (int j = k; j < node2.numEntries; j++) {
-						if (query.query(node1.volumes[i], node2.volumes[j], false)) {
-							if (!visitor.visit((E) node1.entries[i], (F) node2.entries[j])) {
-								return false;
-							}
-						} else {
-							if (sameIndex && !query.isSymmetric()) {
-								if (query.query(node2.volumes[j], node1.volumes[i], false)) {
-									if (!visitor.visit((E) node2.entries[j], (F) node1.entries[i])) {
-										return false;
-									}
-								}
-							}
-						}
-					}
+		if (node1.isLeaf && !node2.isLeaf) {
+			for (int i = 0; i < node2.numEntries; i++) {
+				if (!query(query, visitor, node1, (SpatialIndex<F>.Node) node2.entries[i])) {
+					return false;
 				}
-			} else {
-				for (int i = 0; i < node2.numEntries; i++) {
-					if (!query(query, visitor, node1, (SpatialIndex<F>.Node) node2.entries[i], sameIndex)) {
+			}
+
+			return true;
+		}
+
+		if (node2.isLeaf && !node1.isLeaf) {
+			for (int i = 0; i < node1.numEntries; i++) {
+				if (!query(query, visitor, (SpatialIndex<E>.Node) node1.entries[i], node2)) {
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		if (!node1.isLeaf && !node2.isLeaf) {
+			return queryInternal(query, visitor, node1, node2);
+		} else {
+			return queryExternal(query, visitor, node1, node2);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private <F> boolean queryInternal(JoinQuery query, JoinQueryResultVisitor<E, F> visitor, SpatialIndex<E>.Node node1, SpatialIndex<F>.Node node2)
+	{
+		for (int i = 0; i < node1.numEntries; i++) {
+			int k = node1 == node2 ? i : 0;
+
+			for (int j = k; j < node2.numEntries; j++) {
+				if (query.query(node1.volumes[i], node2.volumes[j], true)) {
+					if (!query(query, visitor, (SpatialIndex<E>.Node) node1.entries[i], (SpatialIndex<F>.Node) node2.entries[j])) {
 						return false;
 					}
 				}
 			}
-		} else {
-			if (node2.isLeaf) {
-				for (int i = 0; i < node1.numEntries; i++) {
-					if (!query(query, visitor, (SpatialIndex<E>.Node) node1.entries[i], node2, sameIndex)) {
+		}
+
+		return true;
+	}
+
+	@SuppressWarnings("unchecked")
+	private <F> boolean queryExternal(JoinQuery query, JoinQueryResultVisitor<E, F> visitor, SpatialIndex<E>.Node node1, SpatialIndex<F>.Node node2)
+	{
+		for (int i = 0; i < node1.numEntries; i++) {
+			int k = node1 == node2 ? i + 1 : 0;
+
+			for (int j = k; j < node2.numEntries; j++) {
+				if (query.query(node1.volumes[i], node2.volumes[j], false)) {
+					if (!visitor.visit((E) node1.entries[i], (F) node2.entries[j])) {
 						return false;
 					}
-				}
-			} else {
-				for (int i = 0; i < node1.numEntries; i++) {
-					int k = node1 == node2 ? i : 0;
-
-					for (int j = k; j < node2.numEntries; j++) {
-						if (query.query(node1.volumes[i], node2.volumes[j], true)) {
-							if (!query(query, visitor, (SpatialIndex<E>.Node) node1.entries[i], (SpatialIndex<F>.Node) node2.entries[j], sameIndex)) {
+				} else {
+					if (node1 == node2 && !query.isSymmetric()) {
+						if (query.query(node2.volumes[j], node1.volumes[i], false)) {
+							if (!visitor.visit((E) node2.entries[j], (F) node1.entries[i])) {
 								return false;
 							}
 						}
