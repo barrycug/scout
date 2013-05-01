@@ -156,7 +156,7 @@ public class SpatialIndex<E>
 			node2 = splitNode(node1, volume, object);
 		}
 
-		while (node1 != root) {
+		while (node1 != root && node2 != null) {
 			Node parent = node1.parent;
 			Node psplit = null;
 
