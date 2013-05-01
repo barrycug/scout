@@ -505,8 +505,13 @@ public class SpatialIndex<E>
 			iterations++;
 		}
 
-		bulkAddEntry(oldNode, volumes1, entries1, size1);
-		bulkAddEntry(newNode, volumes2, entries2, size2);
+		for (int i = 0; i < size1; i++) {
+			oldNode.add(volumes1[i], entries1[i]);
+		}
+
+		for (int i = 0; i < size2; i++) {
+			newNode.add(volumes2[i], entries2[i]);
+		}
 	}
 
 	private void adjustMedian(AABB median, AABB[] volumes, int size)
@@ -552,13 +557,6 @@ public class SpatialIndex<E>
 		}
 
 		return transfers;
-	}
-
-	private void bulkAddEntry(Node target, AABB[] volumes, Object[] entries, int size)
-	{
-		for (int i = 0; i < size; i++) {
-			target.add(volumes[i], entries[i]);
-		}
 	}
 
 	private boolean updateVolumes(Node parent, Node node)
