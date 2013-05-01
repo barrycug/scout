@@ -143,11 +143,15 @@ public class SpatialIndex<E>
 		Node node2 = null;
 
 		while (!node1.isLeaf) {
-			node1 = (Node) node1.entries[chooseChildIndex(node1, volume)];
+			int index = chooseChildIndex(node1, volume);
+
+			AABBUtil.expand(node1.volumes[index], volume);
+			node1 = (Node) node1.entries[index];
 		}
 
 		if (node1.numEntries + 1 <= MAX_OBJECTS_PER_NODE) {
 			node1.add(volume, object);
+			return;
 		} else {
 			node2 = splitNode(node1, volume, object);
 		}
