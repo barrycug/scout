@@ -136,10 +136,15 @@ public class SpatialIndex<E>
 	 * @param volume
 	 *            The bounding volume of the object.
 	 */
+	@SuppressWarnings("unchecked")
 	public void insert(E object, AABB volume)
 	{
-		Node node1 = chooseLeaf(root, volume);
+		Node node1 = root;
 		Node node2 = null;
+
+		while (!node1.isLeaf) {
+			node1 = (Node) node1.entries[chooseChildIndex(node1, volume)];
+		}
 
 		if (node1.numEntries + 1 <= MAX_OBJECTS_PER_NODE) {
 			node1.add(volume, object);
@@ -381,35 +386,30 @@ public class SpatialIndex<E>
 		return true;
 	}
 
-	@SuppressWarnings("unchecked")
-	private Node chooseLeaf(Node node, AABB volume)
+	private int chooseChildIndex(Node node, AABB volume)
 	{
-		while (!node.isLeaf) {
-			int index = 0;
-			float best = Float.POSITIVE_INFINITY;
+		int index = 0;
+		float best = Float.POSITIVE_INFINITY;
 
-			for (int i = 0; i < node.numEntries; i++) {
-				float increase = 1;
+		for (int i = 0; i < node.numEntries; i++) {
+			float increase = 1;
 
-				for (int j = 0; j < volume.getDimensions(); j++) {
-					float min = Math.min(node.volumes[i].getMinimum(j), volume.getMinimum(j));
-					float max = Math.max(node.volumes[i].getMaximum(j), volume.getMaximum(j));
+			for (int j = 0; j < volume.getDimensions(); j++) {
+				float min = Math.min(node.volumes[i].getMinimum(j), volume.getMinimum(j));
+				float max = Math.max(node.volumes[i].getMaximum(j), volume.getMaximum(j));
 
-					increase *= max - min;
-				}
-
-				increase -= node.volumes[i].getVolume();
-
-				if (increase < best || (increase == best && node.volumes[i].getVolume() < node.volumes[index].getVolume())) {
-					index = i;
-					best = increase;
-				}
+				increase *= max - min;
 			}
 
-			node = (Node) node.entries[index];
+			increase -= node.volumes[i].getVolume();
+
+			if (increase < best || (increase == best && node.volumes[i].getVolume() < node.volumes[index].getVolume())) {
+				index = i;
+				best = increase;
+			}
 		}
 
-		return node;
+		return index;
 	}
 
 	private Node splitNode(Node oldNode, AABB volume, Object object)
