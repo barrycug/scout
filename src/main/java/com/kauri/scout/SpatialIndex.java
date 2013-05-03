@@ -393,23 +393,25 @@ public class SpatialIndex<E>
 	private int chooseChildIndex(Node node, AABB volume)
 	{
 		int index = 0;
-		float best = Float.POSITIVE_INFINITY;
+		float bestArea = Float.POSITIVE_INFINITY;
+		float bestDiff = Float.POSITIVE_INFINITY;
 
 		for (int i = 0; i < node.numEntries; i++) {
-			float increase = 1;
+			float area = 1;
 
 			for (int j = 0; j < volume.getDimensions(); j++) {
 				float min = Math.min(node.volumes[i].getMinimum(j), volume.getMinimum(j));
 				float max = Math.max(node.volumes[i].getMaximum(j), volume.getMaximum(j));
 
-				increase *= max - min;
+				area *= max - min;
 			}
 
-			increase -= node.volumes[i].getVolume();
+			float diff = area - node.volumes[i].getVolume();
 
-			if (increase < best || (increase == best && node.volumes[i].getVolume() < node.volumes[index].getVolume())) {
+			if (diff < bestDiff || (diff == bestDiff && area < bestArea)) {
 				index = i;
-				best = increase;
+				bestArea = area;
+				bestDiff = diff;
 			}
 		}
 
