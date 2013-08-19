@@ -54,7 +54,7 @@ public class SpatialIndexTest extends QueryTest
 		SpatialIndex<Object> tree1 = new SpatialIndex<Object>();
 		SpatialIndex<Object> tree2 = new SpatialIndex<Object>();
 
-		for (int i = 0; i < ENTITIES * 2; i++) {
+		for (int i = 0; i < ENTITIES; i++) {
 			tree1.insert(new Object(), new AABB2(i, 0, 1, 1));
 			tree2.insert(new Object(), new AABB2(i, 0, 1, 1));
 		}
