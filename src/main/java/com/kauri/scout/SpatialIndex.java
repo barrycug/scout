@@ -21,6 +21,7 @@
 
 package com.kauri.scout;
 
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -73,6 +74,13 @@ public class SpatialIndex<E>
 	private Map<E, Node> leafMap = new HashMap<E, Node>();
 
 	/**
+	 * The number of active traversals of the index. This field is used to forbid structural
+	 * modification operations on the index while it is being traversed, which may result in
+	 * undefined or exceptional behavior.
+	 */
+	private transient int traversalCount = 0;
+
+	/**
 	 * Creates a new SpatialIndex.
 	 */
 	public SpatialIndex()
@@ -91,7 +99,9 @@ public class SpatialIndex<E>
 	 */
 	public void query(Query query, QueryResultVisitor<E> visitor)
 	{
+		traversalCount++;
 		query(query, visitor, root);
+		traversalCount--;
 	}
 
 	/**
@@ -121,7 +131,9 @@ public class SpatialIndex<E>
 	 */
 	public <F> void query(SpatialIndex<F> index, JoinQuery query, JoinQueryResultVisitor<E, F> visitor)
 	{
+		traversalCount++;
 		query(query, visitor, root, index.root);
+		traversalCount--;
 	}
 
 	/**
@@ -139,6 +151,10 @@ public class SpatialIndex<E>
 	@SuppressWarnings("unchecked")
 	public void insert(E object, AABB volume)
 	{
+		if (traversalCount != 0) {
+			throw new ConcurrentModificationException("Index cannot be modified during traversal.");
+		}
+
 		Node node1 = root;
 		Node node2 = null;
 
@@ -192,6 +208,10 @@ public class SpatialIndex<E>
 	 */
 	public void update(E object, AABB volume)
 	{
+		if (traversalCount != 0) {
+			throw new ConcurrentModificationException("Index cannot be modified during traversal.");
+		}
+
 		Node node = leafMap.get(object);
 
 		if (node == null) {
@@ -231,6 +251,10 @@ public class SpatialIndex<E>
 	@SuppressWarnings("unchecked")
 	public void remove(E object)
 	{
+		if (traversalCount != 0) {
+			throw new ConcurrentModificationException("Index cannot be modified during traversal.");
+		}
+
 		Node node = leafMap.get(object);
 
 		if (node == null) {
