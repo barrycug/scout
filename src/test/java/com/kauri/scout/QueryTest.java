@@ -32,16 +32,16 @@ import java.util.List;
  */
 abstract public class QueryTest
 {
-	public <T> List<T> getVisited(SpatialIndex<T> tree, Query query)
+	public <T> List<T> getVisited(SpatialIndex<T> index, Query query)
 	{
-		return getVisited(tree, query, Integer.MAX_VALUE);
+		return getVisited(index, query, Integer.MAX_VALUE);
 	}
 
-	public <T> List<T> getVisited(SpatialIndex<T> tree, Query query, final int limit)
+	public <T> List<T> getVisited(SpatialIndex<T> index, Query query, final int limit)
 	{
 		final List<T> visited = new ArrayList<T>();
 
-		tree.query(query, new QueryResultVisitor<T>() {
+		index.query(query, new QueryResultVisitor<T>() {
 			@Override
 			public boolean visit(T o)
 			{
@@ -52,16 +52,16 @@ abstract public class QueryTest
 		return visited;
 	}
 
-	public <T> List<Pair<T>> getVisited(SpatialIndex<T> tree1, SpatialIndex<T> tree2, JoinQuery query)
+	public <T> List<Pair<T>> getVisited(SpatialIndex<T> index1, SpatialIndex<T> index2, JoinQuery query)
 	{
-		return getVisited(tree1, tree2, query, Integer.MAX_VALUE);
+		return getVisited(index1, index2, query, Integer.MAX_VALUE);
 	}
 
-	public <T> List<Pair<T>> getVisited(SpatialIndex<T> tree1, SpatialIndex<T> tree2, JoinQuery query, final int limit)
+	public <T> List<Pair<T>> getVisited(SpatialIndex<T> index1, SpatialIndex<T> index2, JoinQuery query, final int limit)
 	{
 		final List<Pair<T>> visited = new ArrayList<Pair<T>>();
 
-		tree1.query(tree2, query, new JoinQueryResultVisitor<T, T>() {
+		index1.query(index2, query, new JoinQueryResultVisitor<T, T>() {
 			@Override
 			public boolean visit(T o1, T o2)
 			{

@@ -37,34 +37,34 @@ public class ContainsQueryTest extends QueryTest
 	@Test
 	public void test()
 	{
-		SpatialIndex<Object> tree = new SpatialIndex<Object>();
+		SpatialIndex<Object> index = new SpatialIndex<Object>();
 
 		Object o1, o2, o3;
-		tree.insert(o1 = new Object(), new AABB2(1, 1, 3, 3)); // Within bounds
-		tree.insert(o2 = new Object(), new AABB2(2, 2, 3, 3)); // Within bounds
-		tree.insert(o3 = new Object(), new AABB2(0, 0, 5, 5)); // Copies bounds
+		index.insert(o1 = new Object(), new AABB2(1, 1, 3, 3)); // Within bounds
+		index.insert(o2 = new Object(), new AABB2(2, 2, 3, 3)); // Within bounds
+		index.insert(o3 = new Object(), new AABB2(0, 0, 5, 5)); // Copies bounds
 
-		tree.insert(new Object(), new AABB2(4, 0, 2, 2)); // Intersects bounds
-		tree.insert(new Object(), new AABB2(6, 0, 1, 1)); // Outside of bounds
+		index.insert(new Object(), new AABB2(4, 0, 2, 2)); // Intersects bounds
+		index.insert(new Object(), new AABB2(6, 0, 1, 1)); // Outside of bounds
 
-		ensureSame(getVisited(tree, new ContainsQuery(new AABB2(0, 0, 5, 5))), Arrays.asList(o1, o2, o3));
+		ensureSame(getVisited(index, new ContainsQuery(new AABB2(0, 0, 5, 5))), Arrays.asList(o1, o2, o3));
 	}
 
 	@Test
 	public void testBulk()
 	{
-		SpatialIndex<Object> tree = new SpatialIndex<Object>();
+		SpatialIndex<Object> index = new SpatialIndex<Object>();
 		List<Object> expected = new ArrayList<Object>();
 
 		Object o;
 		for (int i = 0; i < ENTITIES; i++) {
-			tree.insert(o = new Object(), new AABB2(5 * i, 0, 5, 5));
+			index.insert(o = new Object(), new AABB2(5 * i, 0, 5, 5));
 
 			if (i < ENTITIES / 4) {
 				expected.add(o);
 			}
 		}
 
-		ensureSame(getVisited(tree, new ContainsQuery(new AABB2(0, 0, ENTITIES / 4 * 5, 5))), expected);
+		ensureSame(getVisited(index, new ContainsQuery(new AABB2(0, 0, ENTITIES / 4 * 5, 5))), expected);
 	}
 }

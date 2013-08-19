@@ -34,16 +34,16 @@ public class AllJoinQueryTest extends QueryTest
 	private static final int ENTITIES = 50;
 
 	@Test
-	public void testOneTreeBulk()
+	public void testOneIndexBulk()
 	{
-		SpatialIndex<Object> tree = new SpatialIndex<Object>();
+		SpatialIndex<Object> index = new SpatialIndex<Object>();
 
 		List<Object> objects = new ArrayList<Object>();
 
 		Object o1, o2;
 		for (int i = 0; i < ENTITIES; i++) {
-			tree.insert(o1 = new Object(), new AABB2(i, 0, 1, 1));
-			tree.insert(o2 = new Object(), new AABB2(i, 1, 1, 1));
+			index.insert(o1 = new Object(), new AABB2(i, 0, 1, 1));
+			index.insert(o2 = new Object(), new AABB2(i, 1, 1, 1));
 
 			objects.add(o1);
 			objects.add(o2);
@@ -57,14 +57,14 @@ public class AllJoinQueryTest extends QueryTest
 			}
 		}
 
-		ensureSameSymmetric(getVisited(tree, tree, new AllJoinQuery()), expected);
+		ensureSameSymmetric(getVisited(index, index, new AllJoinQuery()), expected);
 	}
 
 	@Test
-	public void testTwoTreesBulk()
+	public void testTwoIndicesBulk()
 	{
-		SpatialIndex<Object> tree1 = new SpatialIndex<Object>();
-		SpatialIndex<Object> tree2 = new SpatialIndex<Object>();
+		SpatialIndex<Object> index1 = new SpatialIndex<Object>();
+		SpatialIndex<Object> index2 = new SpatialIndex<Object>();
 
 		List<Object> objects1 = new ArrayList<Object>();
 		List<Object> objects2 = new ArrayList<Object>();
@@ -74,8 +74,8 @@ public class AllJoinQueryTest extends QueryTest
 
 		Object o1, o2;
 		for (int i = 0; i < ENTITIES; i++) {
-			tree1.insert(o1 = new Object(), new AABB2(i, 0, 1, 1));
-			tree2.insert(o2 = new Object(), new AABB2(i, 1, 1, 1));
+			index1.insert(o1 = new Object(), new AABB2(i, 0, 1, 1));
+			index2.insert(o2 = new Object(), new AABB2(i, 1, 1, 1));
 
 			objects1.add(o1);
 			objects2.add(o2);
@@ -88,7 +88,7 @@ public class AllJoinQueryTest extends QueryTest
 			}
 		}
 
-		ensureSame(getVisited(tree1, tree2, new AllJoinQuery()), expected1);
-		ensureSame(getVisited(tree2, tree1, new AllJoinQuery()), expected2);
+		ensureSame(getVisited(index1, index2, new AllJoinQuery()), expected1);
+		ensureSame(getVisited(index2, index1, new AllJoinQuery()), expected2);
 	}
 }

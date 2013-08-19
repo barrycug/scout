@@ -37,29 +37,29 @@ public class IntersectionQueryTest extends QueryTest
 	@Test
 	public void test()
 	{
-		SpatialIndex<Object> tree = new SpatialIndex<Object>();
+		SpatialIndex<Object> index = new SpatialIndex<Object>();
 
 		Object o1, o2, o3;
-		tree.insert(o1 = new Object(), new AABB2(0, 0, 1, 1)); // Within bounds
-		tree.insert(o2 = new Object(), new AABB2(2, 1, 2, 2)); // Intersects bounds
-		tree.insert(o3 = new Object(), new AABB2(0, 0, 3, 3)); // Copies bounds
+		index.insert(o1 = new Object(), new AABB2(0, 0, 1, 1)); // Within bounds
+		index.insert(o2 = new Object(), new AABB2(2, 1, 2, 2)); // Intersects bounds
+		index.insert(o3 = new Object(), new AABB2(0, 0, 3, 3)); // Copies bounds
 
-		tree.insert(new Object(), new AABB2(5, 5, 1, 1)); // Outside of bounds
-		tree.insert(new Object(), new AABB2(6, 6, 1, 1)); // Outside of bounds
+		index.insert(new Object(), new AABB2(5, 5, 1, 1)); // Outside of bounds
+		index.insert(new Object(), new AABB2(6, 6, 1, 1)); // Outside of bounds
 
-		ensureSame(getVisited(tree, new IntersectionQuery(new AABB2(0, 0, 3, 3))), Arrays.asList(o1, o2, o3));
+		ensureSame(getVisited(index, new IntersectionQuery(new AABB2(0, 0, 3, 3))), Arrays.asList(o1, o2, o3));
 	}
 
 	@Test
 	public void testBulk()
 	{
-		SpatialIndex<Object> tree = new SpatialIndex<Object>();
+		SpatialIndex<Object> index = new SpatialIndex<Object>();
 		List<Object> expected = new ArrayList<Object>();
 
 		Object o1, o2;
 		for (int i = 0; i < ENTITIES; i++) {
-			tree.insert(o1 = new Object(), new AABB2(10 * i, 0, 10, 5));
-			tree.insert(o2 = new Object(), new AABB2(10 * i, 5, 10, 5));
+			index.insert(o1 = new Object(), new AABB2(10 * i, 0, 10, 5));
+			index.insert(o2 = new Object(), new AABB2(10 * i, 5, 10, 5));
 
 			if (i < ENTITIES / 4) {
 				expected.add(o1);
@@ -67,6 +67,6 @@ public class IntersectionQueryTest extends QueryTest
 			}
 		}
 
-		ensureSame(getVisited(tree, new IntersectionQuery(new AABB2(1, 1, ENTITIES / 4 * 10 - 2, 8))), expected);
+		ensureSame(getVisited(index, new IntersectionQuery(new AABB2(1, 1, ENTITIES / 4 * 10 - 2, 8))), expected);
 	}
 }

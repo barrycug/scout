@@ -38,7 +38,7 @@ import com.kauri.scout.Query.QueryResult;
  * 
  * <p>
  * <b>Note that this implementation is not synchronized.</b> If multiple threads access the index
- * concurrently, and at least one of the threads modifies the tree structurally, it <i>must</i> be
+ * concurrently, and at least one of the threads modifies the index structurally, it <i>must</i> be
  * synchronized externally. A structural modification is a successful {@link #insert(Object, AABB)
  * insert}, {@link #update(Object, AABB) update}, or {@link #remove(Object) remove} operation.
  * 
@@ -141,7 +141,7 @@ public class SpatialIndex<E>
 	 * 
 	 * <p>
 	 * If <tt>volume</tt> is modified after insertion, {@link #update(Object, AABB)} should be
-	 * called in order to keep the tree well-formed.
+	 * called in order to keep the index well-formed.
 	 * 
 	 * @param object
 	 *            The object to insert.

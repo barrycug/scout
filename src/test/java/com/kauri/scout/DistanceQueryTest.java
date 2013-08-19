@@ -37,31 +37,31 @@ public class DistanceQueryTest extends QueryTest
 	@Test
 	public void test()
 	{
-		SpatialIndex<Object> tree = new SpatialIndex<Object>();
+		SpatialIndex<Object> index = new SpatialIndex<Object>();
 
 		Object o1, o2, o3;
-		tree.insert(o1 = new Object(), new AABB2(1, 1, 1, 1)); // Intersects
-		tree.insert(o2 = new Object(), new AABB2(6, 0, 1, 1)); // Exact distance on one axis
-		tree.insert(o3 = new Object(), new AABB2(4, 5, 1, 1)); // Exact distance on two axes
+		index.insert(o1 = new Object(), new AABB2(1, 1, 1, 1)); // Intersects
+		index.insert(o2 = new Object(), new AABB2(6, 0, 1, 1)); // Exact distance on one axis
+		index.insert(o3 = new Object(), new AABB2(4, 5, 1, 1)); // Exact distance on two axes
 
-		tree.insert(new Object(), new AABB2(7, 0, 1, 1)); // Beyond distance on one axis
-		tree.insert(new Object(), new AABB2(5, 5, 1, 1)); // Beyond distance on two axes
+		index.insert(new Object(), new AABB2(7, 0, 1, 1)); // Beyond distance on one axis
+		index.insert(new Object(), new AABB2(5, 5, 1, 1)); // Beyond distance on two axes
 
-		ensureSame(getVisited(tree, new DistanceQuery(new AABB2(0, 0, 1, 1), 5)), Arrays.asList(o1, o2, o3));
+		ensureSame(getVisited(index, new DistanceQuery(new AABB2(0, 0, 1, 1), 5)), Arrays.asList(o1, o2, o3));
 	}
 
 	@Test
 	public void testBulk()
 	{
-		SpatialIndex<Object> tree = new SpatialIndex<Object>();
+		SpatialIndex<Object> index = new SpatialIndex<Object>();
 		List<Object> expected = new ArrayList<Object>();
 
 		Object o1, o2, o3, o4;
 		for (int i = 1; i <= ENTITIES; i++) {
-			tree.insert(o1 = new Object(), new AABB2(ENTITIES - i, ENTITIES - i, 1, 1));
-			tree.insert(o2 = new Object(), new AABB2(ENTITIES + i, ENTITIES - i, 1, 1));
-			tree.insert(o3 = new Object(), new AABB2(ENTITIES - i, ENTITIES + i, 1, 1));
-			tree.insert(o4 = new Object(), new AABB2(ENTITIES + i, ENTITIES + i, 1, 1));
+			index.insert(o1 = new Object(), new AABB2(ENTITIES - i, ENTITIES - i, 1, 1));
+			index.insert(o2 = new Object(), new AABB2(ENTITIES + i, ENTITIES - i, 1, 1));
+			index.insert(o3 = new Object(), new AABB2(ENTITIES - i, ENTITIES + i, 1, 1));
+			index.insert(o4 = new Object(), new AABB2(ENTITIES + i, ENTITIES + i, 1, 1));
 
 			if (i <= 25) {
 				expected.add(o1);
@@ -71,6 +71,6 @@ public class DistanceQueryTest extends QueryTest
 			}
 		}
 
-		ensureSame(getVisited(tree, new DistanceQuery(new AABB2(ENTITIES, ENTITIES, 1, 1), 35)), expected);
+		ensureSame(getVisited(index, new DistanceQuery(new AABB2(ENTITIES, ENTITIES, 1, 1), 35)), expected);
 	}
 }

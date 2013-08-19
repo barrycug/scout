@@ -34,56 +34,56 @@ public class IntersectionJoinQueryTest extends QueryTest
 	private static final int ENTITIES = 1000;
 
 	@Test
-	public void testOneTree()
+	public void testOneIndex()
 	{
-		SpatialIndex<Object> tree = new SpatialIndex<Object>();
+		SpatialIndex<Object> index = new SpatialIndex<Object>();
 
 		Object o1, o2, o3, o4;
-		tree.insert(o1 = new Object(), new AABB2(0, 1, 2, 2)); // Intersects o2
-		tree.insert(o2 = new Object(), new AABB2(1, 1, 2, 3)); // Intersects o1, o3
-		tree.insert(o3 = new Object(), new AABB2(3, 1, 2, 2)); // Intersects o2, o4
-		tree.insert(o4 = new Object(), new AABB2(5, 3, 1, 1)); // Intersects o3
+		index.insert(o1 = new Object(), new AABB2(0, 1, 2, 2)); // Intersects o2
+		index.insert(o2 = new Object(), new AABB2(1, 1, 2, 3)); // Intersects o1, o3
+		index.insert(o3 = new Object(), new AABB2(3, 1, 2, 2)); // Intersects o2, o4
+		index.insert(o4 = new Object(), new AABB2(5, 3, 1, 1)); // Intersects o3
 
 		List<Pair<Object>> expected = new ArrayList<Pair<Object>>();
 		expected.add(new Pair<Object>(o1, o2));
 		expected.add(new Pair<Object>(o2, o3));
 		expected.add(new Pair<Object>(o3, o4));
 
-		ensureSameSymmetric(getVisited(tree, tree, new IntersectionJoinQuery()), expected);
+		ensureSameSymmetric(getVisited(index, index, new IntersectionJoinQuery()), expected);
 	}
 
 	@Test
-	public void testOneTreeBulk()
+	public void testOneIndexBulk()
 	{
-		SpatialIndex<Object> tree = new SpatialIndex<Object>();
+		SpatialIndex<Object> index = new SpatialIndex<Object>();
 		List<Pair<Object>> expected = new ArrayList<Pair<Object>>();
 
 		Object o1, o2;
 		for (int i = 0; i < ENTITIES; i++) {
-			tree.insert(o1 = new Object(), new AABB2(2 * i, 0, 1, 2));
-			tree.insert(o2 = new Object(), new AABB2(2 * i, 1, 1, 2));
+			index.insert(o1 = new Object(), new AABB2(2 * i, 0, 1, 2));
+			index.insert(o2 = new Object(), new AABB2(2 * i, 1, 1, 2));
 
 			expected.add(new Pair<Object>(o1, o2));
 		}
 
-		ensureSameSymmetric(getVisited(tree, tree, new IntersectionJoinQuery()), expected);
+		ensureSameSymmetric(getVisited(index, index, new IntersectionJoinQuery()), expected);
 	}
 
 	@Test
-	public void testTwoTrees()
+	public void testTwoIndices()
 	{
-		SpatialIndex<Object> tree1 = new SpatialIndex<Object>();
-		SpatialIndex<Object> tree2 = new SpatialIndex<Object>();
+		SpatialIndex<Object> index1 = new SpatialIndex<Object>();
+		SpatialIndex<Object> index2 = new SpatialIndex<Object>();
 
 		Object o1, o2, o3;
-		tree1.insert(o1 = new Integer(1), new AABB2(3, 0, 2, 2)); // Intersects o4
-		tree1.insert(o2 = new Integer(2), new AABB2(0, 1, 4, 4)); // Intersects o4, o5, o6
-		tree1.insert(o3 = new Integer(3), new AABB2(3, 4, 1, 1)); // Intersects o6
+		index1.insert(o1 = new Integer(1), new AABB2(3, 0, 2, 2)); // Intersects o4
+		index1.insert(o2 = new Integer(2), new AABB2(0, 1, 4, 4)); // Intersects o4, o5, o6
+		index1.insert(o3 = new Integer(3), new AABB2(3, 4, 1, 1)); // Intersects o6
 
 		Object o4, o5, o6;
-		tree2.insert(o4 = new Integer(4), new AABB2(3, 0, 2, 2)); // Intersects o1, o2
-		tree2.insert(o5 = new Integer(5), new AABB2(0, 1, 2, 2)); // Intersects o2
-		tree2.insert(o6 = new Integer(6), new AABB2(2, 5, 2, 2)); // Intersects o2, o3
+		index2.insert(o4 = new Integer(4), new AABB2(3, 0, 2, 2)); // Intersects o1, o2
+		index2.insert(o5 = new Integer(5), new AABB2(0, 1, 2, 2)); // Intersects o2
+		index2.insert(o6 = new Integer(6), new AABB2(2, 5, 2, 2)); // Intersects o2, o3
 
 		List<Pair<Object>> expected1 = new ArrayList<Pair<Object>>();
 		expected1.add(new Pair<Object>(o1, o4));
@@ -99,29 +99,29 @@ public class IntersectionJoinQueryTest extends QueryTest
 		expected2.add(new Pair<Object>(o6, o2));
 		expected2.add(new Pair<Object>(o6, o3));
 
-		ensureSame(getVisited(tree1, tree2, new IntersectionJoinQuery()), expected1);
-		ensureSame(getVisited(tree2, tree1, new IntersectionJoinQuery()), expected2);
+		ensureSame(getVisited(index1, index2, new IntersectionJoinQuery()), expected1);
+		ensureSame(getVisited(index2, index1, new IntersectionJoinQuery()), expected2);
 	}
 
 	@Test
-	public void testTwoTreesBulk()
+	public void testTwoIndicesBulk()
 	{
-		SpatialIndex<Object> tree1 = new SpatialIndex<Object>();
-		SpatialIndex<Object> tree2 = new SpatialIndex<Object>();
+		SpatialIndex<Object> index1 = new SpatialIndex<Object>();
+		SpatialIndex<Object> index2 = new SpatialIndex<Object>();
 
 		List<Pair<Object>> expected1 = new ArrayList<Pair<Object>>();
 		List<Pair<Object>> expected2 = new ArrayList<Pair<Object>>();
 
 		Object o1, o2;
 		for (int i = 0; i < ENTITIES; i++) {
-			tree1.insert(o1 = new Object(), new AABB2(2 * i, 0, 1, 2));
-			tree2.insert(o2 = new Object(), new AABB2(2 * i, 1, 1, 2));
+			index1.insert(o1 = new Object(), new AABB2(2 * i, 0, 1, 2));
+			index2.insert(o2 = new Object(), new AABB2(2 * i, 1, 1, 2));
 
 			expected1.add(new Pair<Object>(o1, o2));
 			expected2.add(new Pair<Object>(o2, o1));
 		}
 
-		ensureSame(getVisited(tree1, tree2, new IntersectionJoinQuery()), expected1);
-		ensureSame(getVisited(tree2, tree1, new IntersectionJoinQuery()), expected2);
+		ensureSame(getVisited(index1, index2, new IntersectionJoinQuery()), expected1);
+		ensureSame(getVisited(index2, index1, new IntersectionJoinQuery()), expected2);
 	}
 }

@@ -36,16 +36,16 @@ public class AllQueryTest extends QueryTest
 	@Test
 	public void testBulk()
 	{
-		SpatialIndex<Object> tree = new SpatialIndex<Object>();
+		SpatialIndex<Object> index = new SpatialIndex<Object>();
 		List<Object> expected = new ArrayList<Object>();
 
 		Object o1;
 		for (int i = 0; i < ENTITIES; i++) {
-			tree.insert(o1 = new Object(), new AABB2(i, 0, 1, 1));
+			index.insert(o1 = new Object(), new AABB2(i, 0, 1, 1));
 
 			expected.add(o1);
 		}
 
-		ensureSame(getVisited(tree, new AllQuery()), expected);
+		ensureSame(getVisited(index, new AllQuery()), expected);
 	}
 }
