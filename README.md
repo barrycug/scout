@@ -87,10 +87,6 @@ index1.query(index2, new IntersectionJoinQuery(), new JoinQueryResultVisitor<E, 
 
 The visitor may return `false` from the `visit` method in the case that the tree traversal should halt.
 
-### Note
-
-Modification of the index during a query may adjust the internal structure of the tree and can result in undefined or exceptional behavior.
-
 ## License
 
 Copyright (c) 2013 Eric Fritz
