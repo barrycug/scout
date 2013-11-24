@@ -1,4 +1,4 @@
-/*0
+/*
  * This file is part of the scout package.
  *
  * Copyright (C) 2013, Eric Fritz
