@@ -156,7 +156,7 @@ public class SpatialIndex<E>
 		}
 
 		Node node1 = root;
-		Node node2 = null;
+		Node node2;
 
 		while (!node1.isLeaf) {
 			int index = chooseChildIndex(node1, volume);
@@ -449,7 +449,7 @@ public class SpatialIndex<E>
 		Object[] entries2 = new Object[MAX_OBJECTS_PER_NODE];
 
 		int seed1 = (int) (Math.random() * MAX_OBJECTS_PER_NODE);
-		int seed2 = 0;
+		int seed2;
 
 		do {
 			seed2 = (int) (Math.random() * MAX_OBJECTS_PER_NODE);
