@@ -219,10 +219,10 @@ public class SpatialIndex<E>
 		if (node != root) {
 			Node parent = node.parent;
 
-			outer: for (int i = 0; i < parent.numEntries; i++) {
+			for (int i = 0; i < parent.numEntries; i++) {
 				if (parent.entries[i] == node) {
 					if (!parent.volumes[i].contains(volume)) {
-						break outer;
+						break;
 					}
 
 					for (int j = 0; j < node.numEntries; j++) {
