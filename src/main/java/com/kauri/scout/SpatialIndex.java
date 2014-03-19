@@ -132,7 +132,7 @@ public class SpatialIndex<E>
 	public <F> void query(SpatialIndex<F> index, JoinQuery query, JoinQueryResultVisitor<E, F> visitor)
 	{
 		traversalCount++;
-		query(query, visitor, root, index.root);
+		this.<F>query(query, visitor, root, index.root);
 		traversalCount--;
 	}
 
@@ -364,9 +364,9 @@ public class SpatialIndex<E>
 		}
 
 		if (!node1.isLeaf && !node2.isLeaf) {
-			return queryInternal(query, visitor, node1, node2);
+			return this.<F>queryInternal(query, visitor, node1, node2);
 		} else {
-			return queryExternal(query, visitor, node1, node2);
+			return this.<F>queryExternal(query, visitor, node1, node2);
 		}
 	}
 
@@ -378,7 +378,7 @@ public class SpatialIndex<E>
 
 			for (int j = k; j < node2.numEntries; j++) {
 				if (query.query(node1.volumes[i], node2.volumes[j], true)) {
-					if (!query(query, visitor, (SpatialIndex<E>.Node) node1.entries[i], (SpatialIndex<F>.Node) node2.entries[j])) {
+					if (!this.<F>query(query, visitor, (SpatialIndex<E>.Node) node1.entries[i], (SpatialIndex<F>.Node) node2.entries[j])) {
 						return false;
 					}
 				}
