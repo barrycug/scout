@@ -178,12 +178,10 @@ public class SpatialIndex<E>
 
 			updateVolumes(parent, node1);
 
-			if (node2 != null) {
-				if (parent.numEntries + 1 <= MAX_OBJECTS_PER_NODE) {
-					parent.add(getVolumeForNode(node2), node2);
-				} else {
-					psplit = splitNode(parent, getVolumeForNode(node2), node2);
-				}
+			if (parent.numEntries + 1 <= MAX_OBJECTS_PER_NODE) {
+				parent.add(getVolumeForNode(node2), node2);
+			} else {
+				psplit = splitNode(parent, getVolumeForNode(node2), node2);
 			}
 
 			node1 = parent;
