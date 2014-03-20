@@ -71,7 +71,7 @@ public class SpatialIndex<E>
 	 * An auxiliary map of objects to the leaf node where they are stored. This allows for
 	 * constant-time retrieval in the case of updates and deletions.
 	 */
-	private Map<E, Node> leafMap = new HashMap<E, Node>();
+	private Map<E, Node> leafMap = new HashMap<>();
 
 	/**
 	 * The number of active traversals of the index. This field is used to forbid structural
@@ -261,7 +261,7 @@ public class SpatialIndex<E>
 
 		node.remove(object);
 
-		Queue<Node> queue = new LinkedList<Node>();
+		Queue<Node> queue = new LinkedList<>();
 
 		while (node != root) {
 			Node parent = node.parent;

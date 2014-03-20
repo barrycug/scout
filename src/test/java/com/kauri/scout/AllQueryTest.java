@@ -36,8 +36,8 @@ public class AllQueryTest extends QueryTest
 	@Test
 	public void testBulk()
 	{
-		SpatialIndex<Object> index = new SpatialIndex<Object>();
-		List<Object> expected = new ArrayList<Object>();
+		SpatialIndex<Object> index = new SpatialIndex<>();
+		List<Object> expected = new ArrayList<>();
 
 		Object o1;
 		for (int i = 0; i < ENTITIES; i++) {

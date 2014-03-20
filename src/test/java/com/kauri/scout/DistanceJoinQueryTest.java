@@ -36,7 +36,7 @@ public class DistanceJoinQueryTest extends QueryTest
 	@Test
 	public void testOneIndex()
 	{
-		SpatialIndex<Object> index = new SpatialIndex<Object>();
+		SpatialIndex<Object> index = new SpatialIndex<>();
 
 		Object o1, o2, o3, o4;
 		index.insert(o1 = new Object(), new AABB2(0, 0, 1, 1)); // In range of o2
@@ -44,11 +44,11 @@ public class DistanceJoinQueryTest extends QueryTest
 		index.insert(o3 = new Object(), new AABB2(8, 0, 9, 1)); // In range of o2, o4
 		index.insert(o4 = new Object(), new AABB2(8, 4, 9, 5)); // In range of o2, o3
 
-		List<Pair<Object>> expected = new ArrayList<Pair<Object>>();
-		expected.add(new Pair<Object>(o1, o2));
-		expected.add(new Pair<Object>(o2, o3));
-		expected.add(new Pair<Object>(o2, o4));
-		expected.add(new Pair<Object>(o3, o4));
+		List<Pair<Object>> expected = new ArrayList<>();
+		expected.add(new Pair<>(o1, o2));
+		expected.add(new Pair<>(o2, o3));
+		expected.add(new Pair<>(o2, o4));
+		expected.add(new Pair<>(o3, o4));
 
 		ensureSameSymmetric(getVisited(index, index, new DistanceJoinQuery(5)), expected);
 	}
@@ -56,15 +56,15 @@ public class DistanceJoinQueryTest extends QueryTest
 	@Test
 	public void testOneIndexBulk()
 	{
-		SpatialIndex<Object> index = new SpatialIndex<Object>();
-		List<Pair<Object>> expected = new ArrayList<Pair<Object>>();
+		SpatialIndex<Object> index = new SpatialIndex<>();
+		List<Pair<Object>> expected = new ArrayList<>();
 
 		Object o1, o2 = null;
 		for (int i = 0; i < ENTITIES; i++) {
 			index.insert(o1 = new Object(), new AABB2(5 * i, 0, 5, 5));
 
 			if (o2 != null) {
-				expected.add(new Pair<Object>(o2, o1));
+				expected.add(new Pair<>(o2, o1));
 			}
 
 			o2 = o1;
@@ -76,30 +76,30 @@ public class DistanceJoinQueryTest extends QueryTest
 	@Test
 	public void testTwoIndices()
 	{
-		SpatialIndex<Object> index1 = new SpatialIndex<Object>();
-		SpatialIndex<Object> index2 = new SpatialIndex<Object>();
+		SpatialIndex<Object> index1 = new SpatialIndex<>();
+		SpatialIndex<Object> index2 = new SpatialIndex<>();
 
 		Object o1, o2, o3;
-		index1.insert(o1 = new Integer(1), new AABB2(2, 0, 1, 3)); // In range of o4, o5
-		index1.insert(o2 = new Integer(2), new AABB2(0, 5, 1, 1)); // In range of o6
-		index1.insert(o3 = new Integer(3), new AABB2(0, 7, 1, 1)); // In range of o6
+		index1.insert(o1 = new Object(), new AABB2(2, 0, 1, 3)); // In range of o4, o5
+		index1.insert(o2 = new Object(), new AABB2(0, 5, 1, 1)); // In range of o6
+		index1.insert(o3 = new Object(), new AABB2(0, 7, 1, 1)); // In range of o6
 
 		Object o4, o5, o6;
-		index2.insert(o4 = new Integer(4), new AABB2(0, 0, 1, 1)); // In range of o1
-		index2.insert(o5 = new Integer(5), new AABB2(0, 2, 1, 1)); // In range of o1
-		index2.insert(o6 = new Integer(6), new AABB2(2, 5, 1, 3)); // In range of o2, o3
+		index2.insert(o4 = new Object(), new AABB2(0, 0, 1, 1)); // In range of o1
+		index2.insert(o5 = new Object(), new AABB2(0, 2, 1, 1)); // In range of o1
+		index2.insert(o6 = new Object(), new AABB2(2, 5, 1, 3)); // In range of o2, o3
 
-		List<Pair<Object>> expected1 = new ArrayList<Pair<Object>>();
-		expected1.add(new Pair<Object>(o1, o4));
-		expected1.add(new Pair<Object>(o1, o5));
-		expected1.add(new Pair<Object>(o2, o6));
-		expected1.add(new Pair<Object>(o3, o6));
+		List<Pair<Object>> expected1 = new ArrayList<>();
+		expected1.add(new Pair<>(o1, o4));
+		expected1.add(new Pair<>(o1, o5));
+		expected1.add(new Pair<>(o2, o6));
+		expected1.add(new Pair<>(o3, o6));
 
-		List<Pair<Object>> expected2 = new ArrayList<Pair<Object>>();
-		expected2.add(new Pair<Object>(o4, o1));
-		expected2.add(new Pair<Object>(o5, o1));
-		expected2.add(new Pair<Object>(o6, o2));
-		expected2.add(new Pair<Object>(o6, o3));
+		List<Pair<Object>> expected2 = new ArrayList<>();
+		expected2.add(new Pair<>(o4, o1));
+		expected2.add(new Pair<>(o5, o1));
+		expected2.add(new Pair<>(o6, o2));
+		expected2.add(new Pair<>(o6, o3));
 
 		ensureSame(getVisited(index1, index2, new DistanceJoinQuery(1)), expected1);
 		ensureSame(getVisited(index2, index1, new DistanceJoinQuery(1)), expected2);
@@ -108,19 +108,19 @@ public class DistanceJoinQueryTest extends QueryTest
 	@Test
 	public void testTwoIndicesBulk()
 	{
-		SpatialIndex<Object> index1 = new SpatialIndex<Object>();
-		SpatialIndex<Object> index2 = new SpatialIndex<Object>();
+		SpatialIndex<Object> index1 = new SpatialIndex<>();
+		SpatialIndex<Object> index2 = new SpatialIndex<>();
 
-		List<Pair<Object>> expected1 = new ArrayList<Pair<Object>>();
-		List<Pair<Object>> expected2 = new ArrayList<Pair<Object>>();
+		List<Pair<Object>> expected1 = new ArrayList<>();
+		List<Pair<Object>> expected2 = new ArrayList<>();
 
 		Object o1, o2;
 		for (int i = 0; i < ENTITIES; i++) {
 			index1.insert(o1 = new Object(), new AABB2(5 * i, 0, 1, 1));
 			index2.insert(o2 = new Object(), new AABB2(5 * i, 2, 1, 1));
 
-			expected1.add(new Pair<Object>(o1, o2));
-			expected2.add(new Pair<Object>(o2, o1));
+			expected1.add(new Pair<>(o1, o2));
+			expected2.add(new Pair<>(o2, o1));
 		}
 
 		ensureSame(getVisited(index1, index2, new DistanceJoinQuery(1)), expected1);

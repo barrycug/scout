@@ -39,7 +39,7 @@ abstract public class QueryTest
 
 	public <T> List<T> getVisited(SpatialIndex<T> index, Query query, final int limit)
 	{
-		final List<T> visited = new ArrayList<T>();
+		final List<T> visited = new ArrayList<>();
 
 		index.query(query, new QueryResultVisitor<T>() {
 			@Override
@@ -59,7 +59,7 @@ abstract public class QueryTest
 
 	public <T> List<Pair<T>> getVisited(SpatialIndex<T> index1, SpatialIndex<T> index2, JoinQuery query, final int limit)
 	{
-		final List<Pair<T>> visited = new ArrayList<Pair<T>>();
+		final List<Pair<T>> visited = new ArrayList<>();
 
 		index1.query(index2, query, new JoinQueryResultVisitor<T, T>() {
 			@Override
@@ -86,7 +86,7 @@ abstract public class QueryTest
 		assertEquals(expected.size(), actual.size());
 
 		for (Pair<T> item : expected) {
-			assertTrue(actual.contains(item) || actual.contains(new Pair<T>(item.o2, item.o1)));
+			assertTrue(actual.contains(item) || actual.contains(new Pair<>(item.o2, item.o1)));
 		}
 	}
 

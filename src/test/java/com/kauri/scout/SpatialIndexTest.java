@@ -39,7 +39,7 @@ public class SpatialIndexTest extends QueryTest
 	@Test
 	public void testQueryEarlyExit()
 	{
-		SpatialIndex<Object> index = new SpatialIndex<Object>();
+		SpatialIndex<Object> index = new SpatialIndex<>();
 
 		for (int i = 0; i < ENTITIES; i++) {
 			index.insert(new Object(), new AABB2(i, 0, 1, 1));
@@ -51,8 +51,8 @@ public class SpatialIndexTest extends QueryTest
 	@Test
 	public void testJoinQueryEarlyExit()
 	{
-		SpatialIndex<Object> index1 = new SpatialIndex<Object>();
-		SpatialIndex<Object> index2 = new SpatialIndex<Object>();
+		SpatialIndex<Object> index1 = new SpatialIndex<>();
+		SpatialIndex<Object> index2 = new SpatialIndex<>();
 
 		for (int i = 0; i < ENTITIES; i++) {
 			index1.insert(new Object(), new AABB2(i, 0, 1, 1));
@@ -65,11 +65,11 @@ public class SpatialIndexTest extends QueryTest
 	@Test
 	public void testUpdate()
 	{
-		SpatialIndex<Object> index = new SpatialIndex<Object>();
+		SpatialIndex<Object> index = new SpatialIndex<>();
 
-		List<Object> set1 = new ArrayList<Object>();
-		List<Object> set2 = new ArrayList<Object>();
-		List<Object> set3 = new ArrayList<Object>();
+		List<Object> set1 = new ArrayList<>();
+		List<Object> set2 = new ArrayList<>();
+		List<Object> set3 = new ArrayList<>();
 
 		Object o1, o2, o3;
 		for (int i = 0; i < ENTITIES; i++) {
@@ -98,10 +98,10 @@ public class SpatialIndexTest extends QueryTest
 	@Test
 	public void testRemove()
 	{
-		SpatialIndex<Object> index = new SpatialIndex<Object>();
+		SpatialIndex<Object> index = new SpatialIndex<>();
 
-		List<Object> set1 = new ArrayList<Object>();
-		List<Object> set2 = new ArrayList<Object>();
+		List<Object> set1 = new ArrayList<>();
+		List<Object> set2 = new ArrayList<>();
 
 		Object o1, o2;
 		for (int i = 0; i < ENTITIES; i++) {

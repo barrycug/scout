@@ -36,9 +36,9 @@ public class AllJoinQueryTest extends QueryTest
 	@Test
 	public void testOneIndexBulk()
 	{
-		SpatialIndex<Object> index = new SpatialIndex<Object>();
+		SpatialIndex<Object> index = new SpatialIndex<>();
 
-		List<Object> objects = new ArrayList<Object>();
+		List<Object> objects = new ArrayList<>();
 
 		Object o1, o2;
 		for (int i = 0; i < ENTITIES; i++) {
@@ -49,11 +49,11 @@ public class AllJoinQueryTest extends QueryTest
 			objects.add(o2);
 		}
 
-		List<Pair<Object>> expected = new ArrayList<Pair<Object>>();
+		List<Pair<Object>> expected = new ArrayList<>();
 
 		for (int i = 0; i < objects.size(); i++) {
 			for (int j = i + 1; j < objects.size(); j++) {
-				expected.add(new Pair<Object>(objects.get(i), objects.get(j)));
+				expected.add(new Pair<>(objects.get(i), objects.get(j)));
 			}
 		}
 
@@ -63,14 +63,14 @@ public class AllJoinQueryTest extends QueryTest
 	@Test
 	public void testTwoIndicesBulk()
 	{
-		SpatialIndex<Object> index1 = new SpatialIndex<Object>();
-		SpatialIndex<Object> index2 = new SpatialIndex<Object>();
+		SpatialIndex<Object> index1 = new SpatialIndex<>();
+		SpatialIndex<Object> index2 = new SpatialIndex<>();
 
-		List<Object> objects1 = new ArrayList<Object>();
-		List<Object> objects2 = new ArrayList<Object>();
+		List<Object> objects1 = new ArrayList<>();
+		List<Object> objects2 = new ArrayList<>();
 
-		List<Pair<Object>> expected1 = new ArrayList<Pair<Object>>();
-		List<Pair<Object>> expected2 = new ArrayList<Pair<Object>>();
+		List<Pair<Object>> expected1 = new ArrayList<>();
+		List<Pair<Object>> expected2 = new ArrayList<>();
 
 		Object o1, o2;
 		for (int i = 0; i < ENTITIES; i++) {
@@ -83,8 +83,8 @@ public class AllJoinQueryTest extends QueryTest
 
 		for (int i = 0; i < ENTITIES; i++) {
 			for (int j = 0; j < ENTITIES; j++) {
-				expected1.add(new Pair<Object>(objects1.get(i), objects2.get(j)));
-				expected2.add(new Pair<Object>(objects2.get(j), objects1.get(i)));
+				expected1.add(new Pair<>(objects1.get(i), objects2.get(j)));
+				expected2.add(new Pair<>(objects2.get(j), objects1.get(i)));
 			}
 		}
 

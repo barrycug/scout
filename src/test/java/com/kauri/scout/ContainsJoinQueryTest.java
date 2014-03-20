@@ -36,7 +36,7 @@ public class ContainsJoinQueryTest extends QueryTest
 	@Test
 	public void testOneIndex()
 	{
-		SpatialIndex<Object> index = new SpatialIndex<Object>();
+		SpatialIndex<Object> index = new SpatialIndex<>();
 
 		Object o1, o2, o3, o4;
 		index.insert(o1 = new Object(), new AABB2(0, 0, 7, 7)); // Contains o2, o3, o4
@@ -44,13 +44,13 @@ public class ContainsJoinQueryTest extends QueryTest
 		index.insert(o3 = new Object(), new AABB2(2, 2, 3, 3)); // Contains o4
 		index.insert(o4 = new Object(), new AABB2(3, 3, 1, 1)); // Contains nothing
 
-		List<Pair<Object>> expected = new ArrayList<Pair<Object>>();
-		expected.add(new Pair<Object>(o1, o2));
-		expected.add(new Pair<Object>(o1, o3));
-		expected.add(new Pair<Object>(o1, o4));
-		expected.add(new Pair<Object>(o2, o3));
-		expected.add(new Pair<Object>(o2, o4));
-		expected.add(new Pair<Object>(o3, o4));
+		List<Pair<Object>> expected = new ArrayList<>();
+		expected.add(new Pair<>(o1, o2));
+		expected.add(new Pair<>(o1, o3));
+		expected.add(new Pair<>(o1, o4));
+		expected.add(new Pair<>(o2, o3));
+		expected.add(new Pair<>(o2, o4));
+		expected.add(new Pair<>(o3, o4));
 
 		ensureSame(getVisited(index, index, new ContainsJoinQuery()), expected);
 	}
@@ -58,15 +58,15 @@ public class ContainsJoinQueryTest extends QueryTest
 	@Test
 	public void testOneIndexBulk()
 	{
-		SpatialIndex<Object> index = new SpatialIndex<Object>();
-		List<Pair<Object>> expected = new ArrayList<Pair<Object>>();
+		SpatialIndex<Object> index = new SpatialIndex<>();
+		List<Pair<Object>> expected = new ArrayList<>();
 
 		Object o1, o2;
 		for (int i = 0; i < ENTITIES; i++) {
 			index.insert(o1 = new Object(), new AABB2(5 * i + 0, 0, 5, 5));
 			index.insert(o2 = new Object(), new AABB2(5 * i + 1, 1, 3, 3));
 
-			expected.add(new Pair<Object>(o1, o2));
+			expected.add(new Pair<>(o1, o2));
 		}
 
 		ensureSame(getVisited(index, index, new ContainsJoinQuery()), expected);
@@ -75,8 +75,8 @@ public class ContainsJoinQueryTest extends QueryTest
 	@Test
 	public void testTwoIndices()
 	{
-		SpatialIndex<Object> index1 = new SpatialIndex<Object>();
-		SpatialIndex<Object> index2 = new SpatialIndex<Object>();
+		SpatialIndex<Object> index1 = new SpatialIndex<>();
+		SpatialIndex<Object> index2 = new SpatialIndex<>();
 
 		Object o1, o2, o3;
 		index1.insert(o1 = new Object(), new AABB2(0, 0, 8, 8)); // Contains o4, o5, o6
@@ -88,17 +88,17 @@ public class ContainsJoinQueryTest extends QueryTest
 		index2.insert(o5 = new Object(), new AABB2(2, 2, 4, 4)); // Contains o2, o3
 		index2.insert(o6 = new Object(), new AABB2(3, 3, 1, 1)); // Contains nothing
 
-		List<Pair<Object>> expected1 = new ArrayList<Pair<Object>>();
-		expected1.add(new Pair<Object>(o1, o4));
-		expected1.add(new Pair<Object>(o1, o5));
-		expected1.add(new Pair<Object>(o1, o6));
-		expected1.add(new Pair<Object>(o2, o6));
+		List<Pair<Object>> expected1 = new ArrayList<>();
+		expected1.add(new Pair<>(o1, o4));
+		expected1.add(new Pair<>(o1, o5));
+		expected1.add(new Pair<>(o1, o6));
+		expected1.add(new Pair<>(o2, o6));
 
-		List<Pair<Object>> expected2 = new ArrayList<Pair<Object>>();
-		expected2.add(new Pair<Object>(o4, o2));
-		expected2.add(new Pair<Object>(o4, o3));
-		expected2.add(new Pair<Object>(o5, o2));
-		expected2.add(new Pair<Object>(o5, o3));
+		List<Pair<Object>> expected2 = new ArrayList<>();
+		expected2.add(new Pair<>(o4, o2));
+		expected2.add(new Pair<>(o4, o3));
+		expected2.add(new Pair<>(o5, o2));
+		expected2.add(new Pair<>(o5, o3));
 
 		ensureSame(getVisited(index1, index2, new ContainsJoinQuery()), expected1);
 		ensureSame(getVisited(index2, index1, new ContainsJoinQuery()), expected2);
@@ -107,11 +107,11 @@ public class ContainsJoinQueryTest extends QueryTest
 	@Test
 	public void testTwoIndicesBulk()
 	{
-		SpatialIndex<Object> index1 = new SpatialIndex<Object>();
-		SpatialIndex<Object> index2 = new SpatialIndex<Object>();
+		SpatialIndex<Object> index1 = new SpatialIndex<>();
+		SpatialIndex<Object> index2 = new SpatialIndex<>();
 
-		List<Pair<Object>> expected1 = new ArrayList<Pair<Object>>();
-		List<Pair<Object>> expected2 = new ArrayList<Pair<Object>>();
+		List<Pair<Object>> expected1 = new ArrayList<>();
+		List<Pair<Object>> expected2 = new ArrayList<>();
 
 		Object o1, o2, o3;
 		for (int i = 0; i < ENTITIES; i++) {
@@ -119,8 +119,8 @@ public class ContainsJoinQueryTest extends QueryTest
 			index2.insert(o2 = new Object(), new AABB2(5 * i + 1, 1, 3, 3));
 			index1.insert(o3 = new Object(), new AABB2(5 * i + 2, 2, 1, 1));
 
-			expected1.add(new Pair<Object>(o1, o2));
-			expected2.add(new Pair<Object>(o2, o3));
+			expected1.add(new Pair<>(o1, o2));
+			expected2.add(new Pair<>(o2, o3));
 		}
 
 		ensureSame(getVisited(index1, index2, new ContainsJoinQuery()), expected1);

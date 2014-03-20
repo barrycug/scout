@@ -37,7 +37,7 @@ public class DistanceQueryTest extends QueryTest
 	@Test
 	public void test()
 	{
-		SpatialIndex<Object> index = new SpatialIndex<Object>();
+		SpatialIndex<Object> index = new SpatialIndex<>();
 
 		Object o1, o2, o3;
 		index.insert(o1 = new Object(), new AABB2(1, 1, 1, 1)); // Intersects
@@ -53,8 +53,8 @@ public class DistanceQueryTest extends QueryTest
 	@Test
 	public void testBulk()
 	{
-		SpatialIndex<Object> index = new SpatialIndex<Object>();
-		List<Object> expected = new ArrayList<Object>();
+		SpatialIndex<Object> index = new SpatialIndex<>();
+		List<Object> expected = new ArrayList<>();
 
 		Object o1, o2, o3, o4;
 		for (int i = 1; i <= ENTITIES; i++) {

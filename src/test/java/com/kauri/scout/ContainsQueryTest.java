@@ -37,7 +37,7 @@ public class ContainsQueryTest extends QueryTest
 	@Test
 	public void test()
 	{
-		SpatialIndex<Object> index = new SpatialIndex<Object>();
+		SpatialIndex<Object> index = new SpatialIndex<>();
 
 		Object o1, o2, o3;
 		index.insert(o1 = new Object(), new AABB2(1, 1, 3, 3)); // Within bounds
@@ -53,8 +53,8 @@ public class ContainsQueryTest extends QueryTest
 	@Test
 	public void testBulk()
 	{
-		SpatialIndex<Object> index = new SpatialIndex<Object>();
-		List<Object> expected = new ArrayList<Object>();
+		SpatialIndex<Object> index = new SpatialIndex<>();
+		List<Object> expected = new ArrayList<>();
 
 		Object o;
 		for (int i = 0; i < ENTITIES; i++) {
