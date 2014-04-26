@@ -125,7 +125,6 @@ public class SpatialIndex<E>
 	/**
 	 * Inserts an object into the index.
 	 * <p>
-	 * <p>
 	 * If <tt>volume</tt> is modified after insertion, {@link #update(Object, AABB)} should be
 	 * called in order to keep the index well-formed.
 	 *
