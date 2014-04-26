@@ -32,13 +32,11 @@ import static org.junit.Assert.assertTrue;
  */
 abstract public class QueryTest
 {
-	public <T> List<T> getVisited(SpatialIndex<T> index, Query query)
-	{
+	public <T> List<T> getVisited(SpatialIndex<T> index, Query query) {
 		return getVisited(index, query, Integer.MAX_VALUE);
 	}
 
-	public <T> List<T> getVisited(SpatialIndex<T> index, Query query, final int limit)
-	{
+	public <T> List<T> getVisited(SpatialIndex<T> index, Query query, final int limit) {
 		final List<T> visited = new ArrayList<>();
 
 		index.query(query, o -> visited.add(o) && visited.size() < limit);
@@ -46,13 +44,11 @@ abstract public class QueryTest
 		return visited;
 	}
 
-	public <T> List<Pair<T>> getVisited(SpatialIndex<T> index1, SpatialIndex<T> index2, JoinQuery query)
-	{
+	public <T> List<Pair<T>> getVisited(SpatialIndex<T> index1, SpatialIndex<T> index2, JoinQuery query) {
 		return getVisited(index1, index2, query, Integer.MAX_VALUE);
 	}
 
-	public <T> List<Pair<T>> getVisited(SpatialIndex<T> index1, SpatialIndex<T> index2, JoinQuery query, final int limit)
-	{
+	public <T> List<Pair<T>> getVisited(SpatialIndex<T> index1, SpatialIndex<T> index2, JoinQuery query, final int limit) {
 		final List<Pair<T>> visited = new ArrayList<>();
 
 		index1.query(index2, query, (o1, o2) -> visited.add(new Pair<>(o1, o2)) && visited.size() < limit);
@@ -60,8 +56,7 @@ abstract public class QueryTest
 		return visited;
 	}
 
-	public <T> void ensureSame(List<T> actual, List<T> expected)
-	{
+	public <T> void ensureSame(List<T> actual, List<T> expected) {
 		assertEquals(expected.size(), actual.size());
 
 		for (T item : expected) {
@@ -69,8 +64,7 @@ abstract public class QueryTest
 		}
 	}
 
-	public <T> void ensureSameSymmetric(List<Pair<T>> actual, List<Pair<T>> expected)
-	{
+	public <T> void ensureSameSymmetric(List<Pair<T>> actual, List<Pair<T>> expected) {
 		assertEquals(expected.size(), actual.size());
 
 		for (Pair<T> item : expected) {
@@ -83,15 +77,13 @@ abstract public class QueryTest
 		T o1;
 		T o2;
 
-		public Pair(T o1, T o2)
-		{
+		public Pair(T o1, T o2) {
 			this.o1 = o1;
 			this.o2 = o2;
 		}
 
 		@Override
-		public boolean equals(Object o)
-		{
+		public boolean equals(Object o) {
 			if (this == o) {
 				return true;
 			}

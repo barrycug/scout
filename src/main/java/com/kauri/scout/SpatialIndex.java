@@ -30,11 +30,9 @@ import java.util.Queue;
 
 /**
  * A spatial-aware collection of elements.
- *
  * <p>
  * This class implements an R-tree variant designed for efficient traversal and efficient
  * common-case updates.
- *
  * <p>
  * <b>Note that this implementation is not synchronized.</b> If multiple threads access the index
  * concurrently, and at least one of the threads modifies the index structurally, it <i>must</i> be
@@ -82,8 +80,7 @@ public class SpatialIndex<E>
 	/**
 	 * Creates a new SpatialIndex.
 	 */
-	public SpatialIndex()
-	{
+	public SpatialIndex() {
 		root = new Node(true);
 	}
 
@@ -91,13 +88,10 @@ public class SpatialIndex<E>
 	 * Performs a spatial query on the index, visiting all of the matching elements that satisfy the
 	 * query criteria.
 	 *
-	 * @param query
-	 *            The spatial query.
-	 * @param visitor
-	 *            The visitor to call for each matching element.
+	 * @param query   The spatial query.
+	 * @param visitor The visitor to call for each matching element.
 	 */
-	public void query(Query query, QueryResultVisitor<E> visitor)
-	{
+	public void query(Query query, QueryResultVisitor<E> visitor) {
 		traversalCount++;
 		query(query, visitor, root);
 		traversalCount--;
@@ -107,13 +101,10 @@ public class SpatialIndex<E>
 	 * Performs a spatial join on the index with itself, visiting all of the matching element pairs
 	 * that satisfy the query criteria.
 	 *
-	 * @param query
-	 *            The spatial query.
-	 * @param visitor
-	 *            The visitor to call for each matching element.
+	 * @param query   The spatial query.
+	 * @param visitor The visitor to call for each matching element.
 	 */
-	public void query(JoinQuery query, JoinQueryResultVisitor<E, E> visitor)
-	{
+	public void query(JoinQuery query, JoinQueryResultVisitor<E, E> visitor) {
 		query(this, query, visitor);
 	}
 
@@ -121,15 +112,11 @@ public class SpatialIndex<E>
 	 * Performs a spatial join on this index and another spatial index, visiting all of the matching
 	 * element pairs that satisfy the query criteria.
 	 *
-	 * @param index
-	 *            The other spatial index.
-	 * @param query
-	 *            The spatial query.
-	 * @param visitor
-	 *            The visitor to call for each matching element.
+	 * @param index   The other spatial index.
+	 * @param query   The spatial query.
+	 * @param visitor The visitor to call for each matching element.
 	 */
-	public <F> void query(SpatialIndex<F> index, JoinQuery query, JoinQueryResultVisitor<E, F> visitor)
-	{
+	public <F> void query(SpatialIndex<F> index, JoinQuery query, JoinQueryResultVisitor<E, F> visitor) {
 		traversalCount++;
 		this.<F>query(query, visitor, root, index.root);
 		traversalCount--;
@@ -137,19 +124,16 @@ public class SpatialIndex<E>
 
 	/**
 	 * Inserts an object into the index.
-	 *
+	 * <p>
 	 * <p>
 	 * If <tt>volume</tt> is modified after insertion, {@link #update(Object, AABB)} should be
 	 * called in order to keep the index well-formed.
 	 *
-	 * @param object
-	 *            The object to insert.
-	 * @param volume
-	 *            The bounding volume of the object.
+	 * @param object The object to insert.
+	 * @param volume The bounding volume of the object.
 	 */
 	@SuppressWarnings("unchecked")
-	public void insert(E object, AABB volume)
-	{
+	public void insert(E object, AABB volume) {
 		if (traversalCount != 0) {
 			throw new ConcurrentModificationException("Index cannot be modified during traversal.");
 		}
@@ -198,13 +182,10 @@ public class SpatialIndex<E>
 	 * Updates the bounds of an object in the index. If the object was not already in the index, no
 	 * action is performed.
 	 *
-	 * @param object
-	 *            The object to update.
-	 * @param volume
-	 *            The new (current) bounding volume of the object.
+	 * @param object The object to update.
+	 * @param volume The new (current) bounding volume of the object.
 	 */
-	public void update(E object, AABB volume)
-	{
+	public void update(E object, AABB volume) {
 		if (traversalCount != 0) {
 			throw new ConcurrentModificationException("Index cannot be modified during traversal.");
 		}
@@ -241,13 +222,11 @@ public class SpatialIndex<E>
 	/**
 	 * Removes an object from the index.
 	 *
-	 * @param object
-	 *            The object to remove. If the object was not already in the index, no action is
-	 *            performed.
+	 * @param object The object to remove. If the object was not already in the index, no action is
+	 *               performed.
 	 */
 	@SuppressWarnings("unchecked")
-	public void remove(E object)
-	{
+	public void remove(E object) {
 		if (traversalCount != 0) {
 			throw new ConcurrentModificationException("Index cannot be modified during traversal.");
 		}
@@ -288,8 +267,7 @@ public class SpatialIndex<E>
 	}
 
 	@SuppressWarnings("unchecked")
-	private boolean query(Query query, QueryResultVisitor<E> visitor, Node node)
-	{
+	private boolean query(Query query, QueryResultVisitor<E> visitor, Node node) {
 		for (int i = 0; i < node.numEntries; i++) {
 			if (node.isLeaf) {
 				if (query.query(node.volumes[i], false) == QueryResult.PASS) {
@@ -318,8 +296,7 @@ public class SpatialIndex<E>
 	}
 
 	@SuppressWarnings("unchecked")
-	private boolean visitAll(QueryResultVisitor<E> visitor, Node node)
-	{
+	private boolean visitAll(QueryResultVisitor<E> visitor, Node node) {
 		for (int i = 0; i < node.numEntries; i++) {
 			if (node.isLeaf) {
 				if (!visitor.visit((E) node.entries[i])) {
@@ -336,8 +313,7 @@ public class SpatialIndex<E>
 	}
 
 	@SuppressWarnings("unchecked")
-	private <F> boolean query(JoinQuery query, JoinQueryResultVisitor<E, F> visitor, SpatialIndex<E>.Node node1, SpatialIndex<F>.Node node2)
-	{
+	private <F> boolean query(JoinQuery query, JoinQueryResultVisitor<E, F> visitor, SpatialIndex<E>.Node node1, SpatialIndex<F>.Node node2) {
 		if (node1.isLeaf && !node2.isLeaf) {
 			for (int i = 0; i < node2.numEntries; i++) {
 				if (!query(query, visitor, node1, (SpatialIndex<F>.Node) node2.entries[i])) {
@@ -366,8 +342,7 @@ public class SpatialIndex<E>
 	}
 
 	@SuppressWarnings("unchecked")
-	private <F> boolean queryInternal(JoinQuery query, JoinQueryResultVisitor<E, F> visitor, SpatialIndex<E>.Node node1, SpatialIndex<F>.Node node2)
-	{
+	private <F> boolean queryInternal(JoinQuery query, JoinQueryResultVisitor<E, F> visitor, SpatialIndex<E>.Node node1, SpatialIndex<F>.Node node2) {
 		for (int i = 0; i < node1.numEntries; i++) {
 			int k = node1 == node2 ? i : 0;
 
@@ -384,8 +359,7 @@ public class SpatialIndex<E>
 	}
 
 	@SuppressWarnings("unchecked")
-	private <F> boolean queryExternal(JoinQuery query, JoinQueryResultVisitor<E, F> visitor, SpatialIndex<E>.Node node1, SpatialIndex<F>.Node node2)
-	{
+	private <F> boolean queryExternal(JoinQuery query, JoinQueryResultVisitor<E, F> visitor, SpatialIndex<E>.Node node1, SpatialIndex<F>.Node node2) {
 		for (int i = 0; i < node1.numEntries; i++) {
 			int k = node1 == node2 ? i + 1 : 0;
 
@@ -409,8 +383,7 @@ public class SpatialIndex<E>
 		return true;
 	}
 
-	private int chooseChildIndex(Node node, AABB volume)
-	{
+	private int chooseChildIndex(Node node, AABB volume) {
 		int index = 0;
 		float bestArea = Float.POSITIVE_INFINITY;
 		float bestDiff = Float.POSITIVE_INFINITY;
@@ -437,8 +410,7 @@ public class SpatialIndex<E>
 		return index;
 	}
 
-	private Node splitNode(Node oldNode, AABB volume, Object object)
-	{
+	private Node splitNode(Node oldNode, AABB volume, Object object) {
 		AABB[] volumes1 = new AABB[MAX_OBJECTS_PER_NODE];
 		AABB[] volumes2 = new AABB[MAX_OBJECTS_PER_NODE];
 
@@ -503,8 +475,7 @@ public class SpatialIndex<E>
 		return newNode;
 	}
 
-	private void partitionEntries(Node oldNode, Node newNode, AABB[] volumes1, AABB[] volumes2, Object[] entries1, Object[] entries2, int size1, int size2)
-	{
+	private void partitionEntries(Node oldNode, Node newNode, AABB[] volumes1, AABB[] volumes2, Object[] entries1, Object[] entries2, int size1, int size2) {
 		AABB median1 = volumes1[0].copy();
 		AABB median2 = volumes2[0].copy();
 
@@ -539,8 +510,7 @@ public class SpatialIndex<E>
 		}
 	}
 
-	private void adjustMedian(AABB median, AABB[] volumes, int size)
-	{
+	private void adjustMedian(AABB median, AABB[] volumes, int size) {
 		float totalmass = 0;
 		float[] centers = new float[median.getDimensions()];
 
@@ -559,8 +529,7 @@ public class SpatialIndex<E>
 		}
 	}
 
-	private int moveToGroup(AABB[] volumes1, Object[] entries1, int size1, AABB[] volumes2, Object[] entries2, int size2, AABB median1, AABB median2)
-	{
+	private int moveToGroup(AABB[] volumes1, Object[] entries1, int size1, AABB[] volumes2, Object[] entries2, int size2, AABB median1, AABB median2) {
 		int i = 0;
 		int transfers = 0;
 
@@ -584,8 +553,7 @@ public class SpatialIndex<E>
 		return transfers;
 	}
 
-	private boolean updateVolumes(Node parent, Node node)
-	{
+	private boolean updateVolumes(Node parent, Node node) {
 		for (int i = 0; i < parent.numEntries; i++) {
 			if (parent.entries[i] == node) {
 				parent.volumes[i] = getVolumeForNode(node);
@@ -596,8 +564,7 @@ public class SpatialIndex<E>
 		return false;
 	}
 
-	private AABB getVolumeForNode(Node node)
-	{
+	private AABB getVolumeForNode(Node node) {
 		AABB volume = node.volumes[0].copy();
 
 		for (int i = 1; i < node.numEntries; i++) {
@@ -608,8 +575,7 @@ public class SpatialIndex<E>
 	}
 
 	@SuppressWarnings("unchecked")
-	private void reinsert(Node node)
-	{
+	private void reinsert(Node node) {
 		if (node.isLeaf) {
 			for (int i = 0; i < node.numEntries; i++) {
 				insert((E) node.entries[i], node.volumes[i]);
@@ -629,14 +595,12 @@ public class SpatialIndex<E>
 		private AABB[] volumes = new AABB[MAX_OBJECTS_PER_NODE];
 		private Object[] entries = new Object[MAX_OBJECTS_PER_NODE];
 
-		public Node(boolean isLeaf)
-		{
+		public Node(boolean isLeaf) {
 			this.isLeaf = isLeaf;
 		}
 
 		@SuppressWarnings("unchecked")
-		public void add(AABB volume, Object object)
-		{
+		public void add(AABB volume, Object object) {
 			volumes[numEntries] = volume;
 			entries[numEntries] = object;
 			numEntries++;
@@ -648,8 +612,7 @@ public class SpatialIndex<E>
 			}
 		}
 
-		public void remove(Object object)
-		{
+		public void remove(Object object) {
 			for (int i = 0; i < numEntries; i++) {
 				if (entries[i] == object) {
 					if (isLeaf) {
@@ -666,8 +629,7 @@ public class SpatialIndex<E>
 			}
 		}
 
-		public void clear()
-		{
+		public void clear() {
 			for (int i = 0; i < numEntries; i++) {
 				if (isLeaf) {
 					leafMap.remove(entries[i]);

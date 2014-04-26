@@ -31,14 +31,12 @@ public class AABBUtil
 	/**
 	 * Returns the center point of the bounding volume with respect to the specified dimension.
 	 *
-	 * @param volume
-	 *            The volume.
-	 * @param dimension
-	 *            The dimension.
+	 * @param volume    The volume.
+	 * @param dimension The dimension.
+	 *
 	 * @return The center point of the bounding volume with respect to the specified dimension.
 	 */
-	public static float getCenter(AABB volume, int dimension)
-	{
+	public static float getCenter(AABB volume, int dimension) {
 		if (dimension > volume.getDimensions()) {
 			throw new IllegalArgumentException();
 		}
@@ -49,14 +47,12 @@ public class AABBUtil
 	/**
 	 * Returns the minimum distance between two bounding volumes.
 	 *
-	 * @param volume1
-	 *            The first volume.
-	 * @param volume2
-	 *            The second volume.
+	 * @param volume1 The first volume.
+	 * @param volume2 The second volume.
+	 *
 	 * @return The minimum distance between two bounding volumes.
 	 */
-	public static float distanceSquared(AABB volume1, AABB volume2)
-	{
+	public static float distanceSquared(AABB volume1, AABB volume2) {
 		if (volume1.getDimensions() != volume2.getDimensions()) {
 			throw new IllegalArgumentException();
 		}
@@ -80,13 +76,10 @@ public class AABBUtil
 	/**
 	 * Minimally expands <tt>volume1</tt> so that it complete contains <tt>volume2</tt>.
 	 *
-	 * @param volume1
-	 *            The volume to expand.
-	 * @param volume2
-	 *            The reference volume.
+	 * @param volume1 The volume to expand.
+	 * @param volume2 The reference volume.
 	 */
-	public static void expand(AABB volume1, AABB volume2)
-	{
+	public static void expand(AABB volume1, AABB volume2) {
 		if (volume1.getDimensions() != volume2.getDimensions()) {
 			throw new IllegalArgumentException();
 		}

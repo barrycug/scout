@@ -31,8 +31,8 @@ public interface QueryResultVisitor<E>
 	/**
 	 * Called during a spatial query for each object whose volume matches the query criteria.
 	 *
-	 * @param object
-	 *            An object whose volume matched the query criteria.
+	 * @param object An object whose volume matched the query criteria.
+	 *
 	 * @return <tt>false</tt> to cancel the query, <tt>true</tt> otherwise.
 	 */
 	public boolean visit(E object);

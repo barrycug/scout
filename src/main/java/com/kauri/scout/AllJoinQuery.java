@@ -29,14 +29,12 @@ package com.kauri.scout;
 public class AllJoinQuery implements JoinQuery
 {
 	@Override
-	public boolean query(AABB volume1, AABB volume2, boolean partial)
-	{
+	public boolean query(AABB volume1, AABB volume2, boolean partial) {
 		return true;
 	}
 
 	@Override
-	public boolean isSymmetric()
-	{
+	public boolean isSymmetric() {
 		return true;
 	}
 }

@@ -36,8 +36,7 @@ public class SpatialIndexTest extends QueryTest
 	private static final int ENTITIES = 1000;
 
 	@Test
-	public void testQueryEarlyExit()
-	{
+	public void testQueryEarlyExit() {
 		SpatialIndex<Object> index = new SpatialIndex<>();
 
 		for (int i = 0; i < ENTITIES; i++) {
@@ -48,8 +47,7 @@ public class SpatialIndexTest extends QueryTest
 	}
 
 	@Test
-	public void testJoinQueryEarlyExit()
-	{
+	public void testJoinQueryEarlyExit() {
 		SpatialIndex<Object> index1 = new SpatialIndex<>();
 		SpatialIndex<Object> index2 = new SpatialIndex<>();
 
@@ -62,8 +60,7 @@ public class SpatialIndexTest extends QueryTest
 	}
 
 	@Test
-	public void testUpdate()
-	{
+	public void testUpdate() {
 		SpatialIndex<Object> index = new SpatialIndex<>();
 
 		List<Object> set1 = new ArrayList<>();
@@ -95,8 +92,7 @@ public class SpatialIndexTest extends QueryTest
 	}
 
 	@Test
-	public void testRemove()
-	{
+	public void testRemove() {
 		SpatialIndex<Object> index = new SpatialIndex<>();
 
 		List<Object> set1 = new ArrayList<>();

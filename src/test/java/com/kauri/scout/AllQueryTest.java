@@ -33,8 +33,7 @@ public class AllQueryTest extends QueryTest
 	private static final int ENTITIES = 1000;
 
 	@Test
-	public void testBulk()
-	{
+	public void testBulk() {
 		SpatialIndex<Object> index = new SpatialIndex<>();
 		List<Object> expected = new ArrayList<>();
 

@@ -33,8 +33,7 @@ public class AllJoinQueryTest extends QueryTest
 	private static final int ENTITIES = 50;
 
 	@Test
-	public void testOneIndexBulk()
-	{
+	public void testOneIndexBulk() {
 		SpatialIndex<Object> index = new SpatialIndex<>();
 
 		List<Object> objects = new ArrayList<>();
@@ -60,8 +59,7 @@ public class AllJoinQueryTest extends QueryTest
 	}
 
 	@Test
-	public void testTwoIndicesBulk()
-	{
+	public void testTwoIndicesBulk() {
 		SpatialIndex<Object> index1 = new SpatialIndex<>();
 		SpatialIndex<Object> index2 = new SpatialIndex<>();
 

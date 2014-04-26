@@ -24,32 +24,31 @@ package com.kauri.scout;
 /**
  * Defines the query criteria used by spatial queries.
  *
- * @see SpatialIndex#query(Query, QueryResultVisitor)
- *
  * @author Eric Fritz
+ * @see SpatialIndex#query(Query, QueryResultVisitor)
  */
 public interface Query
 {
-	public enum QueryResult {
-		PASS, PARTIAL, FAIL
-	};
+	public enum QueryResult
+	{
+		PASS,
+		PARTIAL,
+		FAIL
+	}
 
 	/**
 	 * Determines if the specified <tt>volume</tt> matches the query criteria.
-	 *
 	 * <p>
 	 * If <tt>partial</tt> queries are allowed, then <tt>volume</tt> represents the minimum bounding
 	 * volume of a group of objects. {@link QueryResult#PARTIAL} should be returned in the case that
 	 * some of the sub-volumes may match the query criteria during a subsequent query.
-	 *
 	 * <p>
 	 * Otherwise, it should return {@link QueryResult#PASS} if the query criteria was matched
 	 * completely, or {@link QueryResult#FAIL} if the query criteria was not matched completely.
 	 *
-	 * @param volume
-	 *            The volume.
-	 * @param partial
-	 *            Whether to allow partial matches.
+	 * @param volume  The volume.
+	 * @param partial Whether to allow partial matches.
+	 *
 	 * @return A {@link QueryResult} specifying whether the query criteria was matched.
 	 */
 	public QueryResult query(AABB volume, boolean partial);

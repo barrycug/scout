@@ -38,29 +38,21 @@ public class AABB3 implements AABB
 	/**
 	 * Creates a new AABB2.
 	 *
-	 * @param x
-	 *            The x-coordinate of the upper left corner.
-	 * @param y
-	 *            The y-coordinate of the upper left corner.
-	 * @param z
-	 *            The z-coordinate of the upper left corner.
-	 * @param w
-	 *            The box's width.
-	 * @param h
-	 *            The box's height.
-	 * @param d
-	 *            The box's depth.
+	 * @param x The x-coordinate of the upper left corner.
+	 * @param y The y-coordinate of the upper left corner.
+	 * @param z The z-coordinate of the upper left corner.
+	 * @param w The box's width.
+	 * @param h The box's height.
+	 * @param d The box's depth.
 	 */
-	public AABB3(float x, float y, float z, float w, float h, float d)
-	{
+	public AABB3(float x, float y, float z, float w, float h, float d) {
 		setBounds(0, x, x + w);
 		setBounds(1, y, y + h);
 		setBounds(2, z, z + d);
 	}
 
 	@Override
-	public boolean equals(Object object)
-	{
+	public boolean equals(Object object) {
 		if (object == this) {
 			return true;
 		}
@@ -75,8 +67,7 @@ public class AABB3 implements AABB
 	}
 
 	@Override
-	public int hashCode()
-	{
+	public int hashCode() {
 		int hash = 1;
 		hash = 31 * hash + Float.floatToIntBits(x1);
 		hash = 31 * hash + Float.floatToIntBits(y1);
@@ -89,20 +80,17 @@ public class AABB3 implements AABB
 	}
 
 	@Override
-	public AABB3 copy()
-	{
+	public AABB3 copy() {
 		return new AABB3(x1, y1, z1, x2 - x1, y2 - y1, z2 - z1);
 	}
 
 	@Override
-	public int getDimensions()
-	{
+	public int getDimensions() {
 		return 3;
 	}
 
 	@Override
-	public float getMinimum(int dimension)
-	{
+	public float getMinimum(int dimension) {
 		if (dimension == 0) {
 			return x1;
 		}
@@ -119,8 +107,7 @@ public class AABB3 implements AABB
 	}
 
 	@Override
-	public float getMaximum(int dimension)
-	{
+	public float getMaximum(int dimension) {
 		if (dimension == 0) {
 			return x2;
 		}
@@ -137,8 +124,7 @@ public class AABB3 implements AABB
 	}
 
 	@Override
-	public void setBounds(int dimension, float minimum, float maximum)
-	{
+	public void setBounds(int dimension, float minimum, float maximum) {
 		if (maximum < minimum) {
 			throw new IllegalArgumentException();
 		}
@@ -158,8 +144,7 @@ public class AABB3 implements AABB
 	}
 
 	@Override
-	public float getExtent(int dimension)
-	{
+	public float getExtent(int dimension) {
 		if (dimension == 0) {
 			return x2 - x1;
 		}
@@ -176,14 +161,12 @@ public class AABB3 implements AABB
 	}
 
 	@Override
-	public float getVolume()
-	{
+	public float getVolume() {
 		return (x2 - x1) * (y2 - y1) * (z2 - z1);
 	}
 
 	@Override
-	public boolean contains(AABB aabb)
-	{
+	public boolean contains(AABB aabb) {
 		if (aabb.getDimensions() != 3) {
 			throw new IllegalArgumentException();
 		}
@@ -204,8 +187,7 @@ public class AABB3 implements AABB
 	}
 
 	@Override
-	public boolean intersects(AABB aabb)
-	{
+	public boolean intersects(AABB aabb) {
 		if (aabb.getDimensions() != 3) {
 			throw new IllegalArgumentException();
 		}

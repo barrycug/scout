@@ -33,8 +33,7 @@ public class DistanceJoinQueryTest extends QueryTest
 	private static final int ENTITIES = 1000;
 
 	@Test
-	public void testOneIndex()
-	{
+	public void testOneIndex() {
 		SpatialIndex<Object> index = new SpatialIndex<>();
 
 		Object o1, o2, o3, o4;
@@ -53,8 +52,7 @@ public class DistanceJoinQueryTest extends QueryTest
 	}
 
 	@Test
-	public void testOneIndexBulk()
-	{
+	public void testOneIndexBulk() {
 		SpatialIndex<Object> index = new SpatialIndex<>();
 		List<Pair<Object>> expected = new ArrayList<>();
 
@@ -73,8 +71,7 @@ public class DistanceJoinQueryTest extends QueryTest
 	}
 
 	@Test
-	public void testTwoIndices()
-	{
+	public void testTwoIndices() {
 		SpatialIndex<Object> index1 = new SpatialIndex<>();
 		SpatialIndex<Object> index2 = new SpatialIndex<>();
 
@@ -105,8 +102,7 @@ public class DistanceJoinQueryTest extends QueryTest
 	}
 
 	@Test
-	public void testTwoIndicesBulk()
-	{
+	public void testTwoIndicesBulk() {
 		SpatialIndex<Object> index1 = new SpatialIndex<>();
 		SpatialIndex<Object> index2 = new SpatialIndex<>();
 

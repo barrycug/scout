@@ -30,17 +30,15 @@ public interface JoinQueryResultVisitor<E, F>
 {
 	/**
 	 * Called during a spatial join for each pair of objects whose volumes match the query criteria.
-	 *
 	 * <p>
 	 * For asymmetric query criteria, <tt>object1</tt> and <tt>object2</tt> will be passed as actual
 	 * parameters in the correct order. This is critical if the two spatial indices being joined are
 	 * the same object. For example, during a {@link ContainsJoinQuery}, <tt>object1</tt> will
 	 * contain <tt>object2</tt>.
 	 *
-	 * @param object1
-	 *            An object whose volume matched the query criteria.
-	 * @param object2
-	 *            An object whose volume matched the query criteria.
+	 * @param object1 An object whose volume matched the query criteria.
+	 * @param object2 An object whose volume matched the query criteria.
+	 *
 	 * @return <tt>false</tt> to cancel the query, <tt>true</tt> otherwise.
 	 */
 	public boolean visit(E object1, F object2);

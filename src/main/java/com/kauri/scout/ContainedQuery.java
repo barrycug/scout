@@ -36,17 +36,14 @@ public class ContainedQuery implements Query
 	/**
 	 * Creates a new ContainedQuery.
 	 *
-	 * @param volume
-	 *            The reference volume.
+	 * @param volume The reference volume.
 	 */
-	public ContainedQuery(AABB volume)
-	{
+	public ContainedQuery(AABB volume) {
 		this.volume = volume;
 	}
 
 	@Override
-	public QueryResult query(AABB volume, boolean partial)
-	{
+	public QueryResult query(AABB volume, boolean partial) {
 		if (volume.contains(this.volume)) {
 			return partial ? QueryResult.PARTIAL : QueryResult.PASS;
 		}

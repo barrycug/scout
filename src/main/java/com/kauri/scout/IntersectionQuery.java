@@ -33,14 +33,12 @@ public class IntersectionQuery implements Query
 	 */
 	private AABB volume;
 
-	public IntersectionQuery(AABB volume)
-	{
+	public IntersectionQuery(AABB volume) {
 		this.volume = volume;
 	}
 
 	@Override
-	public QueryResult query(AABB volume, boolean partial)
-	{
+	public QueryResult query(AABB volume, boolean partial) {
 		if (this.volume.contains(volume)) {
 			return QueryResult.PASS;
 		}

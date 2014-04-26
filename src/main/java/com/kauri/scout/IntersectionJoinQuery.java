@@ -30,14 +30,12 @@ package com.kauri.scout;
 public class IntersectionJoinQuery implements JoinQuery
 {
 	@Override
-	public boolean query(AABB volume1, AABB volume2, boolean partial)
-	{
+	public boolean query(AABB volume1, AABB volume2, boolean partial) {
 		return volume1.contains(volume2) || volume1.intersects(volume2);
 	}
 
 	@Override
-	public boolean isSymmetric()
-	{
+	public boolean isSymmetric() {
 		return true;
 	}
 }

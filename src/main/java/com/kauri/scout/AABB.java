@@ -45,8 +45,8 @@ public interface AABB
 	/**
 	 * Returns the minimum value in the given dimension.
 	 *
-	 * @param dimension
-	 *            The dimension.
+	 * @param dimension The dimension.
+	 *
 	 * @return The maximum value in the given dimension.
 	 */
 	public float getMinimum(int dimension);
@@ -54,8 +54,8 @@ public interface AABB
 	/**
 	 * Returns the maximum value in the given dimension.
 	 *
-	 * @param dimension
-	 *            The dimension.
+	 * @param dimension The dimension.
+	 *
 	 * @return The maximum value in the given dimension.
 	 */
 	public float getMaximum(int dimension);
@@ -63,20 +63,17 @@ public interface AABB
 	/**
 	 * Updates the minimum and maximum value in the given dimension.
 	 *
-	 * @param dimension
-	 *            The dimension.
-	 * @param minimum
-	 *            The minimum value in the given dimension.
-	 * @param maximum
-	 *            The maximum value in the given dimension.
+	 * @param dimension The dimension.
+	 * @param minimum   The minimum value in the given dimension.
+	 * @param maximum   The maximum value in the given dimension.
 	 */
 	public void setBounds(int dimension, float minimum, float maximum);
 
 	/**
 	 * Returns the extent of the given dimension.
 	 *
-	 * @param dimension
-	 *            The dimension.
+	 * @param dimension The dimension.
+	 *
 	 * @return The extent of the given dimension.
 	 */
 	public float getExtent(int dimension);
@@ -91,8 +88,8 @@ public interface AABB
 	/**
 	 * Determines whether this volume contains the specified volume.
 	 *
-	 * @param aabb
-	 *            The other volume.
+	 * @param aabb The other volume.
+	 *
 	 * @return <tt>true</tt> if this volume contains the specified volume.
 	 */
 	public boolean contains(AABB aabb);
@@ -100,8 +97,8 @@ public interface AABB
 	/**
 	 * Determines whether this volume intersects with the specified volume.
 	 *
-	 * @param aabb
-	 *            The other volume.
+	 * @param aabb The other volume.
+	 *
 	 * @return <tt>true</tt> if this volume intersects with the specified volume.
 	 */
 	public boolean intersects(AABB aabb);

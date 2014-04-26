@@ -34,8 +34,7 @@ public class IntersectionQueryTest extends QueryTest
 	private static final int ENTITIES = 1000;
 
 	@Test
-	public void test()
-	{
+	public void test() {
 		SpatialIndex<Object> index = new SpatialIndex<>();
 
 		Object o1, o2, o3;
@@ -50,8 +49,7 @@ public class IntersectionQueryTest extends QueryTest
 	}
 
 	@Test
-	public void testBulk()
-	{
+	public void testBulk() {
 		SpatialIndex<Object> index = new SpatialIndex<>();
 		List<Object> expected = new ArrayList<>();
 

@@ -36,17 +36,14 @@ public class ContainsQuery implements Query
 	/**
 	 * Creates a new ContainsQuery.
 	 *
-	 * @param volume
-	 *            The reference volume.
+	 * @param volume The reference volume.
 	 */
-	public ContainsQuery(AABB volume)
-	{
+	public ContainsQuery(AABB volume) {
 		this.volume = volume;
 	}
 
 	@Override
-	public QueryResult query(AABB volume, boolean partial)
-	{
+	public QueryResult query(AABB volume, boolean partial) {
 		if (this.volume.contains(volume)) {
 			return QueryResult.PASS;
 		}

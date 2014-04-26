@@ -41,20 +41,16 @@ public class DistanceQuery implements Query
 	/**
 	 * Creates a new DistanceQuery.
 	 *
-	 * @param volume
-	 *            The reference volume.
-	 * @param distance
-	 *            The maximum distance matched volumes must be from <tt>volume</tt>.
+	 * @param volume   The reference volume.
+	 * @param distance The maximum distance matched volumes must be from <tt>volume</tt>.
 	 */
-	public DistanceQuery(AABB volume, float distance)
-	{
+	public DistanceQuery(AABB volume, float distance) {
 		this.volume = volume;
 		this.distanceSquared = distance * distance;
 	}
 
 	@Override
-	public QueryResult query(AABB volume, boolean partial)
-	{
+	public QueryResult query(AABB volume, boolean partial) {
 		if (AABBUtil.distanceSquared(this.volume, volume) <= distanceSquared) {
 			return partial ? QueryResult.PARTIAL : QueryResult.PASS;
 		}

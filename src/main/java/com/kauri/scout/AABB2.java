@@ -36,24 +36,18 @@ public class AABB2 implements AABB
 	/**
 	 * Creates a new AABB2.
 	 *
-	 * @param x
-	 *            The x-coordinate of the upper left corner.
-	 * @param y
-	 *            The y-coordinate of the upper left corner.
-	 * @param w
-	 *            The box's width.
-	 * @param h
-	 *            The box's height.
+	 * @param x The x-coordinate of the upper left corner.
+	 * @param y The y-coordinate of the upper left corner.
+	 * @param w The box's width.
+	 * @param h The box's height.
 	 */
-	public AABB2(float x, float y, float w, float h)
-	{
+	public AABB2(float x, float y, float w, float h) {
 		setBounds(0, x, x + w);
 		setBounds(1, y, y + h);
 	}
 
 	@Override
-	public boolean equals(Object object)
-	{
+	public boolean equals(Object object) {
 		if (object == this) {
 			return true;
 		}
@@ -68,8 +62,7 @@ public class AABB2 implements AABB
 	}
 
 	@Override
-	public int hashCode()
-	{
+	public int hashCode() {
 		int hash = 1;
 		hash = 31 * hash + Float.floatToIntBits(x1);
 		hash = 31 * hash + Float.floatToIntBits(y1);
@@ -80,20 +73,17 @@ public class AABB2 implements AABB
 	}
 
 	@Override
-	public AABB2 copy()
-	{
+	public AABB2 copy() {
 		return new AABB2(x1, y1, x2 - x1, y2 - y1);
 	}
 
 	@Override
-	public int getDimensions()
-	{
+	public int getDimensions() {
 		return 2;
 	}
 
 	@Override
-	public float getMinimum(int dimension)
-	{
+	public float getMinimum(int dimension) {
 		if (dimension == 0) {
 			return x1;
 		}
@@ -106,8 +96,7 @@ public class AABB2 implements AABB
 	}
 
 	@Override
-	public float getMaximum(int dimension)
-	{
+	public float getMaximum(int dimension) {
 		if (dimension == 0) {
 			return x2;
 		}
@@ -120,8 +109,7 @@ public class AABB2 implements AABB
 	}
 
 	@Override
-	public void setBounds(int dimension, float minimum, float maximum)
-	{
+	public void setBounds(int dimension, float minimum, float maximum) {
 		if (maximum < minimum) {
 			throw new IllegalArgumentException();
 		}
@@ -138,8 +126,7 @@ public class AABB2 implements AABB
 	}
 
 	@Override
-	public float getExtent(int dimension)
-	{
+	public float getExtent(int dimension) {
 		if (dimension == 0) {
 			return x2 - x1;
 		}
@@ -152,14 +139,12 @@ public class AABB2 implements AABB
 	}
 
 	@Override
-	public float getVolume()
-	{
+	public float getVolume() {
 		return (x2 - x1) * (y2 - y1);
 	}
 
 	@Override
-	public boolean contains(AABB aabb)
-	{
+	public boolean contains(AABB aabb) {
 		if (aabb.getDimensions() != 2) {
 			throw new IllegalArgumentException();
 		}
@@ -176,8 +161,7 @@ public class AABB2 implements AABB
 	}
 
 	@Override
-	public boolean intersects(AABB aabb)
-	{
+	public boolean intersects(AABB aabb) {
 		if (aabb.getDimensions() != 2) {
 			throw new IllegalArgumentException();
 		}

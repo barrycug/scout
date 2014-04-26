@@ -29,8 +29,7 @@ package com.kauri.scout;
 public class AllQuery implements Query
 {
 	@Override
-	public QueryResult query(AABB volume, boolean partial)
-	{
+	public QueryResult query(AABB volume, boolean partial) {
 		return QueryResult.PASS;
 	}
 }

@@ -37,23 +37,19 @@ public class DistanceJoinQuery implements JoinQuery
 	/**
 	 * Creates a new DistanceJoinQuery.
 	 *
-	 * @param distance
-	 *            The maximum distance matched volumes must be from one another.
+	 * @param distance The maximum distance matched volumes must be from one another.
 	 */
-	public DistanceJoinQuery(float distance)
-	{
+	public DistanceJoinQuery(float distance) {
 		this.distanceSquared = distance * distance;
 	}
 
 	@Override
-	public boolean query(AABB volume1, AABB volume2, boolean partial)
-	{
+	public boolean query(AABB volume1, AABB volume2, boolean partial) {
 		return AABBUtil.distanceSquared(volume1, volume2) <= distanceSquared;
 	}
 
 	@Override
-	public boolean isSymmetric()
-	{
+	public boolean isSymmetric() {
 		return true;
 	}
 }
