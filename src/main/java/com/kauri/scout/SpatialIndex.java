@@ -21,13 +21,12 @@
 
 package com.kauri.scout;
 
+import com.kauri.scout.Query.QueryResult;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
-
-import com.kauri.scout.Query.QueryResult;
 
 /**
  * A spatial-aware collection of elements.
