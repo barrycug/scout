@@ -1,22 +1,22 @@
 /*
  * This file is part of the scout package.
  *
- * Copyright (C) 2012, Eric Fritz
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software 
- * and associated documentation files (the "Software"), to deal in the Software without 
- * restriction, including without limitation the rights to use, copy, modify, merge, publish, 
- * distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the 
- * Software is furnished to do so, subject to the following conditions: 
- * 
- * The above copyright notice and this permission notice shall be included in all copies or 
- * substantial portions of the Software. 
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING 
- * BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
- * NONINFRINGEMENT.  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
- * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. 
+ * Copyright (c) 2014 Eric Fritz
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+ * and associated documentation files (the "Software"), to deal in the Software without
+ * restriction, including without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+ * BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT.  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
 package com.kauri.scout;
@@ -31,17 +31,17 @@ import com.kauri.scout.Query.QueryResult;
 
 /**
  * A spatial-aware collection of elements.
- * 
+ *
  * <p>
  * This class implements an R-tree variant designed for efficient traversal and efficient
  * common-case updates.
- * 
+ *
  * <p>
  * <b>Note that this implementation is not synchronized.</b> If multiple threads access the index
  * concurrently, and at least one of the threads modifies the index structurally, it <i>must</i> be
  * synchronized externally. A structural modification is a successful {@link #insert(Object, AABB)
  * insert}, {@link #update(Object, AABB) update}, or {@link #remove(Object) remove} operation.
- * 
+ *
  * @author Eric Fritz
  */
 public class SpatialIndex<E>
@@ -91,7 +91,7 @@ public class SpatialIndex<E>
 	/**
 	 * Performs a spatial query on the index, visiting all of the matching elements that satisfy the
 	 * query criteria.
-	 * 
+	 *
 	 * @param query
 	 *            The spatial query.
 	 * @param visitor
@@ -107,7 +107,7 @@ public class SpatialIndex<E>
 	/**
 	 * Performs a spatial join on the index with itself, visiting all of the matching element pairs
 	 * that satisfy the query criteria.
-	 * 
+	 *
 	 * @param query
 	 *            The spatial query.
 	 * @param visitor
@@ -121,7 +121,7 @@ public class SpatialIndex<E>
 	/**
 	 * Performs a spatial join on this index and another spatial index, visiting all of the matching
 	 * element pairs that satisfy the query criteria.
-	 * 
+	 *
 	 * @param index
 	 *            The other spatial index.
 	 * @param query
@@ -138,11 +138,11 @@ public class SpatialIndex<E>
 
 	/**
 	 * Inserts an object into the index.
-	 * 
+	 *
 	 * <p>
 	 * If <tt>volume</tt> is modified after insertion, {@link #update(Object, AABB)} should be
 	 * called in order to keep the index well-formed.
-	 * 
+	 *
 	 * @param object
 	 *            The object to insert.
 	 * @param volume
@@ -198,7 +198,7 @@ public class SpatialIndex<E>
 	/**
 	 * Updates the bounds of an object in the index. If the object was not already in the index, no
 	 * action is performed.
-	 * 
+	 *
 	 * @param object
 	 *            The object to update.
 	 * @param volume
@@ -241,7 +241,7 @@ public class SpatialIndex<E>
 
 	/**
 	 * Removes an object from the index.
-	 * 
+	 *
 	 * @param object
 	 *            The object to remove. If the object was not already in the index, no action is
 	 *            performed.

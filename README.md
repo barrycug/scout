@@ -89,7 +89,7 @@ The visitor may return `false` from the `visit` method in the case that the tree
 
 ## License
 
-Copyright (c) 2013 Eric Fritz
+Copyright (c) 2014 Eric Fritz
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
