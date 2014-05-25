@@ -257,7 +257,9 @@ public class SpatialIndex<E>
 			root.isLeaf = true;
 		}
 
-		queue.forEach(this::reinsert);
+		for (Node n : queue) {
+			reinsert(n);
+		}
 
 		if (!root.isLeaf && root.numEntries == 1) {
 			root = (Node) root.entries[0];
