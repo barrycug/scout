@@ -22,7 +22,7 @@
 package com.kauri.scout;
 
 /**
- * A two-dimensional bounding volume.
+ * A two-dimensional axis-aligned bounding volume.
  *
  * @author Eric Fritz
  */
