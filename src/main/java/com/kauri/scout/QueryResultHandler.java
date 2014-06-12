@@ -22,11 +22,11 @@
 package com.kauri.scout;
 
 /**
- * A visitor for objects during a spatial query.
+ * A handler for objects during a spatial query.
  *
  * @author Eric Fritz
  */
-public interface QueryResultVisitor<E>
+public interface QueryResultHandler<E>
 {
 	/**
 	 * Called during a spatial query for each object whose volume matches the query criteria.
@@ -35,5 +35,5 @@ public interface QueryResultVisitor<E>
 	 *
 	 * @return <tt>false</tt> to cancel the query, <tt>true</tt> otherwise.
 	 */
-	public boolean visit(E object);
+	public boolean handle(E object);
 }

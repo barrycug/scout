@@ -89,11 +89,11 @@ public class SpatialIndex<E>
 	 * query criteria.
 	 *
 	 * @param query   The spatial query.
-	 * @param visitor The visitor to call for each matching element.
+	 * @param handler The handler to call for each matching element.
 	 */
-	public void query(Query query, QueryResultVisitor<E> visitor) {
+	public void query(Query query, QueryResultHandler<E> handler) {
 		traversalCount++;
-		query(query, visitor, root);
+		query(query, handler, root);
 		traversalCount--;
 	}
 
@@ -102,10 +102,10 @@ public class SpatialIndex<E>
 	 * that satisfy the query criteria.
 	 *
 	 * @param query   The spatial query.
-	 * @param visitor The visitor to call for each matching element.
+	 * @param handler The handler to call for each matching element.
 	 */
-	public void query(JoinQuery query, JoinQueryResultVisitor<E, E> visitor) {
-		query(this, query, visitor);
+	public void query(JoinQuery query, JoinQueryResultHandler<E, E> handler) {
+		query(this, query, handler);
 	}
 
 	/**
@@ -114,11 +114,11 @@ public class SpatialIndex<E>
 	 *
 	 * @param index   The other spatial index.
 	 * @param query   The spatial query.
-	 * @param visitor The visitor to call for each matching element.
+	 * @param handler The handler to call for each matching element.
 	 */
-	public <F> void query(SpatialIndex<F> index, JoinQuery query, JoinQueryResultVisitor<E, F> visitor) {
+	public <F> void query(SpatialIndex<F> index, JoinQuery query, JoinQueryResultHandler<E, F> handler) {
 		traversalCount++;
-		this.<F>query(query, visitor, root, index.root);
+		this.<F>query(query, handler, root, index.root);
 		traversalCount--;
 	}
 
@@ -268,11 +268,11 @@ public class SpatialIndex<E>
 	}
 
 	@SuppressWarnings("unchecked")
-	private boolean query(Query query, QueryResultVisitor<E> visitor, Node node) {
+	private boolean query(Query query, QueryResultHandler<E> handler, Node node) {
 		for (int i = 0; i < node.numEntries; i++) {
 			if (node.isLeaf) {
 				if (query.query(node.volumes[i], false) == QueryResult.PASS) {
-					if (!visitor.visit((E) node.entries[i])) {
+					if (!handler.handle((E) node.entries[i])) {
 						return false;
 					}
 				}
@@ -281,11 +281,11 @@ public class SpatialIndex<E>
 
 				if (result != QueryResult.FAIL) {
 					if (result == QueryResult.PASS) {
-						if (!visitAll(visitor, (Node) node.entries[i])) {
+						if (!visitAll(handler, (Node) node.entries[i])) {
 							return false;
 						}
 					} else {
-						if (!query(query, visitor, (Node) node.entries[i])) {
+						if (!query(query, handler, (Node) node.entries[i])) {
 							return false;
 						}
 					}
@@ -297,14 +297,14 @@ public class SpatialIndex<E>
 	}
 
 	@SuppressWarnings("unchecked")
-	private boolean visitAll(QueryResultVisitor<E> visitor, Node node) {
+	private boolean visitAll(QueryResultHandler<E> handler, Node node) {
 		for (int i = 0; i < node.numEntries; i++) {
 			if (node.isLeaf) {
-				if (!visitor.visit((E) node.entries[i])) {
+				if (!handler.handle((E) node.entries[i])) {
 					return false;
 				}
 			} else {
-				if (!visitAll(visitor, (Node) node.entries[i])) {
+				if (!visitAll(handler, (Node) node.entries[i])) {
 					return false;
 				}
 			}
@@ -314,10 +314,10 @@ public class SpatialIndex<E>
 	}
 
 	@SuppressWarnings("unchecked")
-	private <F> boolean query(JoinQuery query, JoinQueryResultVisitor<E, F> visitor, SpatialIndex<E>.Node node1, SpatialIndex<F>.Node node2) {
+	private <F> boolean query(JoinQuery query, JoinQueryResultHandler<E, F> handler, SpatialIndex<E>.Node node1, SpatialIndex<F>.Node node2) {
 		if (node1.isLeaf && !node2.isLeaf) {
 			for (int i = 0; i < node2.numEntries; i++) {
-				if (!query(query, visitor, node1, (SpatialIndex<F>.Node) node2.entries[i])) {
+				if (!query(query, handler, node1, (SpatialIndex<F>.Node) node2.entries[i])) {
 					return false;
 				}
 			}
@@ -327,7 +327,7 @@ public class SpatialIndex<E>
 
 		if (node2.isLeaf && !node1.isLeaf) {
 			for (int i = 0; i < node1.numEntries; i++) {
-				if (!query(query, visitor, (SpatialIndex<E>.Node) node1.entries[i], node2)) {
+				if (!query(query, handler, (SpatialIndex<E>.Node) node1.entries[i], node2)) {
 					return false;
 				}
 			}
@@ -336,20 +336,20 @@ public class SpatialIndex<E>
 		}
 
 		if (!node1.isLeaf && !node2.isLeaf) {
-			return this.<F>queryInternal(query, visitor, node1, node2);
+			return this.<F>queryInternal(query, handler, node1, node2);
 		} else {
-			return this.<F>queryExternal(query, visitor, node1, node2);
+			return this.<F>queryExternal(query, handler, node1, node2);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private <F> boolean queryInternal(JoinQuery query, JoinQueryResultVisitor<E, F> visitor, SpatialIndex<E>.Node node1, SpatialIndex<F>.Node node2) {
+	private <F> boolean queryInternal(JoinQuery query, JoinQueryResultHandler<E, F> handler, SpatialIndex<E>.Node node1, SpatialIndex<F>.Node node2) {
 		for (int i = 0; i < node1.numEntries; i++) {
 			int k = node1 == node2 ? i : 0;
 
 			for (int j = k; j < node2.numEntries; j++) {
 				if (query.query(node1.volumes[i], node2.volumes[j], true)) {
-					if (!this.<F>query(query, visitor, (SpatialIndex<E>.Node) node1.entries[i], (SpatialIndex<F>.Node) node2.entries[j])) {
+					if (!this.<F>query(query, handler, (SpatialIndex<E>.Node) node1.entries[i], (SpatialIndex<F>.Node) node2.entries[j])) {
 						return false;
 					}
 				}
@@ -360,19 +360,19 @@ public class SpatialIndex<E>
 	}
 
 	@SuppressWarnings("unchecked")
-	private <F> boolean queryExternal(JoinQuery query, JoinQueryResultVisitor<E, F> visitor, SpatialIndex<E>.Node node1, SpatialIndex<F>.Node node2) {
+	private <F> boolean queryExternal(JoinQuery query, JoinQueryResultHandler<E, F> handler, SpatialIndex<E>.Node node1, SpatialIndex<F>.Node node2) {
 		for (int i = 0; i < node1.numEntries; i++) {
 			int k = node1 == node2 ? i + 1 : 0;
 
 			for (int j = k; j < node2.numEntries; j++) {
 				if (query.query(node1.volumes[i], node2.volumes[j], false)) {
-					if (!visitor.visit((E) node1.entries[i], (F) node2.entries[j])) {
+					if (!handler.handle((E) node1.entries[i], (F) node2.entries[j])) {
 						return false;
 					}
 				} else {
 					if (node1 == node2 && !query.isSymmetric()) {
 						if (query.query(node2.volumes[j], node1.volumes[i], false)) {
-							if (!visitor.visit((E) node2.entries[j], (F) node1.entries[i])) {
+							if (!handler.handle((E) node2.entries[j], (F) node1.entries[i])) {
 								return false;
 							}
 						}

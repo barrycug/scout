@@ -39,9 +39,9 @@ abstract public class QueryTest
 	public <T> List<T> getVisited(SpatialIndex<T> index, Query query, final int limit) {
 		final List<T> visited = new ArrayList<>();
 
-		index.query(query, new QueryResultVisitor<T>() {
+		index.query(query, new QueryResultHandler<T>() {
 			@Override
-			public boolean visit(T o) {
+			public boolean handle(T o) {
 				return visited.add(o) && visited.size() < limit;
 			}
 		});
@@ -56,9 +56,9 @@ abstract public class QueryTest
 	public <T> List<Pair<T>> getVisited(SpatialIndex<T> index1, SpatialIndex<T> index2, JoinQuery query, final int limit) {
 		final List<Pair<T>> visited = new ArrayList<>();
 
-		index1.query(index2, query, new JoinQueryResultVisitor<T, T>() {
+		index1.query(index2, query, new JoinQueryResultHandler<T, T>() {
 			@Override
-			public boolean visit(T o1, T o2) {
+			public boolean handle(T o1, T o2) {
 				return visited.add(new Pair<>(o1, o2)) && visited.size() < limit;
 			}
 		});

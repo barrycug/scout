@@ -25,8 +25,8 @@ package com.kauri.scout;
  * Defines the query criteria used by spatial joins.
  *
  * @author Eric Fritz
- * @see SpatialIndex#query(JoinQuery, JoinQueryResultVisitor)
- * @see SpatialIndex#query(SpatialIndex, JoinQuery, JoinQueryResultVisitor)
+ * @see SpatialIndex#query(JoinQuery, JoinQueryResultHandler)
+ * @see SpatialIndex#query(SpatialIndex, JoinQuery, JoinQueryResultHandler)
  */
 public interface JoinQuery
 {

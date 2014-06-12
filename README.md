@@ -44,20 +44,20 @@ ContainsQuery     | Returns all objects that are contained by a given `AABB`.
 ContainedQuery    | Returns all objects that contain a given `AABB`.
 DistanceQuery     | Returns all objects `d` units or less from a given `AABB`.
 
-Instead of building a result list, Scout uses the [visitor pattern](http://en.wikipedia.org/wiki/Visitor_pattern) to iterate queried objects. The visitor will receive each object that matches the query constraints, one at a time. The order that the visitor receives objects is subject to the internal structure of the tree and cannot be guaranteed.
+Instead of building a result list, Scout uses a handler object to iterate queried objects. The handler will receive each object that matches the query constraints, one at a time. The order that the handler receives objects is subject to the internal structure of the tree and cannot be guaranteed.
 
 ```java
 SpatialIndex<E> index = new SpatialIndex<E>();
 
-index.query(new ContainsQuery(new AABB(0, 0, 100, 100)), new QueryResultVisitor<E>() {
-    public boolean visit(E o) {
+index.query(new ContainsQuery(new AABB(0, 0, 100, 100)), new QueryResultHandler<E>() {
+    public boolean handle(E o) {
         // do something with o
         return true;
     }
 });
 ```
 
-The visitor may return `false` from the `visit` method in the case that the tree traversal should halt.
+The handler may return `false` from the `handle` method in the case that the tree traversal should halt.
 
 ### Join Queries
 
@@ -71,21 +71,21 @@ ContainsJoinQuery     | Returns all pairs of objects such that `e1.contains(e2)`
 ContainedJoinQuery    | Returns all pairs of objects such that `e2.contains(e1)`.
 DistanceJoinQuery     | Returns all pairs of objects `d` units or less from each other.
 
-Join queries also use visitors to iterate queried objects. The visitor will receive pairs of objects that match the query constraints, one at a time. The order that the visitor receives objects is subject to the internal structure of the tree and cannot be guaranteed. In the case that an index is joined with itself, the elements of a pair may be received in either order, `(e1, e2)` or `(e2, e1)`.
+Join queries also use handlers to iterate queried objects. The handler will receive pairs of objects that match the query constraints, one at a time. The order that the handler receives objects is subject to the internal structure of the tree and cannot be guaranteed. In the case that an index is joined with itself, the elements of a pair may be received in either order, `(e1, e2)` or `(e2, e1)`.
 
 ```java
 SpatialIndex<E> index1 = new SpatialIndex<E>();
 SpatialIndex<F> index2 = new SpatialIndex<F>();
 
-index1.query(index2, new IntersectionJoinQuery(), new JoinQueryResultVisitor<E, F>() {
-    public boolean visit(E o1, F, o2) {
+index1.query(index2, new IntersectionJoinQuery(), new JoinQueryResultHandler<E, F>() {
+    public boolean handle(E o1, F, o2) {
         // do something with o1 and o2
         return true;
     }
 });
 ```
 
-The visitor may return `false` from the `visit` method in the case that the tree traversal should halt.
+The handler may return `false` from the `handle` method in the case that the tree traversal should halt.
 
 ## License
 

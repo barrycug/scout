@@ -25,7 +25,7 @@ package com.kauri.scout;
  * Defines the query criteria used by spatial queries.
  *
  * @author Eric Fritz
- * @see SpatialIndex#query(Query, QueryResultVisitor)
+ * @see SpatialIndex#query(Query, QueryResultHandler)
  */
 public interface Query
 {
