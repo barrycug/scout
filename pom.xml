@@ -7,8 +7,31 @@
 	<version>0.0.1</version>
 	<packaging>jar</packaging>
 
-	<name>scout</name>
-	<url>http://maven.apache.org</url>
+	<name>Scout</name>
+	<description>Scout is a simple spatial database written in Java. It is written to be used with dynamic (moving) objects in real-time.</description>
+	<url>https://github.com/efritz/scout</url>
+
+	<licenses>
+		<license>
+			<name>MIT License</name>
+			<url>http://www.opensource.org/licenses/mit-license.php</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Eric Fritz</name>
+			<email>eric@eric-fritz.com</email>
+			<organization>Kauri Development</organization>
+			<organizationUrl>www.kauridev.com</organizationUrl>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:git@github.com:efritz/scout.git</connection>
+		<developerConnection>scm:git:git@github.com:efritz/scout.git</developerConnection>
+		<url>git@github.com:efritz/scout.git</url>
+	</scm>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
