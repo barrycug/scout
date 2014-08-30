@@ -87,6 +87,20 @@ index1.query(index2, new IntersectionJoinQuery(), new JoinQueryResultHandler<E, 
 
 The handler may return `false` from the `handle` method in the case that the tree traversal should halt.
 
+## Installation
+
+If using Maven as a build tool, add the following dependency to your `pom.xml` file.
+
+```xml
+<dependency>
+  <groupId>com.kauridev.lunar</groupId>
+  <artifactId>scout</artifactId>
+  <version>0.1.0</version>
+</dependency>
+```
+
+You can also find downloadable `.jar`s on Maven Central.
+
 ## License
 
 Copyright (c) 2014 Eric Fritz
